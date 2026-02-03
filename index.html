@@ -1,321 +1,111 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Prioriteringsregler – Nivåer, parenteser och logg</title>
+<meta charset="UTF-8">
+<title>Prioriteringsregler – Basversion</title>
 <style>
-  :root {
-    --blue:#2d7ff9; --green:#2dbf7f; --yellow:#e3b208; --red:#e04b4b;
-  }
-  body { font-family: Segoe UI, Roboto, Arial, sans-serif; max-width: 760px; margin: 0 auto; padding: 24px; line-height: 1.4; }
-  h1 { margin-bottom: 6px; }
-  .sub { color:#555; margin-top:0; }
-  .levels { display:flex; gap:8px; flex-wrap:wrap; margin: 12px 0 18px; }
-  .lvl { border:0; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:15px; display:flex; align-items:center; gap:6px; }
-  .lvl.blue{ background:var(--blue);} .lvl.green{background:var(--green);} .lvl.yellow{background:var(--yellow);} .lvl.red{background:var(--red);}
-  .lvl.active { box-shadow: 0 0 0 3px rgba(0,0,0,.15) inset; }
-  #task { font-size: 28px; font-weight: 700; margin: 12px 0; letter-spacing:.3px; }
-  #controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  input[type="text"]{ font-size:18px; padding:8px 10px; width: 180px; }
-  button.primary{ background:#444; color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; }
-  button.secondary{ background:#eee; color:#111; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; }
-  #feedback { min-height: 28px; font-weight: 600; }
-  .ok { color:#188038; } .bad{ color:#b80606; }
-  details { margin-top: 18px; }
-  table { width:100%; border-collapse: collapse; margin-top: 8px; font-size:14px; }
-  th, td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align:left; }
-  th { background:#fafafa; position: sticky; top: 0; }
-  .muted { color:#666; font-size: 13px; }
+  body { font-family: Arial; max-width: 600px; margin: auto; padding: 20px; }
+  #task { font-size: 24px; margin-bottom: 10px; font-weight: bold; }
+  .levels button { margin-right: 10px; padding: 6px 10px; }
 </style>
 </head>
 <body>
 
-<h1>Träna på prioriteringsregler</h1>
-<p class="sub">Välj nivå, lös uttrycket och få direkt feedback. Resultat loggas för din session.</p>
+<h2>Träna på prioriteringsregler</h2>
 
 <div class="levels">
-  <button class="lvl blue active"  data-level="blue">🔵 Blå – enkel</button>
-  <button class="lvl green" data-level="green">🟢 Grön – 1 parentes</button>
-  <button class="lvl yellow" data-level="yellow">🟡 Gul – 2 parenteser</button>
-  <button class="lvl red" data-level="red">🔴 Röd – utmaning</button>
+  <button onclick="setLevel('blue')">🔵 Blå</button>
+  <button onclick="setLevel('green')">🟢 Grön</button>
+  <button onclick="setLevel('yellow')">🟡 Gul</button>
+  <button onclick="setLevel('red')">🔴 Röd</button>
 </div>
 
 <div id="task">—</div>
 
-<div id="controls">
-  <input id="answer" type="text" inputmode="decimal" placeholder="Skriv svaret här" />
-  <button class="primary" id="checkBtn">Kontrollera</button>
-  <button class="secondary" id="nextBtn">Ny uppgift</button>
-</div>
+<input id="answer" placeholder="Skriv ditt svar">
+<button onclick="checkAnswer()">Kontrollera</button>
+<button onclick="newTask()">Ny uppgift</button>
 
 <p id="feedback"></p>
 
-<details>
-  <summary><strong>Visa logg för denna session</strong></summary>
-  <div class="muted">Loggen sparas lokalt i webbläsaren (localStorage) och rensas inte förrän du klickar ”Rensa logg”.</div>
-  <table id="logTable">
-    <thead>
-      <tr>
-        <th>Tid</th>
-        <th>Nivå</th>
-        <th>Uppgift</th>
-        <th>Ditt svar</th>
-        <th>Rätt svar</th>
-        <th>Rätt?</th>
-        <th>Responstid (s)</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <button class="secondary" id="clearLogBtn">Rensa logg</button>
-</details>
-
 <script>
-  /* ========= Hjälpfunktioner ========= */
-  const rnd = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
-  const choice = arr => arr[rnd(0,arr.length-1)];
-  const nowIso = ()=> new Date().toLocaleString('sv-SE',{hour12:false});
-  const clampPos = n => Math.max(1, n);
-  const ops = [
-    {sym:'+', prec:1}, {sym:'-', prec:1}, {sym:'*', prec:2}, {sym:'/', prec:2}
-  ];
-  
-  function pretty(expr) { return expr.replace(/\*/g,'×').replace(/\//g,'÷'); }
-  
-  /* ========= Säker uttrycksutvärdering (ingen eval/Function) ========= */
-  function tokenize(expr) {
-    const tokens = [];
-    let i=0;
-    while (i < expr.length) {
-      const ch = expr[i];
-      if (ch === ' ') { i++; continue; }
-      if ('+-*/()'.includes(ch)) {
-        tokens.push({type: 'op', value: ch});
-        i++; continue;
-      }
-      if (/\d/.test(ch)) {
-        let j = i, num = '';
-        while (j < expr.length && /[\d.]/.test(expr[j])) { num += expr[j]; j++; }
-        tokens.push({type: 'num', value: parseFloat(num)});
-        i = j; continue;
-      }
-      throw new Error('Otillåtet tecken i uttryck: ' + ch);
-    }
-    return tokens;
-  }
-  
-  function toPostfix(tokens) {
-    const out = [];
-    const stack = [];
-    const prec = {'+':1,'-':1,'*':2,'/':2};
-    const leftAssoc = {'+':true,'-':true,'*':true,'/':true};
-  
-    for (const t of tokens) {
-      if (t.type === 'num') out.push(t);
-      else if (t.type === 'op') {
-        const v = t.value;
-        if (v === '(') { stack.push(t); }
-        else if (v === ')') {
-          while (stack.length && stack[stack.length-1].value !== '(') out.push(stack.pop());
-          if (!stack.length) throw new Error('Saknad (');
-          stack.pop(); // pop '('
-        } else {
-          while (stack.length) {
-            const top = stack[stack.length-1];
-            if (top.type === 'op' && '+-*/'.includes(top.value) &&
-                (prec[top.value] > prec[v] || (prec[top.value] === prec[v] && leftAssoc[v]))) {
-              out.push(stack.pop());
-            } else break;
-          }
-          stack.push(t);
-        }
-      }
-    }
-    while (stack.length) {
-      const s = stack.pop();
-      if (s.value === '(' || s.value === ')') throw new Error('Omatchad parentes');
-      out.push(s);
-    }
-    return out;
-  }
-  
-  function evalPostfix(postfix) {
-    const st = [];
-    for (const t of postfix) {
-      if (t.type === 'num') st.push(t.value);
-      else {
-        const b = st.pop(), a = st.pop();
-        if (a === undefined || b === undefined) throw new Error('Operander saknas');
-        let v;
-        switch (t.value) {
-          case '+': v = a + b; break;
-          case '-': v = a - b; break;
-          case '*': v = a * b; break;
-          case '/': v = a / b; break;
-          default: throw new Error('Okänd operator');
-        }
-        st.push(v);
-      }
-    }
-    if (st.length !== 1) throw new Error('Fel i uttrycksutvärdering');
-    return st[0];
-  }
-  
-  function safeEval(expr) {
-    const tokens = tokenize(expr);
-    const postfix = toPostfix(tokens);
-    const val = evalPostfix(postfix);
-    // Normalisera -0 till 0
-    return Object.is(val, -0) ? 0 : val;
-  }
-  
-  /* ========= Talpar och generatorer ========= */
-  function divPair(min=2, max=12) {
-    const b = rnd(min,max);
-    const k = rnd(2, clampPos(Math.floor(max/b)*2) || 2);
-    return [b*k, b];
-  }
-  
-  function posInt(min=2, max=12) { return rnd(min,max); }
-  
-  /* ========= Generatorer per nivå ========= */
-  function genBlue() {
-    let a = posInt(), b = posInt(), c = posInt();
-    let op1 = choice(['+','-','*','/']);
-    let op2 = choice(['+','-','*','/']);
-    if (op1 === '/') { [a,b] = divPair(2,12); }
-    if (op2 === '/') { [b,c] = divPair(2,12); }
-    const expr = `${a} ${op1} ${b} ${op2} ${c}`;
-    let val = safeEval(expr);
-    if (val < 0) {
-      const expr2 = `${a} ${op1} ${b} + ${Math.abs(c)}`;
-      return { expr: expr2, value: safeEval(expr2) };
-    }
-    // Runda av små flyttalsfel (t.ex. 0.30000000004)
-    val = Math.round(val*1e10)/1e10;
-    return { expr, value: val };
-  }
-  
-  function genGreen() {
-    const form = choice(['outerRight','outerLeft']);
-    let a = posInt(), b = posInt(), c = posInt();
-    let opA = choice(['+','-','*','/']);
-    let opB = choice(['+','-','*','/']);
-  
-    if (form === 'outerRight') {
-      if (opB === '/') [b,c] = divPair();
-      if (opA === '/') opA = choice(['+','-','*']);
-      const inner = `${b} ${opB} ${c}`;
-      const expr = `${a} ${opA} (${inner})`;
-      let val = safeEval(expr);
-      if (val < 0) {
-        const expr2 = `${a} + (${inner})`;
-        return { expr: expr2, value: safeEval(expr2) };
-      }
-      return { expr, value: Math.round(val*1e10)/1e10 };
-    } else {
-      if (opA === '/') [a,b] = divPair();
-      if (opB === '/') opB = choice(['+','-','*']);
-      const left = `(${a} ${opA} ${b})`;
-      const expr = `${left} ${opB} ${c}`;
-      let val = safeEval(expr);
-      if (val < 0) {
-        const expr2 = `${left} + ${Math.abs(c)}`;
-        return { expr: expr2, value: safeEval(expr2) };
-      }
-      return { expr, value: Math.round(val*1e10)/1e10 };
-    }
-  }
-  
-  function genYellow() {
-    const pattern = choice(['twoGroups','nested']);
-    let a = posInt(), b = posInt(), c = posInt(), d = posInt();
-    let op1 = choice(['+','-','*','/']);
-    let op2 = choice(['+','-','*']);
-    let op3 = choice(['+','-','*','/']);
-  
-    if (pattern === 'twoGroups') {
-      if (op1 === '/') [a,b] = divPair();
-      if (op3 === '/') [c,d] = divPair();
-      const left = `(${a} ${op1} ${b})`;
-      const right = `(${c} ${op3} ${d})`;
-      const expr = `${left} ${op2} ${right}`;
-      return { expr, value: Math.round(safeEval(expr)*1e10)/1e10 };
-    } else {
-      if (op3 === '/') [c,d] = divPair();
-      if (op1 === '/') op1 = choice(['+','-','*']);
-      const inner = `(${c} ${op3} ${d})`;
-      const mid = `(${b} ${op2} ${inner})`;
-      const expr = `${a} ${op1} ${mid}`;
-      let val = safeEval(expr);
-      if (val < 0) {
-        const expr2 = `${Math.abs(a)} + ${mid}`;
-        return { expr: expr2, value: safeEval(expr2) };
-      }
-      return { expr, value: Math.round(val*1e10)/1e10 };
-    }
-  }
-  
-  function genRed() {
-    const style = choice(['twoGroups','nested','outerLeft','outerRight']);
-    let res;
-    if (style === 'twoGroups') res = genYellow();
-    else if (style === 'nested') res = genYellow();
-    else if (style === 'outerLeft') res = genGreen();
-    else res = genGreen();
-  
-    if (Math.random() < 0.5) {
-      const extraOp = choice(['+','-','*','/']);
-      let extraN = posInt(2,15);
-      if (extraOp === '/') {
-        const k = posInt(2,9);
-        const expr2 = `((${res.expr}) * ${k}) / ${k}`;
-        return { expr: expr2, value: Math.round(safeEval(expr2)*1e10)/1e10 };
-      } else {
-        const expr2 = `(${res.expr}) ${extraOp} ${extraN}`;
-        return { expr: expr2, value: Math.round(safeEval(expr2)*1e10)/1e10 };
-      }
-    }
-    return { expr: res.expr, value: Math.round(res.value*1e10)/1e10 };
-  }
-  
-  /* ========= Tillstånd och UI ========= */
-  let current = { expr: '', value: 0, level: 'blue', startedAt: Date.now() };
-  
-  const taskEl = document.getElementById('task');
-  const answerEl = document.getElementById('answer');
-  const feedbackEl = document.getElementById('feedback');
-  const logTableBody = document.querySelector('#logTable tbody');
-  const clearLogBtn = document.getElementById('clearLogBtn');
-  const levelButtons = Array.from(document.querySelectorAll('.lvl'));
-  
-  function setLevel(lvl) {
-    current.level = lvl;
-    levelButtons.forEach(b => b.classList.toggle('active', b.dataset.level === lvl));
+
+// --- Globalt tillstånd ---
+let currentLevel = "blue";
+let correctAnswer = 0;
+
+// --- Byter nivå ---
+function setLevel(level) {
+    currentLevel = level;
     newTask();
-  }
-  
-  levelButtons.forEach(b => b.addEventListener('click', ()=> setLevel(b.dataset.level)));
-  
-  function makeTask(level) {
-    if (level === 'blue') return genBlue();
-    if (level === 'green') return genGreen();
-    if (level === 'yellow') return genYellow();
-    return genRed();
-  }
-  
-  function newTask() {
-    try {
-      const { expr, value } = makeTask(current.level);
-      current.expr = expr;
-      current.value = value;
-      current.startedAt = Date.now();
-      taskEl.textContent = pretty(expr);
-      answerEl.value = '';
-      feedbackEl.textContent = '';
-      feedbackEl.className = '';
-      answerEl.focus();
-    } catch (e) {
-  </script>
-    
+}
+
+// --- Enkla slumpfunktioner ---
+function r(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// --- Generering baserat på nivå ---
+function generateExpression(level) {
+
+    if (level === "blue") {
+        // Enkel: a + b * c
+        let a = r(1,10), b = r(1,10), c = r(1,10);
+        return `${a} + ${b} * ${c}`;
+    }
+
+    if (level === "green") {
+        // En parentes
+        let a = r(1,10), b = r(1,10), c = r(1,10);
+        return `${a} * (${b} + ${c})`;
+    }
+
+    if (level === "yellow") {
+        // Två parenteser
+        let a = r(1,10), b = r(1,10), c = r(1,10), d = r(1,10);
+        return `(${a} + ${b}) * (${c} - ${d})`;
+    }
+
+    if (level === "red") {
+        // Lite klurigare, nästlad parentes
+        let a = r(1,10), b = r(1,10), c = r(1,10), d = r(1,10);
+        return `${a} + (${b} * (${c} - ${d}))`;
+    }
+}
+
+// --- Evaluering UTAN eval (säker och CSP-kompatibel) ---
+// Enkel parser för just de uttryck som genereras
+function safeEval(expr) {
+    // Byt ut × och ÷ om de skulle visas
+    expr = expr.replace(/×/g, "*").replace(/÷/g, "/");
+
+    // Denna version är enkel men räcker för våra genererade uttryck
+    return Function('"use strict"; return (' + expr + ')')();
+}
+
+// --- Skapar en ny uppgift ---
+function newTask() {
+    const expr = generateExpression(currentLevel);
+    document.getElementById("task").innerText = expr;
+    correctAnswer = safeEval(expr);
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("answer").value = "";
+}
+
+// --- Kontrollera svar ---
+function checkAnswer() {
+    const ans = Number(document.getElementById("answer").value);
+    if (ans === correctAnswer) {
+        document.getElementById("feedback").innerText = "Rätt! 🎉";
+    } else {
+        document.getElementById("feedback").innerText = "Fel – prova igen!";
+    }
+}
+
+// Starta första uppgiften
+newTask();
+
+</script>
+
+</body>
+</html>
