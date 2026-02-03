@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <title>Prioriteringsregler – Matteövning</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Prioriteringsregler – Matteövning</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- MathJax för snygg bråknotation (måste vara en riktig <script>-tagg) -->
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/.js</script>
+<script src="https://cdn.jsdelivrjax@3/es5/tex-mml-chtml.js</script>
 
-  <style>
-    body { font-family: Arial, system-ui, Segoe UI, Roboto, Helvetica, sans-serif; max-width: 650px; margin: auto; padding: 20px; }
-    h1 { margin-bottom: 10px; }
-    #task { font-size: 30px; margin: 20px 0; min-height: 40px; }
-    .levels button { padding: 6px 12px; margin: 4px; font-size: 16px; }
-    #answer { font-size: 18px; padding: 6px; width: 140px; }
-    #feedback { font-size: 18px; font-weight: bold; margin-top: 10px; min-height: 28px; }
-  </style>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 650px; margin: auto; padding: 20px; }
+  h1 { margin-bottom: 10px; }
+  #task { font-size: 30px; margin: 20px 0; min-height: 40px; }
+  .levels button { padding: 6px 12px; margin: 4px; font-size: 16px; }
+  #answer { font-size: 18px; padding: 6px; width: 140px; }
+  #feedback { font-size: 18px; font-weight: bold; margin-top: 10px; min-height: 28px; }
+</style>
 </head>
 <body>
 
@@ -36,104 +35,73 @@
 
 <p id="feedback"></p>
 
-<!-- VIKTIGT: Allt JavaScript ligger i en (1) korrekt avslutad <script>-tagg -->
 <script>
-// =========================================================
-// Globalt
-// =========================================================
 let currentLevel = "blue";
 let correctAnswer = 0;
 
-// Slumptal
-function r(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function r(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
-// =========================================================
-// Generatorer – rena uttryck, heltal, inga negativa, · för multiplikation
-// =========================================================
-
-// 🔵 Blå: a + b · c
-function genBlue() {
-  const a = r(1, 15), b = r(1, 12), c = r(1, 12);
+function genBlue(){
+  let a=r(1,15), b=r(1,12), c=r(1,12);
   return `${a} + ${b} · ${c}`;
 }
 
-// 🟢 Grön: a · (b ± c) där (b > c) vid minus
-function genGreen() {
-  const a = r(2, 12), b = r(2, 12);
-  const minus = Math.random() < 0.5;
-  if (minus) {
-    const c = r(1, b - 1);             // b - c > 0
+function genGreen(){
+  let a=r(2,12), b=r(2,12);
+  if(Math.random()<0.5){
+    let c=r(1,b-1);
     return `${a} · (${b} - ${c})`;
   } else {
-    const c = r(1, 12);
+    let c=r(1,12);
     return `${a} · (${b} + ${c})`;
   }
 }
 
-// 🟡 Gul: (a + b) · (c - d) med c > d
-function genYellow() {
-  const a = r(2, 12), b = r(2, 12);
-  const c = r(2, 12), d = r(1, c - 1);
-  return `(${a} + ${b}) · (${c} - ${d})`;
+function genYellow(){
+  let a=r(2,12), b=r(2,12);
+  let c=r(2,12), d=r(1,c-1);
+  return `(${a}+${b}) · (${c}-${d})`;
 }
 
-// 🔴 Röd: a + b · \frac{numerator}{divisor} (heltalsdivision, alltid bråk)
-function genRed() {
-  const a = r(2, 12);
-  const b = r(2, 12);
-  const divisor = r(2, 12);
-  const numerator = divisor * r(1, 12);        // garanterar heltal vid division
-  const frac = `\\frac{${numerator}}{${divisor}}`;
+function genRed(){
+  let a=r(2,12), b=r(2,12);
+  let divisor=r(2,12);
+  let numerator=divisor*r(1,12);
+  let frac=`\\frac{${numerator}}{${divisor}}`;
   return `${a} + ${b} · ${frac}`;
 }
 
-// Huvudväljare
-function generateExpression(level) {
-  if (level === "blue") return genBlue();
-  if (level === "green") return genGreen();
-  if (level === "yellow") return genYellow();
-  if (level === "red") return genRed();
-  return genBlue();
+function generateExpression(level){
+  if(level==="blue") return genBlue();
+  if(level==="green") return genGreen();
+  if(level==="yellow") return genYellow();
+  return genRed();
 }
 
-// =========================================================
-// Utvärdering – gör om \frac{a}{b} till (a/b) och · till *
-// =========================================================
-function evaluateMathExpr(expr) {
-  const jsExpr = expr
-    .replace(/\\frac{(\d+)}{(\d+)}/g, "($1/$2)")
-    .replace(/·/g, "*");
-  // Säker körning av bara siffror/operatörer vi skapat
-  return Function('"use strict"; return (' + jsExpr + ')')();
+function evaluateExpr(expr){
+  let jsExpr = expr
+    .replace(/\\frac{(\d+)}{(\d+)}/g,"($1/$2)")
+    .replace(/·/g,"*");
+  return Function('"use strict";return('+jsExpr+')')();
 }
 
-// =========================================================
-// Rendering och interaktion
-// =========================================================
-function newTask() {
-  const expr = generateExpression(currentLevel);
-  correctAnswer = evaluateMathExpr(expr);
-  // Visa uttrycket via MathJax
-  const el = document.getElementById("task");
-  el.innerHTML = "\\(" + expr + "\\)";
-  // Trigga omrendering av MathJax
-  if (window.MathJax && MathJax.typeset) MathJax.typeset();
-  document.getElementById("feedback").innerText = "";
-  document.getElementById("answer").value = "";
+function newTask(){
+  let expr = generateExpression(currentLevel);
+  correctAnswer = evaluateExpr(expr);
+  document.getElementById("task").innerHTML="\\("+expr+"\\)";
+  if(window.MathJax) MathJax.typeset();
+  document.getElementById("feedback").innerText="";
+  document.getElementById("answer").value="";
 }
 
-function checkAnswer() {
-  const ans = Number(document.getElementById("answer").value);
-  const ok = (Math.abs(ans - correctAnswer) < 1e-9); // tolerans mot t.ex. 12 vs 12.0
-  document.getElementById("feedback").innerText = ok ? "Rätt! 🎉" : "Inte riktigt – försök igen!";
+function checkAnswer(){
+  let ans = Number(document.getElementById("answer").value);
+  document.getElementById("feedback").innerText =
+    (Math.abs(ans-correctAnswer)<1e-9 ? "Rätt! 🎉" : "Fel – försök igen!");
 }
 
-function setLevel(level) {
-  currentLevel = level;
-  newTask();
-}
+function setLevel(level){ currentLevel=level; newTask(); }
 
-// Första uppgiften
 newTask();
 </script>
 
