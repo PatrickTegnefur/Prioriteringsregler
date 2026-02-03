@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<title>Prioriteringsregler – Matteövning</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Prioriteringsregler – Matteövning</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- MathJax för snygg bråknotation -->
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer body { font-family: Arial; max-width: 650px; margin: auto; padding: 20px; }
-  h1 { margin-bottom: 10px; }
-  #task { font-size: 30px; margin: 20px 0; min-height: 40px; }
-  .levels button { padding: 6px 12px; margin: 4px; font-size: 16px; }
-  #answer { font-size: 18px; padding: 6px; width: 120px; }
-  #feedback { font-size: 18px; font-weight: bold; margin-top: 10px; }
-</style>
+  <!-- MathJax för snygg bråknotation (måste vara en riktig <script>-tagg) -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/.js</script>
+
+  <style>
+    body { font-family: Arial, system-ui, Segoe UI, Roboto, Helvetica, sans-serif; max-width: 650px; margin: auto; padding: 20px; }
+    h1 { margin-bottom: 10px; }
+    #task { font-size: 30px; margin: 20px 0; min-height: 40px; }
+    .levels button { padding: 6px 12px; margin: 4px; font-size: 16px; }
+    #answer { font-size: 18px; padding: 6px; width: 140px; }
+    #feedback { font-size: 18px; font-weight: bold; margin-top: 10px; min-height: 28px; }
+  </style>
 </head>
 <body>
 
@@ -33,11 +36,11 @@
 
 <p id="feedback"></p>
 
+<!-- VIKTIGT: Allt JavaScript ligger i en (1) korrekt avslutad <script>-tagg -->
 <script>
 // =========================================================
-// Globala variabler
+// Globalt
 // =========================================================
-
 let currentLevel = "blue";
 let correctAnswer = 0;
 
@@ -45,115 +48,93 @@ let correctAnswer = 0;
 function r(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 // =========================================================
-// 1. Generering av uttryck per nivå (nya rena versionen)
+// Generatorer – rena uttryck, heltal, inga negativa, · för multiplikation
 // =========================================================
 
-// 🔵 Blå (multiplikation med · , inga parenteser)
+// 🔵 Blå: a + b · c
 function genBlue() {
-    let a = r(1, 15);
-    let b = r(1, 12);
-    let c = r(1, 12);
-    return `${a} + ${b} · ${c}`;
+  const a = r(1, 15), b = r(1, 12), c = r(1, 12);
+  return `${a} + ${b} · ${c}`;
 }
 
-// 🟢 Grön (en nödvändig parentes)
+// 🟢 Grön: a · (b ± c) där (b > c) vid minus
 function genGreen() {
-    let a = r(2, 12);
-    let b = r(2, 12);
-    let c = r(1, b - 1); // garanterar positivt resultat
-
-    let op = Math.random() < 0.5 ? "+" : "-";
-    return `${a} · (${b} ${op} ${c})`;
+  const a = r(2, 12), b = r(2, 12);
+  const minus = Math.random() < 0.5;
+  if (minus) {
+    const c = r(1, b - 1);             // b - c > 0
+    return `${a} · (${b} - ${c})`;
+  } else {
+    const c = r(1, 12);
+    return `${a} · (${b} + ${c})`;
+  }
 }
 
-// 🟡 Gul (två parentesgrupper, rena uttryck)
+// 🟡 Gul: (a + b) · (c - d) med c > d
 function genYellow() {
-    let a = r(2, 12), b = r(2, 12);
-    let c = r(2, 12), d = r(1, c - 1);
-    return `(${a} + ${b}) · (${c} - ${d})`;
+  const a = r(2, 12), b = r(2, 12);
+  const c = r(2, 12), d = r(1, c - 1);
+  return `(${a} + ${b}) · (${c} - ${d})`;
 }
 
-// 🔴 Röd (ALLTID en division som bråk)
+// 🔴 Röd: a + b · \frac{numerator}{divisor} (heltalsdivision, alltid bråk)
 function genRed() {
-
-    let a = r(2, 12);
-    let b = r(2, 12);
-
-    // Division ska ALLTID synas, som bråk
-    let divisor = r(2, 12);
-    let numerator = divisor * r(1, 12);
-
-    // MathJax-bråk
-    let frac = `\\frac{${numerator}}{${divisor}}`;
-
-    // Exempel: 5 + 7 · \frac{20}{4}
-    return `${a} + ${b} · ${frac}`;
+  const a = r(2, 12);
+  const b = r(2, 12);
+  const divisor = r(2, 12);
+  const numerator = divisor * r(1, 12);        // garanterar heltal vid division
+  const frac = `\\frac{${numerator}}{${divisor}}`;
+  return `${a} + ${b} · ${frac}`;
 }
 
-// =========================================================
-// 2. Huvudgenerator
-// =========================================================
-
+// Huvudväljare
 function generateExpression(level) {
-    if (level === "blue") return genBlue();
-    if (level === "green") return genGreen();
-    if (level === "yellow") return genYellow();
-    if (level === "red") return genRed();
+  if (level === "blue") return genBlue();
+  if (level === "green") return genGreen();
+  if (level === "yellow") return genYellow();
+  if (level === "red") return genRed();
+  return genBlue();
 }
 
 // =========================================================
-// 3. Utvärdering av MathJax-uttryck
+// Utvärdering – gör om \frac{a}{b} till (a/b) och · till *
 // =========================================================
-
-function evaluateMathJax(expr) {
-    // ersätt alla \frac{a}{b} → (a/b)
-    let jsExpr = expr
-        .replace(/\\frac{(\d+)}{(\d+)}/g, "($1/$2)")
-        .replace(/·/g, "*");   // bullet operator till JS-multiplikation
-
-    return Function('"use strict"; return (' + jsExpr + ')')();
+function evaluateMathExpr(expr) {
+  const jsExpr = expr
+    .replace(/\\frac{(\d+)}{(\d+)}/g, "($1/$2)")
+    .replace(/·/g, "*");
+  // Säker körning av bara siffror/operatörer vi skapat
+  return Function('"use strict"; return (' + jsExpr + ')')();
 }
 
 // =========================================================
-// 4. Rendera och skapa ny uppgift
+// Rendering och interaktion
 // =========================================================
-
 function newTask() {
-    let expr = generateExpression(currentLevel);
-    correctAnswer = evaluateMathJax(expr);
-
-    document.getElementById("task").innerHTML = "\\(" + expr + "\\)";
-    MathJax.typeset();
-
-    document.getElementById("feedback").innerText = "";
-    document.getElementById("answer").value = "";
+  const expr = generateExpression(currentLevel);
+  correctAnswer = evaluateMathExpr(expr);
+  // Visa uttrycket via MathJax
+  const el = document.getElementById("task");
+  el.innerHTML = "\\(" + expr + "\\)";
+  // Trigga omrendering av MathJax
+  if (window.MathJax && MathJax.typeset) MathJax.typeset();
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("answer").value = "";
 }
-
-// =========================================================
-// 5. Kontrollera svaret
-// =========================================================
 
 function checkAnswer() {
-    let ans = Number(document.getElementById("answer").value);
-    if (ans === correctAnswer) {
-        document.getElementById("feedback").innerText = "Rätt! 🎉";
-    } else {
-        document.getElementById("feedback").innerText = "Fel – försök igen!";
-    }
+  const ans = Number(document.getElementById("answer").value);
+  const ok = (Math.abs(ans - correctAnswer) < 1e-9); // tolerans mot t.ex. 12 vs 12.0
+  document.getElementById("feedback").innerText = ok ? "Rätt! 🎉" : "Inte riktigt – försök igen!";
 }
-
-// =========================================================
-// 6. Välj nivå
-// =========================================================
 
 function setLevel(level) {
-    currentLevel = level;
-    newTask();
+  currentLevel = level;
+  newTask();
 }
 
-// Startuppgift
+// Första uppgiften
 newTask();
-
 </script>
 
 </body>
