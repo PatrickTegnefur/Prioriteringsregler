@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<title>Prioriteringsregler – Matteövning</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdn.jsdelivrjax@3/es5/tex-mml-chtml.js</script>
+
+<style>
+  body { font-family: Arial, sans-serif; max-width: 650px; margin: auto; padding: 20px; }
+  h1 { margin-bottom: 10px; }
+  #task { font-size: 30px; margin: 20px 0; min-height: 40px; }
+  .levels button { padding: 6px 12px; margin: 4px; font-size: 16px; }
+  #answer { font-size: 18px; padding: 6px; width: 140px; }
+  #feedback { font-size: 18px; font-weight: bold; margin-top: 10px; min-height: 28px; }
+</style>
+</head>
+<body>
+
+<h1>Träna på prioriteringsregler</h1>
+
+<div class="levels">
+  <button onclick="setLevel('blue')">🔵 Blå</button>
+  <button onclick="setLevel('green')">🟢 Grön</button>
+  <button onclick="setLevel('yellow')">🟡 Gul</button>
+  <button onclick="setLevel('red')">🔴 Röd</button>
+</div>
+
+<div id="task">—</div>
+
+<input id="answer" placeholder="Skriv ditt svar">
+<button onclick="checkAnswer()">Kontrollera</button>
+<button onclick="newTask()">Ny uppgift</button>
+
+<p id="feedback"></p>
+
+<script>
+let currentLevel = "blue";
+let correctAnswer = 0;
+
+function r(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function genBlue(){
+  let a=r(1,15), b=r(1,12), c=r(1,12);
+  return `${a} + ${b} · ${c}`;
+}
+
+function genGreen(){
+  let a=r(2,12), b=r(2,12);
+  if(Math.random()<0.5){
+    let c=r(1,b-1);
+    return `${a} · (${b} - ${c})`;
+  } else {
+    let c=r(1,12);
+    return `${a} · (${b} + ${c})`;
+  }
+}
+
+function genYellow(){
+  let a=r(2,12), b=r(2,12);
+  let c=r(2,12), d=r(1,c-1);
+  return `(${a}+${b}) · (${c}-${d})`;
+}
+
+function genRed(){
+  let a=r(2,12), b=r(2,12);
+  let divisor=r(2,12);
+  let numerator=divisor*r(1,12);
+  let frac=`\\frac{${numerator}}{${divisor}}`;
+  return `${a} + ${b} · ${frac}`;
+}
+
+function generateExpression(level){
+  if(level==="blue") return genBlue();
+  if(level==="green") return genGreen();
+  if(level==="yellow") return genYellow();
+  return genRed();
+}
+
+function evaluateExpr(expr){
+  let jsExpr = expr
+    .replace(/\\frac{(\d+)}{(\d+)}/g,"($1/$2)")
+    .replace(/·/g,"*");
+  return Function('"use strict";return('+jsExpr+')')();
+}
+
+function newTask(){
+  let expr = generateExpression(currentLevel);
+  correctAnswer = evaluateExpr(expr);
+  document.getElementById("task").innerHTML="\\("+expr+"\\)";
+  if(window.MathJax) MathJax.typeset();
+  document.getElementById("feedback").innerText="";
+  document.getElementById("answer").value="";
+}
+
+function checkAnswer(){
+  let ans = Number(document.getElementById("answer").value);
+  document.getElementById("feedback").innerText =
+    (Math.abs(ans-correctAnswer)<1e-9 ? "Rätt! 🎉" : "Fel – försök igen!");
+}
+
+function setLevel(level){ currentLevel=level; newTask(); }
+
+newTask();
+</script>
+
+</body>
+</html>
