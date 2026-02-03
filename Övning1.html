@@ -317,3 +317,93 @@ function newTask() {
     feedbackEl.className = '';
     answerEl.focus();
   } catch (e) {
+    taskEl.textContent = 'Kunde inte generera uppgift. (Tekniskt fel: ' + (e?.message || e) + ')';
+  }
+}
+
+function parseStudentAnswer(s) {
+  if (!s) return NaN;
+  s = s.replace(',', '.').trim();
+  return Number(s);
+}
+
+function addLogRow(row) {
+  const tr = document.createElement('tr');
+  const tds = [
+    row.time, row.level, row.displayExpr, row.studentAns, row.correctAns,
+    row.correct ? '✔' : '✖', row.responseSec.toFixed(1)
+  ];
+  tds.forEach(txt => {
+    const td = document.createElement('td'); td.textContent = txt; tr.appendChild(td);
+  });
+  logTableBody.prepend(tr);
+}
+
+const STORAGE_KEY = 'prioriteringsregler_logg_v1';
+
+function loadLog() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveLog(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function logAttempt({level, expr, value, student, correct, startedAt}) {
+  const responseSec = (Date.now() - startedAt)/1000;
+  const row = {
+    time: nowIso(),
+    level,
+    displayExpr: pretty(expr),
+    studentAns: String(student),
+    correctAns: String(value),
+    correct,
+    responseSec
+  };
+  const all = loadLog();
+  all.push(row);
+  saveLog(all);
+  addLogRow(row);
+}
+
+function renderExistingLog() {
+  logTableBody.innerHTML = '';
+  loadLog().slice(-100).forEach(row => addLogRow(row));
+}
+
+document.getElementById('checkBtn').addEventListener('click', ()=> {
+  const student = parseStudentAnswer(answerEl.value);
+  if (Number.isNaN(student)) {
+    feedbackEl.textContent = 'Ange ett tal (du kan använda komma eller punkt).';
+    feedbackEl.className = 'bad';
+    return;
+  }
+  // Tillåt små flyttalsvariationer: jämför med tolerans
+  const tol = 1e-9;
+  const correct = Math.abs(student - current.value) <= tol;
+  feedbackEl.textContent = correct ? 'Rätt! 🎉' : 'Inte riktigt. Försök igen!';
+  feedbackEl.className = correct ? 'ok' : 'bad';
+  logAttempt({
+    level: current.level, expr: current.expr, value: current.value,
+    student, correct, startedAt: current.startedAt
+  });
+});
+
+document.getElementById('nextBtn').addEventListener('click', newTask);
+clearLogBtn.addEventListener('click', ()=> {
+  if (confirm('Vill du rensa loggen (lokalt i denna webbläsare)?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    renderExistingLog();
+  }
+});
+
+answerEl.addEventListener('keydown', (e)=>{
+  if (e.key === 'Enter') document.getElementById('checkBtn').click();
+});
+
+// Init
+renderExistingLog();
+newTask();
+</script>
+
+</body>
+</html>
