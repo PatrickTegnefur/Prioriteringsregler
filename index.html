@@ -56,7 +56,7 @@ function genBlue() {
     let a = r(1, 15);
     let b = r(1, 12);
     let c = r(1, 12);
-    return `${a} + ${b} * ${c}`;
+    return `${a} + ${b} · ${c}`;
 }
 
 // 🟢 Grön (en parentes – endast där den behövs)
@@ -73,21 +73,24 @@ function genGreen() {
 function genYellow() {
     let a = r(2, 12), b = r(2, 12);
     let c = r(2, 12), d = r(1, c - 1);
-    return `(${a} + ${b}) * (${c} - ${d})`;
+    return `(${a} + ${b}) · (${c} - ${d})`;
 }
 
 // 🔴 Röd (inkluderar bråk med MathJax, fortfarande heltalsdivision)
 function genRed() {
+    // skapa två faktorer
     let a = r(2, 12);
     let b = r(2, 12);
 
-    // skapa säker heltalsdivision
+    // skapa ett heltalsbråk
     let divisor = r(2, 12);
-    let numerator = divisor * r(1, 12);
+    let numerator = divisor · r(1, 12);
 
+    // MathJax-bråk
     let frac = `\\frac{${numerator}}{${divisor}}`;
 
-    return `${a} + ${b} * ${frac}`;
+    // Exempel: 7 + 4 · ( 20/5 )
+    return `${a} + ${b} · ${frac}`;
 }
 
 // =========================================================
@@ -105,11 +108,16 @@ function generateExpression(level) {
 // 3. Utvärdering av MathJax-uttryck
 // =========================================================
 
+
 function evaluateMathJax(expr) {
-    // ersätt alla \frac{a}{b} med (a/b)
-    let jsExpr = expr.replace(/\\frac{(\d+)}{(\d+)}/g, "($1/$2)");
+    // ersätt \frac{a}{b} med (a/b)
+    let jsExpr = expr
+      .replace(/\\frac{(\d+)}{(\d+)}/g, "($1/$2)")
+      .replace(/·/g, "*");  // bullet operator → multiplikation
+
     return Function('"use strict"; return (' + jsExpr + ')')();
 }
+
 
 // =========================================================
 // 4. Rendera och skapa ny uppgift
@@ -154,4 +162,5 @@ newTask();
 </script>
 
 </body>
+
 </html>
