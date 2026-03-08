@@ -2,108 +2,1370 @@
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
-<title>Prioriteringsregler – Matteövning</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prioriteringsregler – Räkneordning</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1117;--panel:#1a1d2e;--panel2:#22263a;
+  --accent:#f5c842;--accent2:#ff6b6b;--accent3:#6bffc8;
+  --text:#e8eaf0;--muted:#8b90a8;--border:#2e3350;
+  --correct:#4caf7d;--wrong:#e05c5c;--radius:14px;
+  --sec1:#1e2540;--sec1b:#2a3360;--sec1ac:#6bffc8;
+  --sec2:#221a30;--sec2b:#3a2850;--sec2ac:#c084fc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+/* ══ START ══ */
+#start-screen{max-width:840px;margin:0 auto;padding:22px 16px 50px}
+.hero{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.hero-icon{font-size:34px;animation:float 3s ease-in-out infinite;flex-shrink:0}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hero h1{font-size:1.65rem;font-weight:900;color:var(--accent);letter-spacing:-.5px}
+.hero p{color:var(--muted);font-size:.82rem;margin-top:1px}
 
-  <style>
-      body { font-family: Arial, sans-serif; max-width: 650px; margin: auto; padding: 20px; }
-      h1 { margin-bottom: 10px; }
-      #task { font-size: 30px; margin: 20px 0; min-height: 40px; }
-      .levels button { padding: 6px 12px; margin: 4px; font-size: 16px; }
-      #answer { font-size: 18px; padding: 6px; width: 140px; }
-      #feedback { font-size: 18px; font-weight: bold; margin-top: 10px; min-height: 28px; }
-  </style>
+/* Rule pills — compact horizontal strip */
+.rules-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.rule-pill{background:var(--panel);border-radius:9px;padding:6px 8px;border-top:3px solid transparent;display:flex;align-items:center;gap:7px}
+.rule-pill .rp-left{display:flex;flex-direction:column;align-items:center;min-width:28px}
+.rule-pill .rp-step{font-size:.55rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.rule-pill .rp-sym{font-size:1rem;line-height:1}
+.rule-pill .rp-right{display:flex;flex-direction:column}
+.rule-pill .rp-name{font-size:.72rem;font-weight:800;line-height:1}
+.rule-pill .rp-ex{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:1px}
+.rule-pill:nth-child(1){border-top-color:#ff6b6b}
+.rule-pill:nth-child(2){border-top-color:#f5c842}
+.rule-pill:nth-child(3){border-top-color:#6bffc8}
+.rule-pill:nth-child(4){border-top-color:#a78bfa}
+
+/* Mode panel — compact horizontal cards */
+.mode-panel{background:var(--panel);border:1.5px solid var(--border);border-radius:13px;padding:11px 12px;margin-bottom:11px}
+.mode-panel-hdr{font-size:.6rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.mode-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mode-btn{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.08);border-radius:10px;
+  padding:7px 10px;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;
+  text-align:left;transition:all .14s;display:flex;align-items:center;gap:7px}
+.mode-btn:hover{border-color:var(--accent);background:rgba(255,255,255,.07)}
+.mode-btn.selected{border-color:var(--accent);background:rgba(245,200,66,.07)}
+.mode-btn .mi{font-size:1.1rem;flex-shrink:0}
+.mode-btn .mt{display:flex;flex-direction:column}
+.mode-btn .mn{font-size:.78rem;font-weight:800;line-height:1.1}
+.mode-btn .md{font-size:.62rem;color:var(--muted);margin-top:1px}
+.time-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.time-label{font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.tbtns{display:flex;gap:5px}
+.tbtn{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.08);border-radius:7px;
+  padding:4px 10px;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:800;transition:all .14s}
+.tbtn:hover{border-color:var(--accent);color:var(--text)}
+.tbtn.active{border-color:var(--accent);color:var(--accent);background:rgba(245,200,66,.07)}
+
+/* Level sections */
+.level-section{border-radius:13px;padding:12px;margin-bottom:10px}
+.level-section.sec-nopow{background:var(--sec1);border:1.5px solid var(--sec1b)}
+.level-section.sec-pow{background:var(--sec2);border:1.5px solid var(--sec2b)}
+.sec-header{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sec-badge{font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.sec-nopow .sec-badge{background:rgba(107,255,200,.13);color:var(--sec1ac);border:1px solid rgba(107,255,200,.28)}
+.sec-pow   .sec-badge{background:rgba(192,132,252,.13);color:var(--sec2ac);border:1px solid rgba(192,132,252,.28)}
+.sec-title{font-size:.74rem;font-weight:700;color:var(--muted)}
+.levels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.level-btn{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.07);border-radius:10px;
+  padding:9px 10px;cursor:pointer;text-align:left;transition:all .14s;color:var(--text);font-family:'Nunito',sans-serif}
+.level-btn:hover{border-color:var(--accent);background:rgba(255,255,255,.07)}
+.level-btn.selected{border-color:var(--accent);background:rgba(245,200,66,.07)}
+.level-btn .lbl{font-size:.57rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.level-btn .ltitle{font-size:.77rem;font-weight:800;line-height:1.2}
+.level-btn .lexample{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--accent3);margin-top:4px;line-height:1.65}
+.lexample .ep{color:var(--accent);font-weight:700}
+.lexample .eo{color:var(--accent2)}
+.lexample .ev{font-size:.48em;vertical-align:super;line-height:0;position:relative;top:-0.1em}
+.lexample .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.88em;line-height:1.1;margin:0 2px}
+.lexample .frac .fnum{padding:0 2px 1px}
+.lexample .frac .fden{padding:1px 2px 0;border-top:1px solid var(--accent3)}
+
+.start-btn{width:100%;background:var(--accent);color:#111;border:none;border-radius:var(--radius);
+  padding:12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;transition:all .14s;margin-top:2px}
+.start-btn:hover{background:#ffd966;transform:translateY(-1px)}
+
+/* ══ EXERCISE ══ */
+#exercise-screen{display:none;max-width:680px;margin:0 auto;padding:20px 16px 60px}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.back-btn{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:5px 11px;
+  color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;transition:all .13s}
+.back-btn:hover{color:var(--text);border-color:var(--accent)}
+.stats-row{display:flex;gap:6px;margin-left:auto}
+.stat-chip{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:3px 9px;font-size:.75rem;font-weight:800}
+.stat-chip span{color:var(--accent)}
+.timer-bar-wrap{height:5px;background:var(--panel2);border-radius:4px;margin-bottom:11px;overflow:hidden;display:none}
+.timer-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .9s linear,background .3s}
+.time-display{font-family:'Space Mono',monospace;font-size:2rem;font-weight:700;color:var(--accent);text-align:center;margin-bottom:4px;display:none}
+.time-display.urgent{color:var(--accent2);animation:pulse .5s infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.4}}
+
+/* Rule hint bar */
+.rule-hint-bar{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.rh-chip{background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:4px 9px;
+  font-size:.68rem;font-weight:800;display:flex;align-items:center;gap:4px;transition:all .2s}
+.rh-chip .rh-n{color:var(--muted);font-size:.58rem}
+.rh-chip.active{border-color:var(--accent);background:#2a2600;color:var(--accent);transform:scale(1.06);box-shadow:0 0 8px rgba(245,200,66,.2)}
+.rh-chip.active .rh-n{color:var(--accent)}
+
+/* Exercise card */
+.exercise-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px 18px;margin-bottom:12px}
+.ex-mode-tag{font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+/* Expression box — larger, clearer font */
+.expression-box{
+  background:var(--panel2);border-radius:11px;padding:20px 16px;text-align:center;
+  font-family:'Nunito',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--text);margin-bottom:13px;line-height:1.7;
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:3px;min-height:84px;
+  letter-spacing:.5px;
+}
+/* Token colours */
+.ep{color:var(--accent);font-weight:900}
+.eo{color:var(--accent2);font-weight:700}
+.ev{font-size:.58em;vertical-align:baseline;line-height:0;font-weight:900;position:relative;top:-0.65em}
+/* Highlighted tokens (current step) */
+.hi{background:rgba(245,200,66,.22);border-radius:5px;padding:1px 3px;color:var(--accent);font-weight:900;transition:background .25s}
+.hi.hi-paren{background:rgba(107,255,200,.2);color:var(--accent3)}
+.hi.hi-pow  {background:rgba(167,139,250,.2);color:#c084fc}
+.hi.hi-frac {background:rgba(107,255,200,.18);color:var(--accent3)}
+
+/* Fraction — bar always spans full width of the widest part */
+.frac{display:inline-flex;flex-direction:column;align-items:stretch;vertical-align:middle;
+  margin:0 6px;font-size:.8em;line-height:1.2;gap:0}
+.frac .fnum{padding:0 6px 4px;text-align:center}
+.frac .fden{padding:4px 6px 0;text-align:center;border-top:2.5px solid var(--text)}
+.frac.show-parens .fnum{background:rgba(107,255,200,.18);border-radius:4px 4px 0 0;color:var(--accent3)}
+.frac.show-parens .fden{background:rgba(255,107,107,.18);border-radius:0 0 4px 4px;color:var(--accent2)}
+.frac.show-parens .fnum::before{content:'(';color:var(--accent3);font-weight:900}
+.frac.show-parens .fnum::after {content:')';color:var(--accent3);font-weight:900}
+.frac.show-parens .fden::before{content:'(';color:var(--accent2);font-weight:900}
+.frac.show-parens .fden::after {content:')';color:var(--accent2);font-weight:900}
+/* Fraction highlighted */
+.frac.hi-frac-el .fnum,.frac.hi-frac-el .fden{background:rgba(107,255,200,.18);color:var(--accent3)}
+.frac.hi-frac-el{border-radius:6px;outline:2px solid rgba(107,255,200,.4)}
+
+/* Paren toggle */
+.paren-toggle{display:none;align-items:center;gap:7px;margin-bottom:10px;background:var(--panel2);
+  border:1.5px solid var(--border);border-radius:9px;padding:6px 12px;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:800;color:var(--muted);transition:all .17s;width:fit-content}
+.paren-toggle:hover{border-color:var(--accent3);color:var(--text)}
+.paren-toggle.on{border-color:var(--accent3);color:var(--accent3);background:#0d2820}
+.paren-toggle .pt-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background .17s;flex-shrink:0}
+.paren-toggle.on .pt-dot{background:var(--accent3)}
+
+/* Step guide — chain layout */
+.chain-box{background:var(--panel2);border-radius:11px;padding:13px 16px;margin-bottom:11px;
+  font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;line-height:1.9;
+  display:flex;flex-direction:column;gap:0}
+.chain-line{display:flex;align-items:center;gap:8px;animation:slideIn .2s ease}
+.chain-line.chain-original{color:var(--muted)}
+.chain-line.chain-new{color:var(--text)}
+.chain-line.chain-final{color:var(--correct);font-size:1.3rem;font-weight:900}
+.chain-eq{color:var(--accent2);font-size:.85em;font-weight:800;margin-right:4px;flex-shrink:0}
+.chain-hint{font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--accent);background:rgba(245,200,66,.12);border-radius:5px;padding:2px 7px;margin-left:6px;white-space:nowrap}
+/* chain token colours */
+.chain-box .ep{color:var(--accent);font-weight:900}
+.chain-box .eo{color:var(--accent2);font-weight:700}
+.chain-box .ev{font-size:.45em;vertical-align:baseline;line-height:0;font-weight:900;position:relative;top:-0.65em}
+.chain-box .frac{display:inline-flex;flex-direction:column;align-items:stretch;vertical-align:middle;
+  margin:0 5px;font-size:.75em;line-height:1.2;gap:0}
+.chain-box .frac .fnum{padding:0 5px 3px;text-align:center}
+.chain-box .frac .fden{padding:3px 5px 0;text-align:center;border-top:2px solid currentColor}
+/* highlighted token in chain */
+.chain-box .hi{background:rgba(245,200,66,.22);border-radius:4px;padding:0 3px;color:var(--accent);font-weight:900}
+.chain-box .hi.hi-paren{background:rgba(107,255,200,.2);color:var(--accent3)}
+.chain-box .hi.hi-pow  {background:rgba(167,139,250,.2);color:#c084fc}
+.chain-box .hi.hi-frac {background:rgba(107,255,200,.18);color:var(--accent3)}
+.chain-hi{
+  background:var(--accent);border-radius:5px;padding:1px 5px;
+  color:#111;font-weight:900;
+  box-shadow:0 0 0 2px rgba(245,200,66,.4);
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.step-hint-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;animation:slideIn .18s ease}
+.step-badge{background:var(--panel2);border-radius:6px;padding:3px 7px;font-size:.63rem;font-weight:800;
+  color:var(--accent);letter-spacing:1px;white-space:nowrap;flex-shrink:0}
+.step-rule{font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.step-desc{font-size:.68rem;color:var(--muted);font-family:'Nunito',sans-serif;font-style:italic;
+  margin-left:4px;margin-bottom:5px;animation:slideIn .18s ease}
+.guide-controls{display:flex;gap:7px;margin-bottom:9px}
+.guide-btn{background:var(--panel2);border:1.5px solid var(--border);border-radius:9px;padding:7px 13px;
+  color:var(--text);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .12s}
+.guide-btn:hover{border-color:var(--accent);color:var(--accent)}
+.guide-btn:disabled{color:var(--muted);cursor:default;border-color:var(--border)}
+
+/* Answer */
+.answer-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.answer-input{flex:1;min-width:100px;background:var(--panel2);border:2px solid var(--border);border-radius:10px;
+  padding:10px 13px;font-family:'Space Mono',monospace;font-size:1.15rem;color:var(--text);outline:none;transition:border-color .17s}
+.answer-input:focus{border-color:var(--accent)}
+.answer-input.correct{border-color:var(--correct);background:#1a2d23}
+.answer-input.wrong{border-color:var(--wrong);background:#2d1a1a}
+.check-btn{background:var(--accent);color:#111;border:none;border-radius:10px;padding:10px 18px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .12s}
+.check-btn:hover{background:#ffd966}
+.check-btn:disabled{background:var(--muted);cursor:default}
+.feedback-banner{border-radius:10px;padding:10px 13px;margin-top:10px;font-weight:700;display:none;animation:popIn .15s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.feedback-banner.correct{background:#1c3828;border:1px solid var(--correct);color:#6dffaa}
+.feedback-banner.wrong{background:#3b1c1c;border:1px solid var(--wrong);color:#ffaaaa}
+.next-btn{width:100%;background:var(--panel2);border:2px solid var(--border);border-radius:var(--radius);
+  padding:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:800;
+  cursor:pointer;margin-top:9px;transition:all .12s;display:none}
+.next-btn:hover{border-color:var(--accent);color:var(--accent)}
+.skip-btn{background:transparent;border:1.5px solid var(--border);border-radius:9px;
+  padding:6px 14px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.76rem;
+  font-weight:700;cursor:pointer;transition:all .13s;white-space:nowrap}
+.skip-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.skip-btn:disabled{opacity:.35;cursor:default}
+
+/* ══ RESULT ══ */
+#result-screen{display:none;max-width:420px;margin:0 auto;padding:60px 16px;text-align:center}
+.result-icon{font-size:52px;display:block;margin-bottom:11px}
+.result-title{font-size:1.65rem;font-weight:900;color:var(--accent);margin-bottom:5px}
+.result-sub{color:var(--muted);font-size:.87rem;margin-bottom:20px}
+.result-stats{display:flex;justify-content:center;gap:11px;margin-bottom:20px;flex-wrap:wrap}
+.rstat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 18px}
+.rstat .rv{font-size:1.9rem;font-weight:900;color:var(--accent);font-family:'Space Mono',monospace}
+.rstat .rl{font-size:.65rem;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.restart-btn{background:var(--accent);color:#111;border:none;border-radius:var(--radius);
+  padding:11px 26px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:900;cursor:pointer;margin:4px;transition:all .12s}
+.restart-btn:hover{background:#ffd966}
+.home-btn2{background:var(--panel);border:2px solid var(--border);border-radius:var(--radius);
+  padding:11px 18px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin:4px;transition:all .12s}
+.home-btn2:hover{border-color:var(--accent)}
+
+@media(max-width:560px){
+  .rules-row{grid-template-columns:repeat(2,1fr)}
+  .levels-grid{grid-template-columns:repeat(2,1fr)}
+  .expression-box{font-size:1.5rem}
+  .hero h1{font-size:1.35rem}
+  .mode-cards{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
-<h1>Träna på prioriteringsregler</h1>
+<!-- ══════════ STARTSIDA ══════════ -->
+<div id="start-screen">
+  <div class="hero">
+    <span class="hero-icon">🔢</span>
+    <div><h1>Prioriteringsregler</h1><p>Träna räkneordningen i numeriska uttryck</p></div>
+  </div>
 
-<div class="levels">
-  <button onclick="setLevel('blue')">🔵 Blå</button>
-  <button onclick="setLevel('green')">🟢 Grön</button>
-  <button onclick="setLevel('yellow')">🟡 Gul</button>
-  <button onclick="setLevel('red')">🔴 Röd</button>
+  <!-- ── Räkneordningen (alltid överst) ── -->
+  <div style="font-size:.6rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px">Räkneordningen</div>
+  <div class="rules-row">
+    <div class="rule-pill">
+      <div class="rp-left"><div class="rp-step">1</div><div class="rp-sym">( )</div></div>
+      <div class="rp-right"><div class="rp-name">Parenteser</div><div class="rp-ex">3×(2+4)</div></div>
+    </div>
+    <div class="rule-pill">
+      <div class="rp-left"><div class="rp-step">2</div><div class="rp-sym">x²</div></div>
+      <div class="rp-right"><div class="rp-name">Potenser</div><div class="rp-ex">2³+5</div></div>
+    </div>
+    <div class="rule-pill">
+      <div class="rp-left"><div class="rp-step">3</div><div class="rp-sym">×÷</div></div>
+      <div class="rp-right"><div class="rp-name">Mult / Div</div><div class="rp-ex">4+3×2</div></div>
+    </div>
+    <div class="rule-pill">
+      <div class="rp-left"><div class="rp-step">4</div><div class="rp-sym">+−</div></div>
+      <div class="rp-right"><div class="rp-name">Add / Sub</div><div class="rp-ex">7−2+3</div></div>
+    </div>
+  </div>
+
+  <!-- ── Lägesväljare ── -->
+  <div class="mode-panel">
+    <div class="mode-panel-hdr">Välj läge</div>
+    <div class="mode-cards">
+      <button class="mode-btn" onclick="selectMode('analog',this)">
+        <span class="mi">✏️</span>
+        <span class="mt"><span class="mn">Analogläge</span><span class="md">Räkna på papper</span></span>
+      </button>
+      <button class="mode-btn selected" onclick="selectMode('guide',this)">
+        <span class="mi">🧠</span>
+        <span class="mt"><span class="mn">Steg-för-steg</span><span class="md">Avslöja ett steg i taget</span></span>
+      </button>
+      <button class="mode-btn" onclick="selectMode('timed',this)">
+        <span class="mi">⏱</span>
+        <span class="mt"><span class="mn">Tävlingsläge</span><span class="md">Hinna med flest!</span></span>
+      </button>
+    </div>
+    <div class="time-row" id="time-group" style="display:none">
+      <span class="time-label">Välj tid</span>
+      <div class="tbtns">
+        <button class="tbtn active" onclick="selectTime(60,this)">60 s</button>
+        <button class="tbtn" onclick="selectTime(90,this)">90 s</button>
+        <button class="tbtn" onclick="selectTime(120,this)">120 s</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Sektion 1: Utan potenser ── -->
+  <div class="level-section sec-nopow">
+    <div class="sec-header">
+      <span class="sec-badge">Utan potenser</span>
+      <span class="sec-title">Nivå 1–6 · Addition, multiplikation, parenteser och bråk</span>
+    </div>
+    <div class="levels-grid" id="grid-nopow"></div>
+  </div>
+
+  <!-- ── Sektion 2: Med potenser ── -->
+  <div class="level-section sec-pow">
+    <div class="sec-header">
+      <span class="sec-badge">Med potenser</span>
+      <span class="sec-title">Nivå 7–9 · Alla regler inklusive x²</span>
+    </div>
+    <div class="levels-grid" id="grid-pow"></div>
+  </div>
+
+  <button class="start-btn" onclick="startExercise()">Starta 🚀</button>
 </div>
 
-<div id="task">—</div>
+<!-- ══════════ ÖVNINGSSIDA ══════════ -->
+<div id="exercise-screen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goHome()">← Hem</button>
+    <div id="ex-mode-label" style="font-size:.73rem;color:var(--muted);font-weight:700"></div>
+    <div class="stats-row">
+      <div class="stat-chip" id="stat-correct">Rätt: <span>0</span></div>
+      <div class="stat-chip" id="stat-total">Totalt: <span>0</span></div>
+    </div>
+  </div>
+  <div class="timer-bar-wrap" id="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+  <div class="time-display" id="time-display-box">60</div>
 
-<input id="answer" placeholder="Skriv ditt svar">
-<button onclick="checkAnswer()">Kontrollera</button>
-<button onclick="newTask()">Ny uppgift</button>
+  <div class="rule-hint-bar">
+    <div class="rh-chip" id="rh-paren"><span class="rh-n">1.</span> ( ) Parenteser</div>
+    <div class="rh-chip" id="rh-pow"><span class="rh-n">2.</span> x² Potenser</div>
+    <div class="rh-chip" id="rh-muldiv"><span class="rh-n">3.</span> × ÷ Mult/Div</div>
+    <div class="rh-chip" id="rh-addsub"><span class="rh-n">4.</span> + − Add/Sub</div>
+  </div>
 
-<p id="feedback"></p>
+  <div class="exercise-card">
+    <div class="ex-mode-tag" id="ex-mode-tag"></div>
+    <div class="expression-box" id="expression-box"></div>
+
+    <button class="paren-toggle" id="paren-toggle" onclick="toggleParens()">
+      <span class="pt-dot"></span> Visa osynliga parenteser
+    </button>
+
+    <div id="guide-area" style="display:none">
+      <div class="chain-box" id="chain-box"></div>
+      <div class="steps-container" id="steps-container"></div>
+      <div class="guide-controls" id="guide-controls"></div>
+    </div>
+
+    <div class="answer-row">
+      <input type="number" id="answer-input" class="answer-input" placeholder="Ditt svar…"
+             onkeydown="handleInputKey(event)">
+      <button class="check-btn" id="check-btn" onclick="checkAnswer()">Kontrollera ✓</button>
+      <button class="skip-btn" id="skip-btn" onclick="skipExercise()" title="Hoppa över – räknas som ett försök">Hoppa över ↩</button>
+    </div>
+    <div class="feedback-banner" id="feedback-banner"></div>
+    <button class="next-btn" id="next-btn" onclick="nextExercise()">Nästa uppgift →</button>
+  </div>
+</div>
+
+<!-- ══════════ RESULTATSIDA ══════════ -->
+<div id="result-screen">
+  <span class="result-icon" id="result-icon">🏆</span>
+  <div class="result-title" id="result-title"></div>
+  <div class="result-sub" id="result-sub"></div>
+  <div class="result-stats">
+    <div class="rstat"><div class="rv" id="r-correct">0</div><div class="rl">Rätt svar</div></div>
+    <div class="rstat"><div class="rv" id="r-total">0</div><div class="rl">Totalt</div></div>
+    <div class="rstat"><div class="rv" id="r-pct">0%</div><div class="rl">Träffsäkerhet</div></div>
+  </div>
+  <button class="restart-btn" onclick="restartSame()">Spela igen 🔄</button>
+  <button class="home-btn2" onclick="goHome()">← Hem</button>
+</div>
 
 <script>
-let currentLevel = "blue";
-let correctAnswer = 0;
+'use strict';
+// ══════════════════════════════════════
+//  TOKEN SYSTEM
+//  hi: array of token-index ranges [[start,end],...] to highlight
+//  hiType: 'default'|'paren'|'pow'|'frac'
+// ══════════════════════════════════════
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function pick(a){return a[rnd(0,a.length-1)]}
 
-function r(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+const T={
+  n: v=>({t:'n',v:String(v)}),
+  op:v=>({t:'op',v}),
+  lp:()=>({t:'lp'}),
+  rp:()=>({t:'rp'}),
+  pw:v=>({t:'pw',v:String(v)}),
+  fr:(num,den)=>({t:'fr',num,den}),
+};
 
-function genBlue(){
-  let a=r(1,15), b=r(1,12), c=r(1,12);
-  return `${a} + ${b} · ${c}`;
+// Render tokens; hiSet = Set of indices to highlight, hiType for colour class
+function renderToks(toks, hiSet, hiType){
+  hiSet = hiSet || new Set();
+  hiType = hiType || 'default';
+  const hcls = hiType==='paren'?'hi hi-paren':hiType==='pow'?'hi hi-pow':hiType==='frac'?'hi hi-frac':'hi';
+  return toks.map((tk,i)=>{
+    const hl = hiSet.has(i);
+    switch(tk.t){
+      case 'n':  return hl?`<span class="${hcls}">${tk.v}</span>`:`<span>${tk.v}</span>`;
+      case 'op': return hl?`<span class="${hcls} eo"> ${tk.v} </span>`:`<span class="eo"> ${tk.v} </span>`;
+      case 'lp': return hl?`<span class="${hcls} ep">(</span>`:`<span class="ep">(</span>`;
+      case 'rp': return hl?`<span class="${hcls} ep">)</span>`:`<span class="ep">)</span>`;
+      case 'pw': return hl?`<span class="${hcls} ev">${tk.v}</span>`:`<span class="ev">${tk.v}</span>`;
+      case 'fr': {
+        const fracHl = hl ? ' hi-frac-el' : '';
+        return `<span class="frac${fracHl}" data-frac="1"><span class="fnum">${renderToks(tk.num)}</span><span class="fden">${renderToks(tk.den)}</span></span>`;
+      }
+    }
+  }).join('');
 }
 
-function genGreen(){
-  let a=r(2,12), b=r(2,12);
-  if(Math.random()<0.5){
-    let c=r(1,b-1);
-    return `${a} · (${b} - ${c})`;
-  } else {
-    let c=r(1,12);
-    return `${a} · (${b} + ${c})`;
+function renderStepStr(s){
+  return s
+    .replace(/²/g,'<span class="ev">2</span>')
+    .replace(/³/g,'<span class="ev">3</span>')
+    .replace(/×/g,'<span class="eo">×</span>')
+    .replace(/÷/g,'<span class="eo">÷</span>');
+}
+
+// ══════════════════════════════════════
+//  LEVEL DEFINITIONS
+// ══════════════════════════════════════
+function fracEx(n,d){
+  return `<span class="frac"><span class="fnum">${n}</span><span class="fden">${d}</span></span>`;
+}
+
+const LEVELS=[
+  {id:1,section:'nopow',color:'#60a5fa',label:'Nivå 1',title:'Addition & subtraktion',
+   exampleHTML:'<span>14</span><span class="eo"> − </span><span>5</span><span class="eo"> + </span><span>8</span><span class="eo"> − </span><span>3</span><span class="eo"> + </span><span>2</span>',
+   hint:'addsub',gen:genL1},
+  {id:2,section:'nopow',color:'#f5c842',label:'Nivå 2',title:'Multiplikation & addition',
+   exampleHTML:'<span>12</span><span class="eo"> + </span><span>3</span><span class="eo"> × </span><span>4</span><span class="eo"> − </span><span>2</span><span class="eo"> × </span><span>5</span>',
+   hint:'muldiv',gen:genL2},
+  {id:3,section:'nopow',color:'#fb923c',label:'Nivå 3',title:'Enkla bråk + mult/add',
+   exampleHTML:'<span>6</span><span class="eo"> + </span>'+fracEx('<span>8</span>','<span>4</span>')+'<span class="eo"> − </span><span>3</span><span class="eo"> × </span><span>2</span>',
+   hint:'muldiv',hasFrac:true,gen:genL3},
+  {id:4,section:'nopow',color:'#6bffc8',label:'Nivå 4',title:'Parenteser + mult/add',
+   exampleHTML:'<span class="ep">(</span><span>5</span><span class="eo"> + </span><span>3</span><span class="ep">)</span><span class="eo"> × </span><span>2</span><span class="eo"> − </span><span>4</span><span class="eo"> × </span><span>3</span>',
+   hint:'paren',gen:genL4},
+  {id:5,section:'nopow',color:'#34d399',label:'Nivå 5',title:'Parenteser, många termer',
+   exampleHTML:'<span class="ep">(</span><span>6</span><span class="eo"> − </span><span>2</span><span class="ep">)</span><span class="eo"> × </span><span class="ep">(</span><span>3</span><span class="eo"> + </span><span>1</span><span class="ep">)</span><span class="eo"> + </span><span>5</span><span class="eo"> × </span><span>2</span>',
+   hint:'paren',gen:genL5},
+  {id:6,section:'nopow',color:'#2dd4bf',label:'Nivå 6',title:'Bråk med osynliga parenteser',
+   exampleHTML:fracEx('<span>3</span><span class="eo"> + </span><span>5</span>','<span>4</span><span class="eo"> − </span><span>2</span>')+'<span class="eo"> + </span><span>6</span>',
+   hint:'muldiv',hasFrac:true,showParenToggle:true,gen:genL6},
+  {id:7,section:'pow',color:'#a78bfa',label:'Nivå 7',title:'Potenser + mult/add',
+   exampleHTML:'<span>2</span><span class="ev">3</span><span class="eo"> + </span><span>4</span><span class="eo"> × </span><span>3</span><span class="eo"> − </span><span>5</span>',
+   hint:'pow',gen:genL7},
+  {id:8,section:'pow',color:'#e879f9',label:'Nivå 8',title:'Potenser + parenteser',
+   exampleHTML:'<span class="ep">(</span><span>2</span><span class="eo"> + </span><span>3</span><span class="ep">)</span><span class="ev">2</span><span class="eo"> − </span><span>3</span><span class="eo"> × </span><span>4</span>',
+   hint:'pow',gen:genL8},
+  {id:9,section:'pow',color:'#f97316',label:'Nivå 9 · Avancerad',title:'Allt kombinerat',
+   exampleHTML:'<span class="ep">(</span><span>3</span><span class="eo"> + </span><span>2</span><span class="ep">)</span><span class="ev">2</span><span class="eo"> − </span>'+fracEx('<span>4</span><span class="eo"> + </span><span>2</span>','<span>3</span>')+'<span class="eo"> × </span><span>2</span>',
+   hint:'pow',hasFrac:true,showParenToggle:true,gen:genL9},
+];
+
+// ══════════════════════════════════════
+//  GENERATORS
+//  Each step: {badge, rule, expr, desc, hi:[[i,j],...], hiType}
+//  hi = token index ranges to highlight in main expression
+// ══════════════════════════════════════
+
+function genL1(){
+  const len=rnd(4,5);
+  const vals=[rnd(10,18)];
+  for(let i=1;i<len;i++) vals.push(rnd(2,12));
+  const ops=[];
+  for(let i=1;i<len;i++) ops.push(pick(['+','−']));
+  let ans=vals[0];
+  for(let i=0;i<ops.length;i++) ans=ops[i]==='+'?ans+vals[i+1]:ans-vals[i+1];
+  if(ans<-5||ans>65) return genL1();
+  const toks=[T.n(vals[0])];
+  for(let i=0;i<ops.length;i++){toks.push(T.op(ops[i]));toks.push(T.n(vals[i+1]))}
+  // L1: only + and −, one step vänster→höger
+  let exprStr=vals[0]+'';
+  for(let i=0;i<ops.length;i++) exprStr+=' '+ops[i]+' '+vals[i+1];
+  return{toks,ans,hint:'addsub',steps:[
+    {badge:'Steg 1',rule:'Vänster → höger (bara + och −)',
+     expr:exprStr+' = '+ans,desc:'Inga × eller parenteser — räkna rakt igenom',
+     hi:[[0,toks.length-1]],hiType:'default',chain:`**${ans}**`},
+  ]};
+}
+
+function genL2(){
+  const type=rnd(1,4);
+  if(type===1){
+    const a=rnd(5,15),b=rnd(2,5),c=rnd(2,6),d=rnd(2,4),e=rnd(2,5),f=rnd(1,8);
+    const p1=b*c,p2=d*e,ans=a+p1-p2+f;
+    if(ans<0||ans>80) return genL2();
+    // toks: a(0) +(1) b(2) ×(3) c(4) −(5) d(6) ×(7) e(8) +(9) f(10)
+    return{hint:'muldiv',
+      toks:[T.n(a),T.op('+'),T.n(b),T.op('×'),T.n(c),T.op('−'),T.n(d),T.op('×'),T.n(e),T.op('+'),T.n(f)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla × samtidigt',expr:`${b}×${c}=${p1}  och  ${d}×${e}=${p2}`,desc:'× och ÷ räknas före + och − (alla på en gång)',hi:[[2,4],[6,8]],hiType:'default',chain:`${a} + **${p1}** − **${p2}** + ${f}`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${a} + ${p1} − ${p2} + ${f} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const a=rnd(2,5),b=rnd(2,6),c=rnd(3,12),d=rnd(2,8),e=rnd(2,4),f=rnd(2,5);
+    const p1=a*b,p2=e*f,ans=p1+c-d+p2;
+    if(ans<0||ans>80) return genL2();
+    // a(0) ×(1) b(2) +(3) c(4) −(5) d(6) +(7) e(8) ×(9) f(10)
+    return{hint:'muldiv',
+      toks:[T.n(a),T.op('×'),T.n(b),T.op('+'),T.n(c),T.op('−'),T.n(d),T.op('+'),T.n(e),T.op('×'),T.n(f)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla × samtidigt',expr:`${a}×${b}=${p1}  och  ${e}×${f}=${p2}`,desc:'× räknas före + och −',hi:[[0,2],[8,10]],hiType:'default',chain:`**${p1}** + ${c} − ${d} + **${p2}**`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${p1} + ${c} − ${d} + ${p2} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const a=rnd(15,25),b=rnd(2,4),c=rnd(2,4),d=rnd(2,4),e=rnd(2,4),f=rnd(1,6);
+    const p1=b*c,p2=d*e,ans=a-p1+p2-f;
+    if(ans<0||ans>80) return genL2();
+    // a(0) −(1) b(2) ×(3) c(4) +(5) d(6) ×(7) e(8) −(9) f(10)
+    return{hint:'muldiv',
+      toks:[T.n(a),T.op('−'),T.n(b),T.op('×'),T.n(c),T.op('+'),T.n(d),T.op('×'),T.n(e),T.op('−'),T.n(f)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla × samtidigt',expr:`${b}×${c}=${p1}  och  ${d}×${e}=${p2}`,desc:'',hi:[[2,4],[6,8]],hiType:'default',chain:`${a} − **${p1}** + **${p2}** − ${f}`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${a} − ${p1} + ${p2} − ${f} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const a=rnd(2,4),b=rnd(2,4),c=rnd(2,3),d=rnd(3,10),e=rnd(2,8);
+  const p1=a*b,p2=p1*c,ans=p2-d+e;
+  if(ans<0||ans>80) return genL2();
+  // a(0) ×(1) b(2) ×(3) c(4) −(5) d(6) +(7) e(8)
+  return{hint:'muldiv',
+    toks:[T.n(a),T.op('×'),T.n(b),T.op('×'),T.n(c),T.op('−'),T.n(d),T.op('+'),T.n(e)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'Vänster × FÖRST',expr:`${a} × ${b} = ${p1}`,desc:'Vänster till höger bland ×',hi:[[0,2]],hiType:'default'},
+      {badge:'Steg 2',rule:'Fortsätt ×',expr:`${p1} × ${c} = ${p2}`,desc:'',hi:[[2,4]],hiType:'default'},
+      {badge:'Steg 3',rule:'Vänster → höger',expr:`${p2} − ${d} + ${e} = ${ans}`,desc:'',hi:[[4,8]],hiType:'default'},
+    ]};
+}
+
+function genL3(){
+  function simpleFrac(){
+    const q=pick([2,3,4,5,6]),p=q*rnd(2,6);
+    return{p,q,v:p/q};
+  }
+  const type=rnd(1,4);
+  if(type===1){
+    const {p,q,v}=simpleFrac(),b=rnd(2,5),c=rnd(2,5),d=rnd(1,8),a=rnd(2,10);
+    const prod=b*c,ans=a+v+prod-d;
+    if(ans<0||ans>70||!Number.isInteger(v)) return genL3();
+    // a(0) +(1) FRAC(2) +(3) b(4) ×(5) c(6) −(7) d(8)
+    return{hint:'muldiv',hasFrac:true,
+      toks:[T.n(a),T.op('+'),T.fr([T.n(p)],[T.n(q)]),T.op('+'),T.n(b),T.op('×'),T.n(c),T.op('−'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Bråk = division  och  × samtidigt',expr:`${p} ÷ ${q} = ${v}  och  ${b} × ${c} = ${prod}`,desc:'Bråk och × räknas före + och −',hi:[[2,2],[4,6]],hiType:'frac',chain:`${a} + **${v}** + **${prod}** − ${d}`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${a} + ${v} + ${prod} − ${d} = ${ans}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const {p,q,v}=simpleFrac(),a=rnd(2,6),b=rnd(2,5),c=rnd(1,8);
+    const prod=a*b,ans=prod-v+c;
+    if(ans<0||ans>70||!Number.isInteger(v)) return genL3();
+    // a(0) ×(1) b(2) −(3) FRAC(4) +(5) c(6)
+    return{hint:'muldiv',hasFrac:true,
+      toks:[T.n(a),T.op('×'),T.n(b),T.op('−'),T.fr([T.n(p)],[T.n(q)]),T.op('+'),T.n(c)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Bråk = division  och  × samtidigt',expr:`${a} × ${b} = ${prod}  och  ${p} ÷ ${q} = ${v}`,desc:'Bråk och × räknas på samma gång',hi:[[0,2],[4,4]],hiType:'frac',chain:`**${prod}** − **${v}** + ${c}`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${prod} − ${v} + ${c} = ${ans}`,desc:'',hi:[[0,6]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const {p,q,v}=simpleFrac(),a=rnd(5,15),b=rnd(2,4),c=rnd(2,4),d=rnd(1,6);
+    const prod=b*c,ans=v+a-prod+d;
+    if(ans<0||ans>70||!Number.isInteger(v)) return genL3();
+    // FRAC(0) +(1) a(2) −(3) b(4) ×(5) c(6) +(7) d(8)
+    return{hint:'muldiv',hasFrac:true,
+      toks:[T.fr([T.n(p)],[T.n(q)]),T.op('+'),T.n(a),T.op('−'),T.n(b),T.op('×'),T.n(c),T.op('+'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Bråk = division  och  × samtidigt',expr:`${p} ÷ ${q} = ${v}  och  ${b} × ${c} = ${prod}`,desc:'',hi:[[0,0],[4,6]],hiType:'frac',chain:`**${v}** + ${a} − **${prod}** + ${d}`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${v} + ${a} − ${prod} + ${d} = ${ans}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const {p,q,v}=simpleFrac(),a=rnd(2,4),b=rnd(2,5),c=rnd(2,3),d=rnd(2,4),e=rnd(1,6);
+  const p1=a*b,p2=c*d,ans=p1+p2-v+e;
+  if(ans<0||ans>80||!Number.isInteger(v)) return genL3();
+  // a(0) ×(1) b(2) +(3) c(4) ×(5) d(6) −(7) FRAC(8) +(9) e(10)
+  return{hint:'muldiv',hasFrac:true,
+    toks:[T.n(a),T.op('×'),T.n(b),T.op('+'),T.n(c),T.op('×'),T.n(d),T.op('−'),T.fr([T.n(p)],[T.n(q)]),T.op('+'),T.n(e)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'Vänster ×',expr:`${a} × ${b} = ${p1}`,desc:'',hi:[[0,2]],hiType:'default'},
+      {badge:'Steg 2',rule:'Höger ×',expr:`${c} × ${d} = ${p2}`,desc:'',hi:[[4,6]],hiType:'default'},
+      {badge:'Steg 3',rule:'Bråk = division',expr:`${p} ÷ ${q} = ${v}`,desc:'',hi:[[8,8]],hiType:'frac'},
+      {badge:'Steg 4',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${v} + ${e} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default'},
+    ]};
+}
+
+function genL4(){
+  const type=rnd(1,5);
+  if(type===1){
+    const a=rnd(2,7),b=rnd(1,5),c=rnd(2,5),d=rnd(1,8),e=rnd(2,4),f=rnd(1,6);
+    const i1=a+b,p1=i1*c,p2=e*f,ans=p1-p2+d;
+    if(ans<0||ans>80) return genL4();
+    // ((0) a(1) +(2) b(3) )(4) ×(5) c(6) −(7) e(8) ×(9) f(10) +(11) d(12)
+    return{hint:'paren',
+      toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.op('×'),T.n(c),T.op('−'),T.n(e),T.op('×'),T.n(f),T.op('+'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${a} + ${b} = ${i1}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`**${i1}** × ${c} − ${e} × ${f} + ${d}`},
+        {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${c}=${p1}  och  ${e}×${f}=${p2}`,desc:'',hi:[[4,6],[8,10]],hiType:'default',chain:`**${p1}** − **${p2}** + ${d}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} − ${p2} + ${d} = ${ans}`,desc:'',hi:[[0,12]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const a=rnd(5,12),b=rnd(1,4),c=rnd(2,5),d=rnd(2,4),e=rnd(2,5),f=rnd(1,8);
+    const i1=a-b,p1=i1*c,p2=d*e,ans=p1+p2-f;
+    if(ans<0||ans>80) return genL4();
+    // ((0) a(1) −(2) b(3) )(4) ×(5) c(6) +(7) d(8) ×(9) e(10) −(11) f(12)
+    return{hint:'paren',
+      toks:[T.lp(),T.n(a),T.op('−'),T.n(b),T.rp(),T.op('×'),T.n(c),T.op('+'),T.n(d),T.op('×'),T.n(e),T.op('−'),T.n(f)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${a} − ${b} = ${i1}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`**${i1}** × ${c} + ${d} × ${e} − ${f}`},
+        {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${c}=${p1}  och  ${d}×${e}=${p2}`,desc:'',hi:[[4,6],[8,10]],hiType:'default',chain:`**${p1}** + **${p2}** − ${f}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${f} = ${ans}`,desc:'',hi:[[0,12]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const a=rnd(2,4),b=rnd(2,6),c=rnd(2,3),d=rnd(2,4),e=rnd(1,8);
+    const ip=c*d,inner=b+ip,ans=a*inner-e;
+    if(ans<0||ans>80) return genL4();
+    // a(0) ×(1) ((2) b(3) +(4) c(5) ×(6) d(7) )(8) −(9) e(10)
+    return{hint:'paren',
+      toks:[T.n(a),T.op('×'),T.lp(),T.n(b),T.op('+'),T.n(c),T.op('×'),T.n(d),T.rp(),T.op('−'),T.n(e)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'× inne i ( ) — sedan hela ( )',expr:`${c}×${d}=${ip}  →  ${b}+${ip}=${inner}`,desc:'Prioriteringsregler gäller inuti parentesen!',hi:[[2,8]],hiType:'paren',chain:`${a} × **${inner}** − ${e}`},
+        {badge:'Steg 2',rule:'Multiplikation',expr:`${a} × ${inner} = ${a*inner}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${a*inner}** − ${e}`},
+        {badge:'Steg 3',rule:'Subtraktion',expr:`${a*inner} − ${e} = ${ans}`,desc:'',hi:[[8,10]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===4){
+    const b=rnd(2,5),c=rnd(4,9),d=rnd(1,c-1),a=rnd(3,12),e=rnd(1,8);
+    const inner=c-d,prod=b*inner,ans=a+prod-e;
+    if(ans<0||ans>80) return genL4();
+    // a(0) +(1) b(2) ×(3) ((4) c(5) −(6) d(7) )(8) −(9) e(10)
+    return{hint:'paren',
+      toks:[T.n(a),T.op('+'),T.n(b),T.op('×'),T.lp(),T.n(c),T.op('−'),T.n(d),T.rp(),T.op('−'),T.n(e)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${c} − ${d} = ${inner}`,desc:'',hi:[[4,8]],hiType:'paren',chain:`${a} + ${b} × **${inner}** − ${e}`},
+        {badge:'Steg 2',rule:'Multiplikation',expr:`${b} × ${inner} = ${prod}`,desc:'',hi:[[2,8]],hiType:'default',chain:`${a} + **${prod}** − ${e}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${a} + ${prod} − ${e} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const a=rnd(2,5),b=rnd(1,3),c=rnd(1,3),d=rnd(2,5),e=rnd(2,4),f=rnd(2,4);
+  const i1=a+b+c,p1=i1*d,p2=e*f,ans=p1-p2;
+  if(ans<0||ans>80) return genL4();
+  // ((0) a(1) +(2) b(3) +(4) c(5) )(6) ×(7) d(8) −(9) e(10) ×(11) f(12)
+  return{hint:'paren',
+    toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.op('+'),T.n(c),T.rp(),T.op('×'),T.n(d),T.op('−'),T.n(e),T.op('×'),T.n(f)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'( ) Parentes (tre termer)',expr:`${a} + ${b} + ${c} = ${i1}`,desc:'Räkna ALLT inne i parentesen',hi:[[0,6]],hiType:'paren'},
+      {badge:'Steg 2',rule:'Vänster ×',expr:`${i1} × ${d} = ${p1}`,desc:'',hi:[[6,8]],hiType:'default'},
+      {badge:'Steg 3',rule:'Höger ×',expr:`${e} × ${f} = ${p2}`,desc:'',hi:[[10,12]],hiType:'default'},
+      {badge:'Steg 4',rule:'Subtraktion',expr:`${p1} − ${p2} = ${ans}`,desc:'',hi:[[0,12]],hiType:'default'},
+    ]};
+}
+
+function genL5(){
+  const type=rnd(1,4);
+  if(type===1){
+    const a=rnd(2,6),b=rnd(1,4),c=rnd(4,9),d=rnd(1,3),e=rnd(2,10),f=rnd(2,4),g=rnd(2,4);
+    const i1=a+b,i2=c-d,p1=i1*i2,p2=f*g,ans=p1+e-p2;
+    if(ans<0||ans>90) return genL5();
+    // ((0) a(1) +(2) b(3) )(4) ×(5) ((6) c(7) −(8) d(9) )(10) +(11) e(12) −(13) f(14) ×(15) g(16)
+    return{hint:'paren',
+      toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.op('×'),T.lp(),T.n(c),T.op('−'),T.n(d),T.rp(),T.op('+'),T.n(e),T.op('−'),T.n(f),T.op('×'),T.n(g)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${a}+${b}=${i1}  och  ${c}−${d}=${i2}`,desc:'Lös alla parenteser i ett svep',hi:[[0,4],[6,10]],hiType:'paren',chain:`**${i1}** × **${i2}** + ${e} − ${f} × ${g}`},
+        {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${i2}=${p1}  och  ${f}×${g}=${p2}`,desc:'',hi:[[4,10],[14,16]],hiType:'default',chain:`**${p1}** + ${e} − **${p2}**`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} + ${e} − ${p2} = ${ans}`,desc:'',hi:[[0,16]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const a=rnd(2,4),b=rnd(2,6),c=rnd(1,4),d=rnd(4,8),e=rnd(1,3),f=rnd(2,4),g=rnd(1,6);
+    const i1=b+c,i2=d-e,p1=a*i1,p2=i2*f,ans=p1+p2-g;
+    if(ans<0||ans>90) return genL5();
+    // a(0) ×(1) ((2) b(3) +(4) c(5) )(6) +(7) ((8) d(9) −(10) e(11) )(12) ×(13) f(14) −(15) g(16)
+    return{hint:'paren',
+      toks:[T.n(a),T.op('×'),T.lp(),T.n(b),T.op('+'),T.n(c),T.rp(),T.op('+'),T.lp(),T.n(d),T.op('−'),T.n(e),T.rp(),T.op('×'),T.n(f),T.op('−'),T.n(g)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${b}+${c}=${i1}  och  ${d}−${e}=${i2}`,desc:'',hi:[[2,6],[8,12]],hiType:'paren',chain:`${a} × **${i1}** + **${i2}** × ${f} − ${g}`},
+        {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${a}×${i1}=${p1}  och  ${i2}×${f}=${p2}`,desc:'',hi:[[0,6],[12,14]],hiType:'default',chain:`**${p1}** + **${p2}** − ${g}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${g} = ${ans}`,desc:'',hi:[[0,16]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const a=rnd(2,5),b=rnd(1,3),c=rnd(1,3),d=rnd(2,4),e=rnd(2,4),f=rnd(1,3),g=rnd(2,3),h=rnd(1,8);
+    const i1=a+b+c,i2=e+f,p1=i1*d,p2=i2*g,ans=p1-p2+h;
+    if(ans<0||ans>90) return genL5();
+    // ((0)a(1)+(2)b(3)+(4)c(5))(6)×(7)d(8)−(9)((10)e(11)+(12)f(13))(14)×(15)g(16)+(17)h(18)
+    return{hint:'paren',
+      toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.op('+'),T.n(c),T.rp(),T.op('×'),T.n(d),T.op('−'),T.lp(),T.n(e),T.op('+'),T.n(f),T.rp(),T.op('×'),T.n(g),T.op('+'),T.n(h)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${a}+${b}+${c}=${i1}  och  ${e}+${f}=${i2}`,desc:'',hi:[[0,6],[10,14]],hiType:'paren',chain:`**${i1}** × ${d} − **${i2}** × ${g} + ${h}`},
+        {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${d}=${p1}  och  ${i2}×${g}=${p2}`,desc:'',hi:[[6,8],[14,16]],hiType:'default',chain:`**${p1}** − **${p2}** + ${h}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} − ${p2} + ${h} = ${ans}`,desc:'',hi:[[0,18]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const a=rnd(2,4),b=rnd(2,5),c=rnd(2,3),d=rnd(2,4),e=rnd(4,8),f=rnd(1,3),g=rnd(2,4);
+  const ip=c*d,i1=b+ip,i2=e-f,p1=a*i1,p2=i2*g,ans=p1+p2;
+  if(ans>90) return genL5();
+  // a(0)×(1)((2)b(3)+(4)c(5)×(6)d(7))(8)+(9)((10)e(11)−(12)f(13))(14)×(15)g(16)
+  return{hint:'paren',
+    toks:[T.n(a),T.op('×'),T.lp(),T.n(b),T.op('+'),T.n(c),T.op('×'),T.n(d),T.rp(),T.op('+'),T.lp(),T.n(e),T.op('−'),T.n(f),T.rp(),T.op('×'),T.n(g)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'Inne i ( ): × FÖRST',expr:`${c} × ${d} = ${ip}`,desc:'Prioriteringsregler gäller inuti parentesen!',hi:[[5,7]],hiType:'paren'},
+      {badge:'Steg 2',rule:'Inne i ( ): + sedan',expr:`${b} + ${ip} = ${i1}`,desc:'',hi:[[2,8]],hiType:'paren'},
+      {badge:'Steg 3',rule:'Höger ( )',expr:`${e} − ${f} = ${i2}`,desc:'',hi:[[10,14]],hiType:'paren'},
+      {badge:'Steg 4',rule:'Vänster ×',expr:`${a} × ${i1} = ${p1}`,desc:'',hi:[[0,8]],hiType:'default'},
+      {badge:'Steg 5',rule:'Höger ×',expr:`${i2} × ${g} = ${p2}`,desc:'',hi:[[14,16]],hiType:'default'},
+      {badge:'Steg 6',rule:'Addition',expr:`${p1} + ${p2} = ${ans}`,desc:'',hi:[[0,16]],hiType:'default'},
+    ]};
+}
+
+function genL6(){
+  const type=rnd(1,5);
+  function fracNumExpr(){
+    const q=pick([2,3,4,5]);
+    const b=rnd(1,5),a=q*rnd(2,4)-b;
+    if(a<1) return null;
+    const num=a+b;
+    if(num%q!==0) return null;
+    return{a,b,q,num,v:num/q,op:'+'};
+  }
+  function fracNumSub(){
+    const q=pick([2,3,4]);
+    const b=rnd(1,4),a=q*rnd(3,6)+b;
+    const num=a-b;
+    if(num%q!==0||num<1) return null;
+    return{a,b,q,num,v:num/q,op:'−'};
+  }
+  function fracBoth(){
+    const q=pick([2,3,4,6]);
+    const b=rnd(1,4),a=q*rnd(2,5)-b;
+    if(a<1) return null;
+    const num=a+b;
+    const d=rnd(1,3),c=q+d;
+    if(num%q!==0) return null;
+    return{a,b,numOp:'+',c,d,denOp:'−',q,num,den:q,v:num/q};
+  }
+  if(type===1){
+    const f=fracNumExpr(); if(!f) return genL6();
+    const c=rnd(2,5),d=rnd(2,5),prod=c*d,ans=f.v+prod;
+    if(ans>70) return genL6();
+    // FRAC(0) +(1) c(2) ×(3) d(4)
+    return{hint:'muldiv',hasFrac:true,showParenToggle:true,
+      toks:[T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('+'),T.n(c),T.op('×'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} + ${f.b} = ${f.num}`,desc:'Räkna INUTI bråket precis som en parentes',hi:[[0,0]],hiType:'frac',chain:`**${f.num}** ÷ ${f.q} + ${c} × ${d}`},
+        {badge:'Steg 2',rule:'Bråk = division  och  × samtidigt',expr:`${f.num} ÷ ${f.q} = ${f.v}  och  ${c} × ${d} = ${prod}`,desc:'Bråket och × räknas före + och −',hi:[[0,0],[2,4]],hiType:'frac',chain:`**${f.v}** + **${prod}**`},
+        {badge:'Steg 3',rule:'Addition',expr:`${f.v} + ${prod} = ${ans}`,desc:'',hi:[[0,4]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const f=fracNumSub(); if(!f) return genL6();
+    const a=rnd(3,10),c=rnd(1,6),ans=a+f.v-c;
+    if(ans<0||ans>70) return genL6();
+    // a(0) +(1) FRAC(2) −(3) c(4)
+    return{hint:'muldiv',hasFrac:true,showParenToggle:true,
+      toks:[T.n(a),T.op('+'),T.fr([T.n(f.a),T.op('−'),T.n(f.b)],[T.n(f.q)]),T.op('−'),T.n(c)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} − ${f.b} = ${f.num}`,desc:'Räkna INUTI bråket precis som en parentes',hi:[[2,2]],hiType:'frac',chain:`${a} + **${f.num}** ÷ ${f.q} − ${c}`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`${f.num} ÷ ${f.q} = ${f.v}`,desc:'',hi:[[2,2]],hiType:'frac',chain:`${a} + **${f.v}** − ${c}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${a} + ${f.v} − ${c} = ${ans}`,desc:'',hi:[[0,4]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const f=fracBoth(); if(!f) return genL6();
+    const e=rnd(2,5),ans=f.v*e;
+    if(ans>70) return genL6();
+    // FRAC(0) ×(1) e(2)
+    return{hint:'muldiv',hasFrac:true,showParenToggle:true,
+      toks:[T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.c),T.op('−'),T.n(f.d)]),T.op('×'),T.n(e)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} + ${f.b} = ${f.num}`,desc:'Räkna täljaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`**${f.num}** ÷ (${f.c} − ${f.d}) × ${e}`},
+        {badge:'Steg 2',rule:'Nämnaren = osynlig ( )',expr:`${f.c} − ${f.d} = ${f.den}`,desc:'Räkna nämnaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`${f.num} ÷ **${f.den}** × ${e}`},
+        {badge:'Steg 3',rule:'Bråk = division  och  × samtidigt',expr:`${f.num} ÷ ${f.den} = ${f.v}  och  ${f.v} × ${e} = ${ans}`,desc:'',hi:[[0,2]],hiType:'frac',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===4){
+    const f=fracNumExpr(); if(!f) return genL6();
+    const a=rnd(2,4),b=rnd(2,5),g=rnd(1,6),prod=a*b,ans=prod+f.v-g;
+    if(ans<0||ans>80) return genL6();
+    // a(0) ×(1) b(2) +(3) FRAC(4) −(5) g(6)
+    return{hint:'muldiv',hasFrac:true,showParenToggle:true,
+      toks:[T.n(a),T.op('×'),T.n(b),T.op('+'),T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('−'),T.n(g)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )  och  × samtidigt',expr:`${f.a} + ${f.b} = ${f.num}  och  ${a} × ${b} = ${prod}`,desc:'Täljaren räknas som en parentes — × räknas parallellt',hi:[[0,2],[4,4]],hiType:'frac',chain:`**${prod}** + **${f.num}** ÷ ${f.q} − ${g}`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`${f.num} ÷ ${f.q} = ${f.v}`,desc:'',hi:[[4,4]],hiType:'frac',chain:`${prod} + **${f.v}** − ${g}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${prod} + ${f.v} − ${g} = ${ans}`,desc:'',hi:[[0,6]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const q=pick([2,3,4,6]),a=rnd(2,4),b=rnd(2,4);
+  const num=a*b;
+  const d=rnd(1,q-1),c=q-d;
+  if(c<1||num%q!==0) return genL6();
+  const v=num/q,e=rnd(2,8),ans=v+e;
+  if(ans>70) return genL6();
+  // FRAC(0) +(1) e(2)
+  return{hint:'muldiv',hasFrac:true,showParenToggle:true,
+    toks:[T.fr([T.n(a),T.op('×'),T.n(b)],[T.n(c),T.op('+'),T.n(d)]),T.op('+'),T.n(e)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${a} × ${b} = ${num}`,desc:'Räkna täljaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`**${num}** ÷ (${c} + ${d}) + ${e}`},
+      {badge:'Steg 2',rule:'Nämnaren = osynlig ( )',expr:`${c} + ${d} = ${q}`,desc:'Räkna nämnaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`${num} ÷ **${q}** + ${e}`},
+      {badge:'Steg 3',rule:'Bråk = division',expr:`${num} ÷ ${q} = ${v}`,desc:'',hi:[[0,0]],hiType:'frac',chain:`**${v}** + ${e}`},
+      {badge:'Steg 4',rule:'Addition',expr:`${v} + ${e} = ${ans}`,desc:'',hi:[[0,2]],hiType:'default',chain:`**${ans}**`},
+    ]};
+}
+
+function genL7(){
+  const type=rnd(1,4);
+  if(type===1){
+    const b=rnd(2,5),a=rnd(2,8),c=rnd(2,4),d=rnd(1,6);
+    const pow=b*b,prod=c*d,ans=a+pow-prod;
+    if(ans<0||ans>80) return genL7();
+    // a(0) +(1) b(2) ²(3) −(4) c(5) ×(6) d(7)
+    return{hint:'pow',
+      toks:[T.n(a),T.op('+'),T.n(b),T.pw(2),T.op('−'),T.n(c),T.op('×'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'x² och × samtidigt',expr:`${b}²=${pow}  och  ${c}×${d}=${prod}`,desc:'Potens och × räknas före + och −',hi:[[2,3],[5,7]],hiType:'pow',chain:`${a} + **${pow}** − **${prod}**`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${a} + ${pow} − ${prod} = ${ans}`,desc:'',hi:[[0,7]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const a=rnd(2,4),b=rnd(2,5),c=rnd(1,8);
+    const pow=b*b,ans=a*pow+c;
+    if(ans>90) return genL7();
+    // a(0) ×(1) b(2) ²(3) +(4) c(5)
+    return{hint:'pow',
+      toks:[T.n(a),T.op('×'),T.n(b),T.pw(2),T.op('+'),T.n(c)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'x² och × samtidigt',expr:`${b}²=${pow}  →  ${a}×${pow}=${a*pow}`,desc:'Potens räknas FÖRE ×, sen × direkt',hi:[[0,3]],hiType:'pow',chain:`**${a*pow}** + ${c}`},
+        {badge:'Steg 2',rule:'Addition',expr:`${a*pow} + ${c} = ${ans}`,desc:'',hi:[[3,5]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const a=rnd(2,5),b=rnd(2,4),c=rnd(2,4),d=rnd(2,4);
+    const p1=a*a,p2=b*b,prod=c*d,ans=p1+p2-prod;
+    if(ans<0||ans>80) return genL7();
+    // a(0)²(1)+(2)b(3)²(4)−(5)c(6)×(7)d(8)
+    return{hint:'pow',
+      toks:[T.n(a),T.pw(2),T.op('+'),T.n(b),T.pw(2),T.op('−'),T.n(c),T.op('×'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla x² och × samtidigt',expr:`${a}²=${p1}  och  ${b}²=${p2}  och  ${c}×${d}=${prod}`,desc:'Potens och × räknas på samma gång',hi:[[0,1],[3,4],[6,8]],hiType:'pow',chain:`**${p1}** + **${p2}** − **${prod}**`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${prod} = ${ans}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const a=rnd(2,8),b=rnd(2,3),c=rnd(2,4),d=rnd(1,8);
+  const pow=c*c,prod=b*pow,ans=a+prod-d;
+  if(ans<0||ans>80) return genL7();
+  // a(0)+(1)b(2)×(3)c(4)²(5)−(6)d(7)
+  return{hint:'pow',
+    toks:[T.n(a),T.op('+'),T.n(b),T.op('×'),T.n(c),T.pw(2),T.op('−'),T.n(d)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'x² Potens ALLTID FÖRST',expr:`${c}² = ${pow}`,desc:'',hi:[[4,5]],hiType:'pow'},
+      {badge:'Steg 2',rule:'× FÖRE + och −',expr:`${b} × ${pow} = ${prod}`,desc:'',hi:[[2,5]],hiType:'default'},
+      {badge:'Steg 3',rule:'Vänster → höger',expr:`${a} + ${prod} − ${d} = ${ans}`,desc:'',hi:[[0,7]],hiType:'default'},
+    ]};
+}
+
+function genL8(){
+  const type=rnd(1,4);
+  if(type===1){
+    const a=rnd(2,5),b=rnd(1,4),c=rnd(2,5),d=rnd(1,5);
+    const inner=a+b,pow=inner*inner,prod=c*d,ans=pow-prod;
+    if(ans<0||ans>90) return genL8();
+    // ((0)a(1)+(2)b(3))(4)²(5)−(6)c(7)×(8)d(9)
+    return{hint:'pow',
+      toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.pw(2),T.op('−'),T.n(c),T.op('×'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'( ) FÖRST — sedan x²',expr:`${a}+${b}=${inner}  →  ${inner}²=${pow}`,desc:'Parentes räknas FÖRE potens',hi:[[0,5]],hiType:'paren',chain:`**${pow}** − ${c} × ${d}`},
+        {badge:'Steg 2',rule:'× FÖRE + och −',expr:`${c} × ${d} = ${prod}`,desc:'',hi:[[7,9]],hiType:'default',chain:`${pow} − **${prod}**`},
+        {badge:'Steg 3',rule:'Subtraktion',expr:`${pow} − ${prod} = ${ans}`,desc:'',hi:[[5,9]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const a=rnd(2,5),b=rnd(2,5),c=rnd(1,3),d=rnd(2,4),e=rnd(1,8);
+    const pow=a*a,inner=b+c,prod=inner*d,ans=pow+prod-e;
+    if(ans<0||ans>90) return genL8();
+    // a(0)²(1)+(2)((3)b(4)+(5)c(6))(7)×(8)d(9)−(10)e(11)
+    return{hint:'pow',
+      toks:[T.n(a),T.pw(2),T.op('+'),T.lp(),T.n(b),T.op('+'),T.n(c),T.rp(),T.op('×'),T.n(d),T.op('−'),T.n(e)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'x² och ( ) samtidigt',expr:`${a}²=${pow}  och  ${b}+${c}=${inner}`,desc:'Potens och parentes räknas i samma svep',hi:[[0,1],[3,7]],hiType:'pow',chain:`**${pow}** + **${inner}** × ${d} − ${e}`},
+        {badge:'Steg 2',rule:'Multiplikation',expr:`${inner} × ${d} = ${prod}`,desc:'',hi:[[7,9]],hiType:'default',chain:`${pow} + **${prod}** − ${e}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${pow} + ${prod} − ${e} = ${ans}`,desc:'',hi:[[0,11]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const a=rnd(4,7),b=rnd(1,3),c=rnd(2,4),d=rnd(1,8);
+    const inner=a-b,p1=inner*inner,p2=c*c,ans=p1+p2-d;
+    if(ans<0||ans>90) return genL8();
+    // ((0)a(1)−(2)b(3))(4)²(5)+(6)c(7)²(8)−(9)d(10)
+    return{hint:'pow',
+      toks:[T.lp(),T.n(a),T.op('−'),T.n(b),T.rp(),T.pw(2),T.op('+'),T.n(c),T.pw(2),T.op('−'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'( ) FÖRST — sedan alla x²',expr:`${a}−${b}=${inner}  →  ${inner}²=${p1}  och  ${c}²=${p2}`,desc:'',hi:[[0,8]],hiType:'paren',chain:`**${p1}** + **${p2}** − ${d}`},
+        {badge:'Steg 2',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${d} = ${ans}`,desc:'',hi:[[5,10]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const a=rnd(2,4),b=rnd(1,3),c=rnd(2,4),d=rnd(1,3),e=rnd(2,4),f=rnd(1,8);
+  const i1=a+b,pow=i1*i1,i2=c+d,prod=i2*e,ans=pow-prod+f;
+  if(ans<0||ans>90) return genL8();
+  // ((0)a(1)+(2)b(3))(4)²(5)−(6)((7)c(8)+(9)d(10))(11)×(12)e(13)+(14)f(15)
+  return{hint:'pow',
+    toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.pw(2),T.op('−'),T.lp(),T.n(c),T.op('+'),T.n(d),T.rp(),T.op('×'),T.n(e),T.op('+'),T.n(f)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'Vänster ( )',expr:`${a} + ${b} = ${i1}`,desc:'',hi:[[0,4]],hiType:'paren'},
+      {badge:'Steg 2',rule:'Höger ( )',expr:`${c} + ${d} = ${i2}`,desc:'',hi:[[7,11]],hiType:'paren'},
+      {badge:'Steg 3',rule:'x² Potens',expr:`${i1}² = ${pow}`,desc:'',hi:[[4,5]],hiType:'pow'},
+      {badge:'Steg 4',rule:'Multiplikation',expr:`${i2} × ${e} = ${prod}`,desc:'',hi:[[11,13]],hiType:'default'},
+      {badge:'Steg 5',rule:'Vänster → höger',expr:`${pow} − ${prod} + ${f} = ${ans}`,desc:'',hi:[[0,15]],hiType:'default'},
+    ]};
+}
+
+function genL9(){
+  const type=rnd(1,4);
+  function mkFrac(){
+    const q=pick([2,3,4]),b=rnd(1,4),a=q*rnd(2,4)-b;
+    if(a<1) return null;
+    const num=a+b;
+    if(num%q!==0) return null;
+    return{a,b,q,num,v:num/q};
+  }
+  if(type===1){
+    const f=mkFrac(); if(!f) return genL9();
+    const a=rnd(2,4),b=rnd(1,3),e=rnd(2,4);
+    const inner=a+b,pow=inner*inner,prod=f.v*e,ans=pow-prod;
+    if(ans<0||ans>90) return genL9();
+    // ((0)a(1)+(2)b(3))(4)²(5)−(6)FRAC(7)×(8)e(9)
+    return{hint:'pow',hasFrac:true,showParenToggle:true,
+      toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.pw(2),T.op('−'),T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('×'),T.n(e)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'( ) ALLTID FÖRST',expr:`${a} + ${b} = ${inner}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`**${inner}**^2 − ${f.a}+${f.b} ÷ ${f.q} × ${e}`},
+        {badge:'Steg 2',rule:'x²  och  täljaren = osynlig ( )',expr:`${inner}² = ${pow}  och  ${f.a} + ${f.b} = ${f.num}`,desc:'Potens och täljare räknas i samma svep',hi:[[4,5],[7,7]],hiType:'pow',chain:`**${pow}** − **${f.num}** ÷ ${f.q} × ${e}`},
+        {badge:'Steg 3',rule:'Bråk = division  och  × samtidigt',expr:`${f.num} ÷ ${f.q} = ${f.v}  och  ${f.v} × ${e} = ${prod}`,desc:'',hi:[[7,9]],hiType:'frac',chain:`${pow} − **${prod}**`},
+        {badge:'Steg 4',rule:'Subtraktion',expr:`${pow} − ${prod} = ${ans}`,desc:'',hi:[[5,9]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===2){
+    const f=mkFrac(); if(!f) return genL9();
+    const a=rnd(2,5),d=rnd(2,4),e=rnd(2,4);
+    const pow=a*a,prod=d*e,ans=pow+f.v-prod;
+    if(ans<0||ans>90) return genL9();
+    // a(0)²(1)+(2)FRAC(3)−(4)d(5)×(6)e(7)
+    return{hint:'pow',hasFrac:true,showParenToggle:true,
+      toks:[T.n(a),T.pw(2),T.op('+'),T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('−'),T.n(d),T.op('×'),T.n(e)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'x²  och  täljaren = osynlig ( )  och  ×',expr:`${a}² = ${pow}  och  ${f.a} + ${f.b} = ${f.num}  och  ${d} × ${e} = ${prod}`,desc:'Potens, parentes i täljare och × räknas i samma svep',hi:[[0,1],[3,3],[5,7]],hiType:'pow',chain:`**${pow}** + **${f.num}** ÷ ${f.q} − **${prod}**`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`${f.num} ÷ ${f.q} = ${f.v}`,desc:'',hi:[[3,3]],hiType:'frac',chain:`${pow} + **${f.v}** − ${prod}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${pow} + ${f.v} − ${prod} = ${ans}`,desc:'',hi:[[0,7]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  if(type===3){
+    const f=mkFrac(); if(!f) return genL9();
+    const c=rnd(2,4),d=rnd(1,3),e=rnd(1,8);
+    const inner=c+d,pow=inner*inner,ans=f.v+pow-e;
+    if(ans<0||ans>90) return genL9();
+    // FRAC(0)+(1)((2)c(3)+(4)d(5))(6)²(7)−(8)e(9)
+    return{hint:'pow',hasFrac:true,showParenToggle:true,
+      toks:[T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('+'),T.lp(),T.n(c),T.op('+'),T.n(d),T.rp(),T.pw(2),T.op('−'),T.n(e)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )  och  ( ) ALLTID FÖRST',expr:`${f.a} + ${f.b} = ${f.num}  och  ${c} + ${d} = ${inner}`,desc:'Räkna täljaren och parentesen i samma svep',hi:[[0,0],[2,6]],hiType:'frac',chain:`**${f.num}** ÷ ${f.q} + **${inner}**^2 − ${e}`},
+        {badge:'Steg 2',rule:'Bråk = division  och  x²',expr:`${f.num} ÷ ${f.q} = ${f.v}  och  ${inner}² = ${pow}`,desc:'',hi:[[0,0],[6,7]],hiType:'frac',chain:`**${f.v}** + **${pow}** − ${e}`},
+        {badge:'Steg 3',rule:'Vänster → höger',expr:`${f.v} + ${pow} − ${e} = ${ans}`,desc:'',hi:[[0,9]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const q=pick([2,3,4]),c=rnd(2,4),d=rnd(2,4);
+  const num=c*d; if(num%q!==0) return genL9();
+  const a=rnd(4,7),b=rnd(1,3),e=rnd(1,8);
+  const inner=a-b; if(inner<1) return genL9();
+  const pow=inner*inner,v=num/q,ans=pow+v+e;
+  if(ans>90) return genL9();
+  // ((0)a(1)−(2)b(3))(4)²(5)+(6)FRAC(7)+(8)e(9)
+  return{hint:'pow',hasFrac:true,showParenToggle:true,
+    toks:[T.lp(),T.n(a),T.op('−'),T.n(b),T.rp(),T.pw(2),T.op('+'),T.fr([T.n(c),T.op('×'),T.n(d)],[T.n(q)]),T.op('+'),T.n(e)],
+    ans,steps:[
+      {badge:'Steg 1',rule:'( ) Parentes',expr:`${a} − ${b} = ${inner}`,desc:'',hi:[[0,4]],hiType:'paren'},
+      {badge:'Steg 2',rule:'x² Potens',expr:`${inner}² = ${pow}`,desc:'',hi:[[4,5]],hiType:'pow'},
+      {badge:'Steg 3',rule:'Täljaren = osynlig ( )',expr:`${c} × ${d} = ${num}`,desc:'',hi:[[7,7]],hiType:'frac'},
+      {badge:'Steg 4',rule:'Bråket = division',expr:`${num} ÷ ${q} = ${v}`,desc:'',hi:[[7,7]],hiType:'frac'},
+      {badge:'Steg 5',rule:'Vänster → höger',expr:`${pow} + ${v} + ${e} = ${ans}`,desc:'',hi:[[5,9]],hiType:'default'},
+    ]};
+}
+
+// ══════════════════════════════════════
+//  CHAIN BUILDER
+//  Adds .chain to each step: the full expression after that step is applied.
+//  Also adds .chainOriginal = original expression string (first line).
+// ══════════════════════════════════════
+// Convert token array to a plain-text chain string (no HTML)
+function tokStr(toks){
+  return toks.map(tk=>{
+    switch(tk.t){
+      case 'n':  return tk.v;
+      case 'op': return ' '+tk.v+' ';
+      case 'lp': return '(';
+      case 'rp': return ')';
+      case 'pw': return '^'+tk.v;
+      case 'fr': {
+        const n=tokStr(tk.num), d=tokStr(tk.den);
+        // Only wrap in parens if multi-token
+        const nw = tk.num.length>1 ? '('+n+')' : n;
+        const dw = tk.den.length>1 ? '('+d+')' : d;
+        return nw+' ÷ '+dw;
+      }
+    }
+  }).join('').replace(/ {2,}/g,' ').trim();
+}
+
+// Render a plain chain string (no existing HTML) into coloured HTML
+// Tokenises character by character to avoid regex touching HTML
+function chainStr(s){
+  // Plain text chain string → HTML
+  // **text** = highlight the active part in this step (yellow)
+  const ops = new Set(['×','÷','−','+']);
+  let out='', i=0, inHi=false;
+  while(i<s.length){
+    // highlight markers **
+    if(s[i]==='*'&&s[i+1]==='*'){
+      if(!inHi){ out+='<span class="chain-hi">'; inHi=true; }
+      else     { out+='</span>'; inHi=false; }
+      i+=2; continue;
+    }
+    const ch=s[i];
+    if(ops.has(ch)){
+      out+=`<span class="eo"> ${ch} </span>`; i++;
+    } else if(ch==='^'){
+      let exp=''; i++;
+      while(i<s.length && s[i]>='0'&&s[i]<='9'){ exp+=s[i]; i++; }
+      out+=`<span class="ev">${exp}</span>`;
+    } else if(ch==='('){
+      out+=`<span class="ep">(</span>`; i++;
+    } else if(ch===')'){
+      out+=`<span class="ep">)</span>`; i++;
+    } else {
+      out+=ch; i++;
+    }
+  }
+  if(inHi) out+='</span>';
+  return out;
+}
+
+// addChains: chains are now explicit in generators; this just returns data as-is
+function addChains(data){ return data; }
+
+// ══════════════════════════════════════
+//  STATE & UI
+// ══════════════════════════════════════
+let state={
+  level:4,mode:'guide',timedSeconds:60,
+  correct:0,total:0,
+  currentAnswer:null,currentSteps:null,currentHint:null,currentToks:null,
+  showParenToggle:false,parensVisible:false,
+  stepsRevealed:0,timerInterval:null,timeLeft:60,answered:false
+};
+
+function buildLevelGrids(){
+  const gno=document.getElementById('grid-nopow');
+  const gpo=document.getElementById('grid-pow');
+  gno.innerHTML=''; gpo.innerHTML='';
+  LEVELS.forEach(lv=>{
+    const btn=document.createElement('button');
+    const isDefault=(lv.id===state.level);
+    btn.className='level-btn'+(isDefault?' selected':'');
+    btn.style.borderTop=`3px solid ${lv.color}`;
+    btn.innerHTML=`<div class="lbl">${lv.label}</div><div class="ltitle">${lv.title}</div><div class="lexample">${lv.exampleHTML}</div>`;
+    btn.onclick=()=>{
+      document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected'); state.level=lv.id;
+    };
+    btn.ondblclick=()=>{
+      document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected'); state.level=lv.id;
+      startExercise();
+    };
+    (lv.section==='nopow'?gno:gpo).appendChild(btn);
+  });
+}
+
+function selectMode(mode,el){
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected'); state.mode=mode;
+  document.getElementById('time-group').style.display=mode==='timed'?'flex':'none';
+}
+function selectTime(sec,el){
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); state.timedSeconds=sec;
+}
+
+function startExercise(){
+  state.correct=0; state.total=0; state.answered=false; updateStats();
+  show('exercise-screen');
+  const tw=document.getElementById('timer-bar-wrap'),tb=document.getElementById('time-display-box');
+  if(state.mode==='timed'){tw.style.display='block';tb.style.display='block';state.timeLeft=state.timedSeconds;startTimer();}
+  else{tw.style.display='none';tb.style.display='none';}
+  const names={analog:'✏️ Analogläge',guide:'🧠 Steg-för-steg',timed:'⏱ Tävlingsläge'};
+  document.getElementById('ex-mode-label').textContent=names[state.mode];
+  document.getElementById('ex-mode-tag').textContent=names[state.mode];
+  generateExercise();
+}
+
+function startTimer(){
+  clearInterval(state.timerInterval); updateTimerDisplay();
+  state.timerInterval=setInterval(()=>{state.timeLeft--;updateTimerDisplay();if(state.timeLeft<=0){clearInterval(state.timerInterval);showResult();}},1000);
+}
+function updateTimerDisplay(){
+  const box=document.getElementById('time-display-box'),bar=document.getElementById('timer-bar');
+  box.textContent=state.timeLeft;
+  box.className='time-display'+(state.timeLeft<=10?' urgent':'');
+  bar.style.width=(state.timeLeft/state.timedSeconds*100)+'%';
+  bar.style.background=state.timeLeft<=10?'var(--accent2)':'var(--accent)';
+}
+
+function generateExercise(){
+  const lvl=LEVELS.find(l=>l.id===state.level);
+  const data=addChains(lvl.gen());
+  state.currentAnswer=data.ans;
+  state.currentSteps=data.steps;
+  state.currentHint=data.hint;
+  state.currentToks=data.toks;
+  state.showParenToggle=!!(data.showParenToggle||lvl.showParenToggle);
+  state.parensVisible=false;
+  state.stepsRevealed=0;
+  state.answered=false;
+
+  // Render expression with NO highlights initially
+  document.getElementById('expression-box').innerHTML=renderToks(data.toks);
+  highlightHint(data.hint);
+
+  const tog=document.getElementById('paren-toggle');
+  tog.style.display=state.showParenToggle?'flex':'none';
+  tog.classList.remove('on');
+  tog.innerHTML='<span class="pt-dot"></span> Visa osynliga parenteser';
+
+  const ga=document.getElementById('guide-area'),sc=document.getElementById('steps-container'),gc=document.getElementById('guide-controls');
+  sc.innerHTML=''; gc.innerHTML='';
+  if(state.mode==='guide'){
+    ga.style.display='block';
+    initChainBox();
+    const btn=document.createElement('button'); btn.className='guide-btn';
+    btn.textContent='Visa nästa steg ▶'; btn.onclick=revealNextStep; gc.appendChild(btn);
+  } else ga.style.display='none';
+
+  const inp=document.getElementById('answer-input');
+  inp.value=''; inp.className='answer-input'; inp.disabled=false;
+  document.getElementById('feedback-banner').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('check-btn').disabled=false;
+  document.getElementById('skip-btn').disabled=false;
+  setTimeout(()=>inp.focus(),50);
+}
+
+const HINT_MAP={paren:'rh-paren',pow:'rh-pow',muldiv:'rh-muldiv',addsub:'rh-addsub'};
+function highlightHint(h){
+  document.querySelectorAll('.rh-chip').forEach(c=>c.classList.remove('active'));
+  const id=HINT_MAP[h]; if(id) document.getElementById(id).classList.add('active');
+}
+
+// Apply step highlight to expression box
+function applyStepHighlight(step){
+  if(!step||!step.hi) return;
+  const hiSet=new Set();
+  // hi is always array of [start,end] pairs
+  for(const range of step.hi){
+    if(Array.isArray(range[0])){
+      // nested: [[s1,e1],[s2,e2]]
+      for(const [s,e] of range) for(let i=s;i<=e;i++) hiSet.add(i);
+    } else {
+      const [s,e]=range; for(let i=s;i<=e;i++) hiSet.add(i);
+    }
+  }
+  document.getElementById('expression-box').innerHTML=renderToks(state.currentToks,hiSet,step.hiType||'default');
+  if(state.parensVisible){
+    document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
   }
 }
 
-function genYellow(){
-  let a=r(2,12), b=r(2,12);
-  let c=r(2,12), d=r(1,c-1);
-  return `(${a}+${b}) · (${c}-${d})`;
+function toggleParens(){
+  state.parensVisible=!state.parensVisible;
+  const tog=document.getElementById('paren-toggle');
+  const fracs=document.querySelectorAll('#expression-box .frac');
+  if(state.parensVisible){
+    tog.classList.add('on');
+    tog.innerHTML='<span class="pt-dot"></span> Dölj osynliga parenteser';
+    fracs.forEach(f=>f.classList.add('show-parens'));
+  } else {
+    tog.classList.remove('on');
+    tog.innerHTML='<span class="pt-dot"></span> Visa osynliga parenteser';
+    fracs.forEach(f=>f.classList.remove('show-parens'));
+  }
 }
 
-function genRed(){
-  let a=r(2,12), b=r(2,12);
-  let divisor=r(2,12);
-  let numerator=divisor*r(1,12);
-  let frac=`\\frac{${numerator}}{${divisor}}`;
-  return `${a} + ${b} · ${frac}`;
+function initChainBox(){
+  const box=document.getElementById('chain-box');
+  box.innerHTML='';
+  // First line: the original expression (copy from expression-box)
+  const orig=document.createElement('div');
+  orig.className='chain-line chain-original';
+  orig.innerHTML=renderToks(state.currentToks);
+  box.appendChild(orig);
 }
 
-function generateExpression(level){
-  if(level==="blue") return genBlue();
-  if(level==="green") return genGreen();
-  if(level==="yellow") return genYellow();
-  return genRed();
+function revealNextStep(){
+  const steps=state.currentSteps;
+  if(state.stepsRevealed>=steps.length) return;
+  const step=steps[state.stepsRevealed];
+
+  // Highlight in expression box
+  applyStepHighlight(step);
+
+  // Append hint row above chain line
+  const sc=document.getElementById('steps-container');
+  const hint=document.createElement('div'); hint.className='step-hint-row';
+  hint.innerHTML=`<div class="step-badge">${step.badge}</div><div class="step-rule">${step.rule}</div>`;
+  sc.appendChild(hint);
+  if(step.desc){
+    const dv=document.createElement('div'); dv.className='step-desc';
+    dv.textContent=step.desc; sc.appendChild(dv);
+  }
+
+  // Append new chain line
+  const box=document.getElementById('chain-box');
+  const isLast=(state.stepsRevealed===steps.length-1);
+  const line=document.createElement('div');
+  line.className='chain-line '+(isLast?'chain-final':'chain-new');
+  // Render chain string with colours
+  line.innerHTML=`<span class="chain-eq">= </span><span>${chainStr(step.chain||'')}</span>`;
+  box.appendChild(line);
+  line.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  state.stepsRevealed++;
+  if(state.stepsRevealed>=steps.length){
+    const btn=document.querySelector('#guide-controls .guide-btn');
+    if(btn){btn.textContent='Alla steg visade ✓';btn.disabled=true;}
+    setTimeout(()=>{
+      document.getElementById('expression-box').innerHTML=renderToks(state.currentToks);
+      if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
+    },1200);
+  }
 }
 
-function evaluateExpr(expr){
-  let jsExpr = expr
-    .replace(/\\frac{(\d+)}{(\d+)}/g,"($1/$2)")
-    .replace(/·/g,"*");
-  return Function('"use strict";return('+jsExpr+')')();
+function skipExercise(){
+  if(state.answered) return;
+  state.answered=true; state.total++;
+  // Does NOT increment correct — counts as seen/skipped
+  updateStats();
+  document.getElementById('skip-btn').disabled=true;
+  document.getElementById('check-btn').disabled=true;
+  document.getElementById('answer-input').disabled=true;
+  const fb=document.getElementById('feedback-banner');
+  fb.style.display='block';
+  fb.className='feedback-banner wrong';
+  fb.innerHTML=`Hoppade över. Rätt svar var <strong>${state.currentAnswer}</strong>.`;
+  if(state.mode==='guide') while(state.stepsRevealed<state.currentSteps.length) revealNextStep();
+  if(state.mode==='timed') setTimeout(nextExercise,1400);
+  else document.getElementById('next-btn').style.display='block';
 }
 
-function newTask(){
-  let expr = generateExpression(currentLevel);
-  correctAnswer = evaluateExpr(expr);
-  document.getElementById("task").innerHTML="\\("+expr+"\\)";
-  if(window.MathJax) MathJax.typeset();
-  document.getElementById("feedback").innerText="";
-  document.getElementById("answer").value="";
+function handleInputKey(e){
+  if(e.key!=='Enter') return;
+  if(!state.answered){
+    checkAnswer();
+  } else if(state.mode!=='timed'){
+    nextExercise();
+  }
 }
 
 function checkAnswer(){
-  let ans = Number(document.getElementById("answer").value);
-  document.getElementById("feedback").innerText =
-    (Math.abs(ans-correctAnswer)<1e-9 ? "Rätt! 🎉" : "Fel – försök igen!");
+  if(state.answered) return;
+  const inp=document.getElementById('answer-input'),val=parseFloat(inp.value);
+  if(isNaN(val)){inp.focus();return;}
+  state.answered=true; state.total++;
+  const ok=Math.abs(val-state.currentAnswer)<0.001;
+  if(ok) state.correct++;
+  updateStats();
+  const fb=document.getElementById('feedback-banner');
+  fb.style.display='block'; inp.disabled=true;
+  document.getElementById('check-btn').disabled=true;
+  document.getElementById('skip-btn').disabled=true;
+  // Clear expression highlight
+  document.getElementById('expression-box').innerHTML=renderToks(state.currentToks);
+  if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
+  if(ok){
+    inp.className='answer-input correct';
+    fb.className='feedback-banner correct'; fb.textContent='✓ Rätt! Tryck Enter för nästa.';
+  } else {
+    inp.className='answer-input wrong';
+    fb.className='feedback-banner wrong';
+    fb.innerHTML=`✗ Fel. Rätt svar är <strong>${state.currentAnswer}</strong>. Titta på stegen ovan!`;
+    if(state.mode==='guide') while(state.stepsRevealed<state.currentSteps.length) revealNextStep();
+  }
+  if(state.mode==='timed') setTimeout(nextExercise,ok?700:1600);
+  else document.getElementById('next-btn').style.display='block';
 }
 
-function setLevel(level){ currentLevel=level; newTask(); }
+function nextExercise(){generateExercise();}
+function updateStats(){
+  document.querySelector('#stat-correct span').textContent=state.correct;
+  document.querySelector('#stat-total span').textContent=state.total;
+}
+function showResult(){
+  clearInterval(state.timerInterval);
+  const pct=state.total>0?Math.round(state.correct/state.total*100):0;
+  document.getElementById('r-correct').textContent=state.correct;
+  document.getElementById('r-total').textContent=state.total;
+  document.getElementById('r-pct').textContent=pct+'%';
+  let icon='🏆',title='Tid ute!',sub='';
+  if(pct>=90){icon='🌟';title='Fantastiskt!';sub='Du behärskar prioriteringsreglerna!';}
+  else if(pct>=70){icon='🎉';title='Bra jobbat!';sub='Fortsätt träna – du är på god väg!';}
+  else{icon='💪';title='Kämpa på!';sub='Titta på reglerna och försök igen.';}
+  document.getElementById('result-icon').textContent=icon;
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-sub').textContent=sub+` (${state.correct}/${state.total} rätt)`;
+  show('result-screen');
+}
+function restartSame(){startExercise();}
+function goHome(){clearInterval(state.timerInterval);show('start-screen');}
+function show(id){
+  ['start-screen','exercise-screen','result-screen'].forEach(s=>document.getElementById(s).style.display='none');
+  document.getElementById(id).style.display='block';
+}
 
-newTask();
+buildLevelGrids();
+show('start-screen');
+
+// © 2025 Patrick Tegnefur – Förstelärare i matematik, Alfred Dalinskolan
+// Länken får delas fritt. Koden får ej kopieras eller modifieras utan tillstånd.
+function renderSignature() {
+  const el = document.getElementById('app-signature');
+  if(!el) return;
+  const author = 'Patrick Tegnefur';
+  const title  = 'Förstelärare i matematik\u00b7 Alfred Dalinskolan';
+  const ver    = 'BALANSMETODEN v1.0';
+  el.style.cssText='width:100%;max-width:900px;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;';
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:.75rem;">
+      <img src="pt_logo.jpg" alt="Patrick Tegnefur" style="height:36px;width:auto;opacity:.85;">
+      <div style="font-size:.78rem;color:var(--muted);line-height:1.6;">
+        <span style="font-weight:700;color:var(--text);">\u00a9 ${new Date().getFullYear()} ${author}</span><br>
+        ${title}
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <img src="AD_color.png" alt="Alfred Dalinskolan" style="height:36px;width:auto;opacity:.85;">
+      <div style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--border);letter-spacing:.08em;">${ver}</div>
+    </div>`;
+}
+renderSignature();
+  
 </script>
-
 </body>
 </html>
