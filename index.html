@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prioriteringsregler – Räkneordning</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>Räkneregler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{
   --bg:#0f1117;--panel:#1a1d2e;--panel2:#22263a;
@@ -13,34 +16,53 @@
   --correct:#4caf7d;--wrong:#e05c5c;--radius:14px;
   --sec1:#1e2540;--sec1b:#2a3360;--sec1ac:#6bffc8;
   --sec2:#221a30;--sec2b:#3a2850;--sec2ac:#c084fc;
+  --c-mul:#60a5fa;--c-div:#fb923c;--c-add:#4ade80;--c-sub:#ff6b6b;
 }
+.op-mul{color:var(--c-mul)!important}
+.op-div{color:var(--c-div)!important}
+.op-add{color:var(--c-add)!important}
+.op-sub{color:var(--c-sub)!important}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
 /* ══ START ══ */
-#start-screen{max-width:840px;margin:0 auto;padding:22px 16px 50px}
-.hero{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.hero-icon{font-size:34px;animation:float 3s ease-in-out infinite;flex-shrink:0}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.hero h1{font-size:1.65rem;font-weight:900;color:var(--accent);letter-spacing:-.5px}
-.hero p{color:var(--muted);font-size:.82rem;margin-top:1px}
+#start-screen{max-width:780px;margin:0 auto;padding:32px 16px 60px}
+.hero{text-align:center;margin-bottom:28px}
+.hero-icon{font-size:42px;display:block;margin-bottom:10px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hero h1{font-size:2rem;font-weight:900;color:var(--accent);letter-spacing:-.5px;margin-bottom:6px}
+.hero-hint{color:var(--muted);font-size:.85rem;line-height:1.5}
+.hero-footnote{color:var(--muted);font-size:.72rem;margin-top:6px;opacity:.7;
+  display:inline-block;background:var(--panel);border:1px solid var(--border);
+  border-radius:20px;padding:3px 12px;letter-spacing:.3px}
+.hero-hint strong{color:var(--text)}
 
-/* Rule pills — compact horizontal strip */
-.rules-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
-.rule-pill{background:var(--panel);border-radius:9px;padding:6px 8px;border-top:3px solid transparent;display:flex;align-items:center;gap:7px}
+/* Rule pills */
+.rules-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rule-pill{background:var(--panel2);border-radius:9px;padding:8px 10px;border-top:3px solid transparent;display:flex;align-items:center;gap:7px}
 .rule-pill .rp-left{display:flex;flex-direction:column;align-items:center;min-width:28px}
 .rule-pill .rp-step{font-size:.55rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
 .rule-pill .rp-sym{font-size:1rem;line-height:1}
 .rule-pill .rp-right{display:flex;flex-direction:column}
 .rule-pill .rp-name{font-size:.72rem;font-weight:800;line-height:1}
-.rule-pill .rp-ex{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:1px}
+.rule-pill .rp-ex{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:2px}
 .rule-pill:nth-child(1){border-top-color:#ff6b6b}
 .rule-pill:nth-child(2){border-top-color:#f5c842}
 .rule-pill:nth-child(3){border-top-color:#6bffc8}
 .rule-pill:nth-child(4){border-top-color:#a78bfa}
 
-/* Mode panel — compact horizontal cards */
-.mode-panel{background:var(--panel);border:1.5px solid var(--border);border-radius:13px;padding:11px 12px;margin-bottom:11px}
+/* Collapsible bottom sections */
+.bottom-section{border:1.5px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:8px}
+.bottom-toggle{width:100%;background:var(--panel);border:none;display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--text);transition:background .13s}
+.bottom-toggle:hover{background:var(--panel2)}
+.bottom-toggle .bt-label{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.bottom-toggle .bt-arrow{font-size:.75rem;color:var(--muted);transition:transform .2s}
+.bottom-toggle.open .bt-arrow{transform:rotate(180deg)}
+.bottom-content{display:none;padding:12px;background:var(--panel);border-top:1px solid var(--border)}
+.bottom-content.open{display:block}
+
+/* Mode panel */
 .mode-panel-hdr{font-size:.6rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .mode-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .mode-btn{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.08);border-radius:10px;
@@ -64,12 +86,24 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .level-section{border-radius:13px;padding:12px;margin-bottom:10px}
 .level-section.sec-nopow{background:var(--sec1);border:1.5px solid var(--sec1b)}
 .level-section.sec-pow{background:var(--sec2);border:1.5px solid var(--sec2b)}
+.level-section.sec-neg{background:rgba(255,100,100,.06);border:1.5px solid rgba(255,100,100,.18)}
 .sec-header{display:flex;align-items:center;gap:8px;margin-bottom:9px}
 .sec-badge{font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:20px}
 .sec-nopow .sec-badge{background:rgba(107,255,200,.13);color:var(--sec1ac);border:1px solid rgba(107,255,200,.28)}
 .sec-pow   .sec-badge{background:rgba(192,132,252,.13);color:var(--sec2ac);border:1px solid rgba(192,132,252,.28)}
 .sec-title{font-size:.74rem;font-weight:700;color:var(--muted)}
-.levels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.levels-grid{display:grid;gap:6px}
+/* Nopow: 2 cols × 3 rows */
+#grid-nopow{grid-template-columns:repeat(2,1fr)}
+/* Pow: 1 col × 3 rows */
+#grid-pow{grid-template-columns:1fr}
+/* Neg + Frac: 3 cols × 1 row */
+#grid-neg{grid-template-columns:repeat(3,1fr)}
+#grid-frac{grid-template-columns:repeat(3,1fr)}
+
+/* Wrapper som ställer nopow och pow bredvid varandra */
+.sec-duo{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px}
+.sec-duo .level-section{margin-bottom:0}
 .level-btn{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.07);border-radius:10px;
   padding:9px 10px;cursor:pointer;text-align:left;transition:all .14s;color:var(--text);font-family:'Nunito',sans-serif}
 .level-btn:hover{border-color:var(--accent);background:rgba(255,255,255,.07)}
@@ -85,11 +119,54 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .lexample .frac .fden{padding:1px 2px 0;border-top:1px solid var(--accent3)}
 
 .start-btn{width:100%;background:var(--accent);color:#111;border:none;border-radius:var(--radius);
-  padding:12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;transition:all .14s;margin-top:2px}
+  padding:13px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;transition:all .14s;margin:14px 0 20px}
 .start-btn:hover{background:#ffd966;transform:translateY(-1px)}
 
 /* ══ EXERCISE ══ */
-#exercise-screen{display:none;max-width:680px;margin:0 auto;padding:20px 16px 60px}
+#exercise-screen{display:none;max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+
+
+
+/* Step input area */
+.step-inputs{background:var(--panel2);border-radius:11px;padding:14px 16px;margin-bottom:11px;font-family:'Nunito',sans-serif}
+.step-inputs-hdr{font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.student-chain-box{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;line-height:2;
+  display:flex;flex-direction:column;gap:0}
+.student-chain-row{display:none;align-items:center;gap:6px;animation:slideIn .2s ease;flex-wrap:wrap}
+/* Stacked fraction input in student working panel */
+.step-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 5px;gap:0}
+.step-fnum{padding:0 2px 3px;text-align:center;display:flex;align-items:center;justify-content:center;gap:3px}
+.step-fden{padding:3px 2px 0;text-align:center;border-top:2.5px solid var(--text);display:flex;align-items:center;justify-content:center;gap:3px}
+.frac-static-part{font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--text);padding:0 2px}
+.step-frac .step-field{font-size:.9rem;padding:4px 7px;min-width:44px}
+/* Inline stacked fraction for ÷ in prompts and chains */
+.inline-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+  margin:0 4px;line-height:1.1;font-size:.9em}
+.inline-fnum{padding:0 4px 2px;text-align:center;border-bottom:1.5px solid currentColor}
+.inline-fden{padding:2px 4px 0;text-align:center}
+/* Also in chain-box */
+.chain-box .inline-frac{font-size:.85em;margin:0 3px}
+.step-prompt{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--muted);margin-bottom:6px;font-weight:600;opacity:.85}
+.step-prompt .eo{color:var(--accent2)}
+.step-input-row{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:2px 0}
+.step-input-eq{color:var(--accent2);font-weight:800;font-size:.9rem;flex-shrink:0;width:18px;text-align:right}
+.step-input-pre{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;color:var(--muted);flex:1;min-width:0;white-space:pre-wrap;word-break:break-all}
+.step-field{background:var(--panel);border:2px solid var(--border);border-radius:8px;
+  padding:6px 10px;font-family:'Space Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--text);
+  outline:none;transition:border-color .17s;min-width:60px;text-align:center;flex-shrink:0}
+/* Hide number input spinners */
+.step-field::-webkit-outer-spin-button,
+.step-field::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.step-field[type=number]{-moz-appearance:textfield}
+.step-field:focus{border-color:var(--accent)}
+.step-field.s-correct{border-color:var(--correct);background:#1a2d23;color:var(--correct)}
+.step-field.s-wrong{border-color:var(--wrong);background:#2d1a1a;color:var(--wrong)}
+.step-field.s-shown{border-color:var(--muted);color:var(--muted);background:var(--panel2)}
+.step-row-body{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;min-width:0;font-size:1.1rem;font-weight:800;line-height:1.9}
+.step-static{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);white-space:pre}
+.step-static .eo{color:var(--accent2);font-weight:700}
+.step-static .ep{color:var(--accent);font-weight:900}
+.step-static .ev{font-size:.55em;vertical-align:super;line-height:0;position:relative;top:-0.1em}
 .top-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .back-btn{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:5px 11px;
   color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;transition:all .13s}
@@ -111,16 +188,54 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .rh-chip.active{border-color:var(--accent);background:#2a2600;color:var(--accent);transform:scale(1.06);box-shadow:0 0 8px rgba(245,200,66,.2)}
 .rh-chip.active .rh-n{color:var(--accent)}
 
-/* Exercise card */
-.exercise-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:22px 18px;margin-bottom:12px}
-.ex-mode-tag{font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+/* ── Uttryck + svar på samma rad ── */
+.expr-answer-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  background:var(--panel);border:1.5px solid var(--border);border-radius:14px;
+  padding:14px 18px;margin-bottom:10px;line-height:1}
+.expression-box{flex:none;background:transparent;border:none;border-radius:0;
+  padding:0;margin:0;min-height:unset;font-size:1.7rem;justify-content:flex-start;
+  text-align:left;flex-wrap:wrap}
+.expr-answer-inline{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.expr-eq-sign{font-size:1.6rem;font-weight:900;color:var(--accent3);flex-shrink:0}
+.answer-input{background:var(--panel2);border:2px solid var(--border);border-radius:10px;
+  padding:8px 13px;font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--text);
+  outline:none;transition:border-color .17s;width:100px}
+.answer-input:focus{border-color:var(--accent)}
+.answer-input.correct{border-color:var(--correct);background:#1a2d23}
+.answer-input.wrong{border-color:var(--wrong);background:#2d1a1a}
+
+/* ── Hjälppanel ── */
+.help-panel{background:var(--panel);border:1.5px solid var(--border);border-radius:14px;
+  padding:0;margin-bottom:12px;overflow:hidden}
+.panel-tabs{display:flex;align-items:center;gap:4px;padding:10px 12px 0;
+  border-bottom:1px solid var(--border);flex-wrap:wrap}
+.panel-tab{background:transparent;border:none;border-bottom:2.5px solid transparent;
+  padding:8px 14px 9px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;
+  color:var(--muted);cursor:pointer;transition:all .15s;border-radius:8px 8px 0 0;margin-bottom:-1px}
+.panel-tab:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.panel-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(245,200,66,.06)}
+.panel-tab-spacer{flex:1}
+.panel-body-header{display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;padding:12px 14px 6px}
+.toolbar-left{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.student-chain-box{padding:0 14px 14px}
+#solution-view{padding:0 14px 14px}
+.toggle-view-btn{background:rgba(255,255,255,.04);border:1.5px solid var(--border);
+  border-radius:9px;padding:6px 13px;color:var(--muted);font-family:'Nunito',sans-serif;
+  font-size:.8rem;font-weight:800;cursor:pointer;transition:all .13s}
+.toggle-view-btn:hover{border-color:var(--accent3);color:var(--accent3)}
+.toggle-view-btn.solution-active{border-color:var(--accent3);color:var(--accent3);
+  background:rgba(107,255,200,.07)}
+.hard-btn{border-color:var(--border);color:var(--muted)}
+.hard-btn.hard-active{border-color:#f97316;color:#f97316;background:rgba(249,115,22,.08)}
 
 /* Expression box — larger, clearer font */
 .expression-box{
-  background:var(--panel2);border-radius:11px;padding:20px 16px;text-align:center;
+  background:var(--panel);border:1.5px solid var(--border);border-radius:14px;
+  padding:18px 20px;text-align:center;
   font-family:'Nunito',sans-serif;font-size:2rem;font-weight:800;
-  color:var(--text);margin-bottom:13px;line-height:1.7;
-  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:3px;min-height:84px;
+  color:var(--text);line-height:1.7;
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:3px;min-height:76px;
   letter-spacing:.5px;
 }
 /* Token colours */
@@ -149,7 +264,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .frac.hi-frac-el{border-radius:6px;outline:2px solid rgba(107,255,200,.4)}
 
 /* Paren toggle */
-.paren-toggle{display:none;align-items:center;gap:7px;margin-bottom:10px;background:var(--panel2);
+.paren-toggle{display:none;align-items:center;gap:7px;background:var(--panel2);
   border:1.5px solid var(--border);border-radius:9px;padding:6px 12px;cursor:pointer;
   font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:800;color:var(--muted);transition:all .17s;width:fit-content}
 .paren-toggle:hover{border-color:var(--accent3);color:var(--text)}
@@ -165,7 +280,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .chain-line.chain-original{color:var(--muted)}
 .chain-line.chain-new{color:var(--text)}
 .chain-line.chain-final{color:var(--correct);font-size:1.3rem;font-weight:900}
-.chain-eq{color:var(--accent2);font-size:.85em;font-weight:800;margin-right:4px;flex-shrink:0}
+.chain-eq{color:var(--accent3);font-size:.85em;font-weight:800;margin-right:4px;flex-shrink:0}
 .chain-hint{font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
   color:var(--accent);background:rgba(245,200,66,.12);border-radius:5px;padding:2px 7px;margin-left:6px;white-space:nowrap}
 /* chain token colours */
@@ -193,11 +308,15 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .step-rule{font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
 .step-desc{font-size:.68rem;color:var(--muted);font-family:'Nunito',sans-serif;font-style:italic;
   margin-left:4px;margin-bottom:5px;animation:slideIn .18s ease}
-.guide-controls{display:flex;gap:7px;margin-bottom:9px}
+.col-controls{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
 .guide-btn{background:var(--panel2);border:1.5px solid var(--border);border-radius:9px;padding:7px 13px;
   color:var(--text);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .12s}
 .guide-btn:hover{border-color:var(--accent);color:var(--accent)}
 .guide-btn:disabled{color:var(--muted);cursor:default;border-color:var(--border)}
+.guide-btn.primary{background:rgba(245,200,66,.1);border-color:var(--accent);color:var(--accent)}
+.guide-btn.primary:hover{background:rgba(245,200,66,.2)}
+.guide-btn.secondary{border-color:var(--border);color:var(--muted)}
+.guide-btn.secondary:hover{border-color:var(--accent3);color:var(--accent3)}
 
 /* Answer */
 .answer-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -211,12 +330,16 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .check-btn:hover{background:#ffd966}
 .check-btn:disabled{background:var(--muted);cursor:default}
 .feedback-banner{border-radius:10px;padding:10px 13px;margin-top:10px;font-weight:700;display:none;animation:popIn .15s ease}
+@keyframes flashGreen{0%{background:var(--panel)}40%{background:#1a4a2e;box-shadow:0 0 0 3px var(--correct)}100%{background:var(--panel)}}
+@keyframes flashRed{0%{background:var(--panel)}40%{background:#4a1a1a;box-shadow:0 0 0 3px var(--wrong)}100%{background:var(--panel)}}
+.expression-box.flash-correct{animation:flashGreen .8s ease forwards}
+.expression-box.flash-wrong{animation:flashRed .7s ease forwards}
 @keyframes popIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
 .feedback-banner.correct{background:#1c3828;border:1px solid var(--correct);color:#6dffaa}
 .feedback-banner.wrong{background:#3b1c1c;border:1px solid var(--wrong);color:#ffaaaa}
 .next-btn{width:100%;background:var(--panel2);border:2px solid var(--border);border-radius:var(--radius);
   padding:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:800;
-  cursor:pointer;margin-top:9px;transition:all .12s;display:none}
+  cursor:pointer;margin-top:8px;transition:all .12s;display:none}
 .next-btn:hover{border-color:var(--accent);color:var(--accent)}
 .skip-btn{background:transparent;border:1.5px solid var(--border);border-radius:9px;
   padding:6px 14px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.76rem;
@@ -240,101 +363,240 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   padding:11px 18px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;margin:4px;transition:all .12s}
 .home-btn2:hover{border-color:var(--accent)}
 
+@media(max-width:680px){
+  .ex-cols{grid-template-columns:1fr !important}
+  .expression-box{font-size:1.6rem}
+}
 @media(max-width:560px){
   .rules-row{grid-template-columns:repeat(2,1fr)}
-  .levels-grid{grid-template-columns:repeat(2,1fr)}
+  .sec-duo{grid-template-columns:1fr}
+  #grid-nopow{grid-template-columns:repeat(2,1fr)}
+  #grid-pow{grid-template-columns:repeat(3,1fr)}
+  #grid-neg{grid-template-columns:repeat(3,1fr)}
+  #grid-frac{grid-template-columns:repeat(3,1fr)}
   .expression-box{font-size:1.5rem}
-  .hero h1{font-size:1.35rem}
+  .hero h1{font-size:1.7rem}
   .mode-cards{grid-template-columns:1fr}
 }
+
+/* ── Lärarknapp & modal ── */
+.teacher-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;
+  border:1.5px solid rgba(180,160,255,.35);border-radius:10px;padding:7px 14px;
+  color:rgba(200,180,255,.8);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;
+  cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.teacher-btn:hover{border-color:#a78bfa;color:#c4b5fd;background:rgba(167,139,250,.08)}
+.teacher-btn-inline{font-size:.75rem;padding:5px 11px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;
+  align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#1a1a2e;border:1.5px solid rgba(167,139,250,.35);border-radius:18px;
+  padding:28px 28px 22px;max-width:560px;width:100%;max-height:88vh;overflow-y:auto;
+  position:relative;animation:popIn .18s ease}
+.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;
+  color:var(--muted);font-size:1.3rem;cursor:pointer;line-height:1;padding:4px 8px;
+  border-radius:6px;transition:color .12s}
+.modal-close:hover{color:var(--text)}
+.modal-teacher-tag{font-size:.65rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+  color:#a78bfa;margin-bottom:6px}
+.modal-title{font-size:1.15rem;font-weight:900;color:var(--text);margin-bottom:16px;line-height:1.3}
+.modal-section{margin-bottom:16px}
+.modal-section h3{font-size:.72rem;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;
+  color:#a78bfa;margin-bottom:6px;border-bottom:1px solid rgba(167,139,250,.2);padding-bottom:4px}
+.modal-section p{font-size:.88rem;color:var(--muted);line-height:1.65;margin-bottom:8px}
+.modal-section p strong{color:var(--text);font-weight:800}
+.modal-rule-box{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);
+  border-radius:10px;padding:11px 14px;margin-bottom:8px;font-size:.88rem;color:var(--text)}
+.modal-rule-box .rule-line{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.modal-rule-box .rule-line:last-child{margin-bottom:0}
+.modal-rule-box .rn{color:#a78bfa;font-weight:900;font-size:.8rem;min-width:20px}
+.modal-tip{background:rgba(245,200,66,.07);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:9px 13px;font-size:.84rem;color:var(--muted);
+  line-height:1.6;margin-top:10px}
+.modal-tip strong{color:var(--accent)}
+
+
+/* ── Bråksektion ── */
+.level-section.sec-frac{background:rgba(52,211,153,.05);border:1.5px solid rgba(52,211,153,.18)}
+.sec-badge.frac-badge{background:rgba(52,211,153,.18);color:#34d399}
+
+/* Bråk-svarrad */
+.frac-answer-wrap{display:inline-flex;flex-direction:column;align-items:center;
+  vertical-align:middle;margin:0 4px;gap:0}
+.frac-answer-wrap .frac-inp-num{border-bottom:2.5px solid var(--accent3);border-radius:6px 6px 0 0}
+.frac-answer-wrap .frac-inp-den{border-top:none;border-radius:0 0 6px 6px}
+.frac-answer-input{width:54px;padding:5px 6px;background:var(--panel2);
+  border:1.5px solid var(--border);color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:1rem;font-weight:900;text-align:center;outline:none;
+  -moz-appearance:textfield}
+.frac-answer-input::-webkit-outer-spin-button,
+.frac-answer-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.frac-answer-input:focus{border-color:var(--accent3)}
+.frac-answer-input.correct{border-color:var(--correct);background:#0d2820}
+.frac-answer-input.wrong{border-color:var(--wrong);background:#2a0d0d}
+.frac-line{width:100%;height:2.5px;background:var(--accent3);border-radius:2px;margin:1px 0}
+
+
+/* ── Förkortningskedja (inline i uttrycksraden) ── */
+.simp-eq{font-size:1.6rem;font-weight:900;color:var(--accent3);flex-shrink:0}
+/* Bråk i förkortningskedjan */
+.simp-frac-wrap{display:inline-flex;align-items:center;flex-shrink:0}
+/* ÷-notation bråk: täljare÷k / nämnare÷k */
+.simp-div-frac{display:inline-flex;flex-direction:column;align-items:center;
+  flex-shrink:0;font-size:.8em;line-height:1.2;gap:0}
+.simp-div-frac .sdf-num,
+.simp-div-frac .sdf-den{display:flex;align-items:center;gap:0;padding:0 4px}
+.simp-div-frac .sdf-num{padding-bottom:3px}
+.simp-div-frac .sdf-den{padding-top:3px;border-top:2.5px solid var(--text)}
+.simp-div-frac .sdf-k{font-size:.68em;font-weight:900;color:var(--accent);opacity:.9}
+/* Bekräftade bråk — matchar .frac i expression-box exakt */
+.simp-confirmed-frac{display:inline-flex;flex-direction:column;align-items:stretch;
+  vertical-align:middle;margin:0 6px;font-size:.8em;line-height:1.2;gap:0;flex-shrink:0}
+.simp-confirmed-frac .scf-num{padding:0 6px 4px;text-align:center}
+.simp-confirmed-frac .scf-den{padding:4px 6px 0;text-align:center;border-top:2.5px solid var(--text)}
+.simp-confirmed-frac.final .scf-num,
+.simp-confirmed-frac.final .scf-den{color:#6dffaa}
+.simp-confirmed-frac.final .scf-den{border-top-color:#6dffaa}
+/* Inmatningsbråk — samma storlek som expression-box */
+.simp-input-frac{display:inline-flex;flex-direction:column;align-items:stretch;
+  vertical-align:middle;margin:0 6px;font-size:.8em;line-height:1.2;gap:0;flex-shrink:0;
+  border:2px solid var(--accent3);border-radius:8px;padding:2px 4px}
+.simp-input-frac input{background:transparent;border:none;outline:none;
+  font-family:'Space Mono',monospace;font-weight:700;font-size:1em;color:var(--text);
+  text-align:center;-moz-appearance:textfield;width:2.4ch;min-width:36px;padding:2px 6px}
+.simp-input-frac input::-webkit-inner-spin-button,.simp-input-frac input::-webkit-outer-spin-button{-webkit-appearance:none}
+.simp-input-frac .sif-line{width:100%;height:2.5px;background:var(--accent3);margin:2px 0}
+.simp-confirm-btn{background:var(--accent);color:#111;border:none;border-radius:8px;
+  padding:6px 12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;
+  cursor:pointer;flex-shrink:0}
+.simp-confirm-btn:hover{background:#ffd966}
+.simp-done-badge{font-size:.75rem;font-weight:900;color:var(--correct);
+  background:rgba(0,200,100,.10);border:1.5px solid var(--correct);border-radius:20px;
+  padding:3px 14px;flex-basis:100%;margin-top:8px;display:block;text-align:left;width:fit-content}
+.simp-msg{font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:8px;
+  border:1px solid;display:none;flex-basis:100%;margin-top:4px}
+.simp-msg.ok{color:var(--correct);border-color:var(--correct);background:rgba(0,200,100,.08)}
+.simp-msg.err{color:var(--wrong);border-color:var(--wrong);background:rgba(255,80,80,.08)}
+
 </style>
 </head>
-<body>
+<body onload="if(document.getElementById('start-screen').style.display==='none'){show('start-screen')}">
 
 <!-- ══════════ STARTSIDA ══════════ -->
-<div id="start-screen">
+<div id="start-screen" style="display:none">
   <div class="hero">
     <span class="hero-icon">🔢</span>
-    <div><h1>Prioriteringsregler</h1><p>Träna räkneordningen i numeriska uttryck</p></div>
+    <h1>Räkneregler</h1>
+    <p class="hero-hint">Välj en nivå och klicka <strong>Starta</strong> — eller <strong>dubbelklicka en nivå</strong> för att hoppa direkt in!</p>
+    <p class="hero-footnote">Tränar prioriteringsregler, bråkräkning och negativa tal</p>
   </div>
 
-  <!-- ── Räkneordningen (alltid överst) ── -->
-  <div style="font-size:.6rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px">Räkneordningen</div>
-  <div class="rules-row">
-    <div class="rule-pill">
-      <div class="rp-left"><div class="rp-step">1</div><div class="rp-sym">( )</div></div>
-      <div class="rp-right"><div class="rp-name">Parenteser</div><div class="rp-ex">3×(2+4)</div></div>
+  <div style="text-align:center;margin-bottom:16px">
+    <button class="teacher-btn" onclick="openTeacherModal(null)">📚 Från läraren — om detta program</button>
+  </div>
+
+  <!-- ── Sektion 1+2: Utan/Med potenser sida vid sida ── -->
+  <div class="sec-duo">
+    <div class="level-section sec-nopow">
+      <div class="sec-header">
+        <span class="sec-badge">Utan potenser</span>
+      </div>
+      <div class="levels-grid" id="grid-nopow"></div>
     </div>
-    <div class="rule-pill">
-      <div class="rp-left"><div class="rp-step">2</div><div class="rp-sym">x²</div></div>
-      <div class="rp-right"><div class="rp-name">Potenser</div><div class="rp-ex">2³+5</div></div>
-    </div>
-    <div class="rule-pill">
-      <div class="rp-left"><div class="rp-step">3</div><div class="rp-sym">×÷</div></div>
-      <div class="rp-right"><div class="rp-name">Mult / Div</div><div class="rp-ex">4+3×2</div></div>
-    </div>
-    <div class="rule-pill">
-      <div class="rp-left"><div class="rp-step">4</div><div class="rp-sym">+−</div></div>
-      <div class="rp-right"><div class="rp-name">Add / Sub</div><div class="rp-ex">7−2+3</div></div>
+    <div class="level-section sec-pow">
+      <div class="sec-header">
+        <span class="sec-badge">Med potenser</span>
+      </div>
+      <div class="levels-grid" id="grid-pow"></div>
     </div>
   </div>
 
-  <!-- ── Lägesväljare ── -->
-  <div class="mode-panel">
-    <div class="mode-panel-hdr">Välj läge</div>
-    <div class="mode-cards">
-      <button class="mode-btn" onclick="selectMode('analog',this)">
-        <span class="mi">✏️</span>
-        <span class="mt"><span class="mn">Analogläge</span><span class="md">Räkna på papper</span></span>
-      </button>
-      <button class="mode-btn selected" onclick="selectMode('guide',this)">
-        <span class="mi">🧠</span>
-        <span class="mt"><span class="mn">Steg-för-steg</span><span class="md">Avslöja ett steg i taget</span></span>
-      </button>
-      <button class="mode-btn" onclick="selectMode('timed',this)">
-        <span class="mi">⏱</span>
-        <span class="mt"><span class="mn">Tävlingsläge</span><span class="md">Hinna med flest!</span></span>
-      </button>
+  <!-- ── Sektion 3: Negativa tal ── -->
+  <div class="level-section sec-neg">
+    <div class="sec-header">
+      <span class="sec-badge" style="background:rgba(255,100,100,.18);color:#ff6b6b">Negativa tal</span>
+      <span class="sec-title">N1–N3 · Teckenregler, addition, multiplikation</span>
     </div>
-    <div class="time-row" id="time-group" style="display:none">
-      <span class="time-label">Välj tid</span>
-      <div class="tbtns">
-        <button class="tbtn active" onclick="selectTime(60,this)">60 s</button>
-        <button class="tbtn" onclick="selectTime(90,this)">90 s</button>
-        <button class="tbtn" onclick="selectTime(120,this)">120 s</button>
+    <div class="levels-grid" id="grid-neg"></div>
+  </div>
+
+  <!-- ── Sektion 4: Bråkräkning ── -->
+  <div class="level-section sec-frac">
+    <div class="sec-header">
+      <span class="sec-badge frac-badge">Bråkräkning</span>
+      <span class="sec-title">B1–B6 · Förenkla, addera, subtrahera, multiplicera, dividera</span>
+    </div>
+    <div class="levels-grid" id="grid-frac"></div>
+  </div>
+
+  <button class="start-btn" onclick="startExercise()">Starta 🚀</button>
+
+  <!-- ── Lägesväljare (hopfälld) ── -->
+  <div class="bottom-section">
+    <button class="bottom-toggle" onclick="toggleBottom('mode-content',this)">
+      <span class="bt-label">⚙️ &nbsp;Välj läge <span id="mode-label-short" style="color:var(--accent);font-weight:900;font-size:.72rem;margin-left:4px">🧠 Steg-för-steg</span></span>
+      <span class="bt-arrow">▾</span>
+    </button>
+    <div class="bottom-content" id="mode-content">
+      <div class="mode-panel-hdr">Välj läge</div>
+      <div class="mode-cards">
+        <button class="mode-btn selected" onclick="selectMode('guide',this)">
+          <span class="mi">🧠</span>
+          <span class="mt"><span class="mn">Steg-för-steg</span><span class="md">Avslöja ett steg i taget</span></span>
+        </button>
+        <button class="mode-btn" onclick="selectMode('timed',this)">
+          <span class="mi">⏱</span>
+          <span class="mt"><span class="mn">Tävlingsläge</span><span class="md">Hinna med flest!</span></span>
+        </button>
+      </div>
+      <div class="time-row" id="time-group" style="display:none">
+        <span class="time-label">Välj tid</span>
+        <div class="tbtns">
+          <button class="tbtn active" onclick="selectTime(60,this)">60 s</button>
+          <button class="tbtn" onclick="selectTime(90,this)">90 s</button>
+          <button class="tbtn" onclick="selectTime(120,this)">120 s</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ── Sektion 1: Utan potenser ── -->
-  <div class="level-section sec-nopow">
-    <div class="sec-header">
-      <span class="sec-badge">Utan potenser</span>
-      <span class="sec-title">Nivå 1–6 · Addition, multiplikation, parenteser och bråk</span>
+  <!-- ── Räkneordningen (hopfälld) ── -->
+  <div class="bottom-section">
+    <button class="bottom-toggle" onclick="toggleBottom('rules-content',this)">
+      <span class="bt-label">📋 &nbsp;Räkneordningen</span>
+      <span class="bt-arrow">▾</span>
+    </button>
+    <div class="bottom-content" id="rules-content">
+      <div class="rules-row">
+        <div class="rule-pill">
+          <div class="rp-left"><div class="rp-step">1</div><div class="rp-sym">( )</div></div>
+          <div class="rp-right"><div class="rp-name">Parenteser</div><div class="rp-ex">3×(2+4)</div></div>
+        </div>
+        <div class="rule-pill">
+          <div class="rp-left"><div class="rp-step">2</div><div class="rp-sym">x²</div></div>
+          <div class="rp-right"><div class="rp-name">Potenser</div><div class="rp-ex">2³+5</div></div>
+        </div>
+        <div class="rule-pill">
+          <div class="rp-left"><div class="rp-step">3</div><div class="rp-sym">×÷</div></div>
+          <div class="rp-right"><div class="rp-name">Mult / Div</div><div class="rp-ex">4+3×2</div></div>
+        </div>
+        <div class="rule-pill">
+          <div class="rp-left"><div class="rp-step">4</div><div class="rp-sym">+−</div></div>
+          <div class="rp-right"><div class="rp-name">Add / Sub</div><div class="rp-ex">7−2+3</div></div>
+        </div>
+      </div>
     </div>
-    <div class="levels-grid" id="grid-nopow"></div>
   </div>
-
-  <!-- ── Sektion 2: Med potenser ── -->
-  <div class="level-section sec-pow">
-    <div class="sec-header">
-      <span class="sec-badge">Med potenser</span>
-      <span class="sec-title">Nivå 7–9 · Alla regler inklusive x²</span>
-    </div>
-    <div class="levels-grid" id="grid-pow"></div>
-  </div>
-
-  <button class="start-btn" onclick="startExercise()">Starta 🚀</button>
 </div>
 
 <!-- ══════════ ÖVNINGSSIDA ══════════ -->
-<div id="exercise-screen">
+<div id="exercise-screen" style="display:none">
   <div class="top-bar">
     <button class="back-btn" onclick="goHome()">← Hem</button>
     <div id="ex-mode-label" style="font-size:.73rem;color:var(--muted);font-weight:700"></div>
     <div class="stats-row">
       <div class="stat-chip" id="stat-correct">Rätt: <span>0</span></div>
       <div class="stat-chip" id="stat-total">Totalt: <span>0</span></div>
+      <div class="stat-chip streak-chip" id="stat-streak" title="Rätt i rad">🔥 <span>0</span></div>
     </div>
   </div>
   <div class="timer-bar-wrap" id="timer-bar-wrap"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
@@ -343,37 +605,71 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="rule-hint-bar">
     <div class="rh-chip" id="rh-paren"><span class="rh-n">1.</span> ( ) Parenteser</div>
     <div class="rh-chip" id="rh-pow"><span class="rh-n">2.</span> x² Potenser</div>
-    <div class="rh-chip" id="rh-muldiv"><span class="rh-n">3.</span> × ÷ Mult/Div</div>
+    <div class="rh-chip" id="rh-muldiv"><span class="rh-n">3.</span> · ÷ Mult/Div</div>
     <div class="rh-chip" id="rh-addsub"><span class="rh-n">4.</span> + − Add/Sub</div>
   </div>
 
-  <div class="exercise-card">
-    <div class="ex-mode-tag" id="ex-mode-tag"></div>
+  <!-- ── Uttryck + svarrad + förkortningskedja (allt på en rad) ── -->
+  <div class="expr-answer-row" id="expr-answer-row">
     <div class="expression-box" id="expression-box"></div>
+    <!-- Heltalssvar (standard) -->
+    <span class="expr-eq-sign" id="eq-sign-main">=</span>
+    <input type="number" inputmode="numeric" id="answer-input" class="answer-input" placeholder="Svar…"
+           onkeydown="handleInputKey(event)" style="display:block">
+    <!-- Bråksvar + förkortningskedja — allt inline -->
+    <div id="frac-answer-wrap" class="frac-answer-wrap" style="display:none">
+      <input type="number" inputmode="numeric" id="ans-num" class="frac-answer-input frac-inp-num"
+             placeholder="täl" onkeydown="handleFracInputKey(event,'num')">
+      <div class="frac-line"></div>
+      <input type="number" inputmode="numeric" id="ans-den" class="frac-answer-input frac-inp-den"
+             placeholder="nämn" onkeydown="handleFracInputKey(event,'den')">
+    </div>
+    <!-- Förkortningskedja — renderas inline i samma rad -->
+    <div id="simp-chain-area" style="display:none;flex-wrap:wrap;align-items:center;gap:8px;flex:none;font-size:1.7rem"></div>
+    <button class="check-btn" id="check-btn" onclick="checkAnswer()">✓</button>
+    <button class="skip-btn" id="skip-btn" onclick="skipExercise()" title="Hoppa över">↩</button>
+  </div>
+  <div class="feedback-banner" id="feedback-banner"></div>
+  <button class="next-btn" id="next-btn" onclick="nextExercise()">Nästa uppgift →</button>
 
-    <button class="paren-toggle" id="paren-toggle" onclick="toggleParens()">
-      <span class="pt-dot"></span> Visa osynliga parenteser
-    </button>
+  <!-- ── Hjälppanel ── -->
+  <div class="help-panel" id="help-panel" style="display:none">
+    <!-- Tab strip: always fixed at top of panel -->
+    <div class="panel-tabs">
+      <button class="panel-tab active" id="tab-student" onclick="switchTab('student')">✏️ Din lösning</button>
+      <button class="panel-tab" id="tab-solution" onclick="switchTab('solution')">💡 Visa lösning</button>
+      <div class="panel-tab-spacer"></div>
+      <button class="toggle-view-btn hard-btn" id="hard-btn" onclick="toggleHardMode()" title="Utmana mig med större tal">🔥 Enkelt</button>
+      <button class="toggle-view-btn colour-btn" id="colour-btn" onclick="cycleColourMode()" title="Ändra färger på räkneoperationer">🎨</button>
+      <button class="toggle-view-btn teacher-btn-inline" onclick="openTeacherModal(state.level)" title="Lärarinformation om denna nivå">📚</button>
+    </div>
 
-    <div id="guide-area" style="display:none">
+    <!-- Shared: step controls + paren toggle -->
+    <div class="panel-body-header">
+      <div id="student-controls"></div>
+      <button class="paren-toggle" id="paren-toggle" onclick="toggleParens()">
+        <span class="pt-dot"></span> Visa osynliga parenteser
+      </button>
+    </div>
+
+    <!-- Student chain -->
+    <div id="student-view">
+      <div class="student-chain-box" id="student-chain-box"></div>
+      <div id="step-input-rows"></div>
+
+    </div>
+
+    <!-- Solution chain -->
+    <div id="solution-view" style="display:none">
       <div class="chain-box" id="chain-box"></div>
       <div class="steps-container" id="steps-container"></div>
-      <div class="guide-controls" id="guide-controls"></div>
+      <div id="solution-controls" style="margin-top:8px"></div>
     </div>
-
-    <div class="answer-row">
-      <input type="number" id="answer-input" class="answer-input" placeholder="Ditt svar…"
-             onkeydown="handleInputKey(event)">
-      <button class="check-btn" id="check-btn" onclick="checkAnswer()">Kontrollera ✓</button>
-      <button class="skip-btn" id="skip-btn" onclick="skipExercise()" title="Hoppa över – räknas som ett försök">Hoppa över ↩</button>
-    </div>
-    <div class="feedback-banner" id="feedback-banner"></div>
-    <button class="next-btn" id="next-btn" onclick="nextExercise()">Nästa uppgift →</button>
   </div>
 </div>
 
 <!-- ══════════ RESULTATSIDA ══════════ -->
-<div id="result-screen">
+<div id="result-screen" style="display:none">
   <span class="result-icon" id="result-icon">🏆</span>
   <div class="result-title" id="result-title"></div>
   <div class="result-sub" id="result-sub"></div>
@@ -381,6 +677,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="rstat"><div class="rv" id="r-correct">0</div><div class="rl">Rätt svar</div></div>
     <div class="rstat"><div class="rv" id="r-total">0</div><div class="rl">Totalt</div></div>
     <div class="rstat"><div class="rv" id="r-pct">0%</div><div class="rl">Träffsäkerhet</div></div>
+  </div>
+  <div id="wrong-log-section" style="display:none;margin:16px 0 8px;width:100%;max-width:400px">
+    <div class="wrong-log-title">Titta på dessa igen</div>
+    <div id="wrong-log-list"></div>
   </div>
   <button class="restart-btn" onclick="restartSame()">Spela igen 🔄</button>
   <button class="home-btn2" onclick="goHome()">← Hem</button>
@@ -395,6 +695,22 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 // ══════════════════════════════════════
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function pick(a){return a[rnd(0,a.length-1)]}
+// Hard-mode aware rnd: scales ranges up by ~60% keeping ratios sensible
+function rndH(a,b){
+  if(!state||!state.hardMode) return rnd(a,b);
+  const scale=1.6;
+  const na=Math.round(a*scale), nb=Math.round(b*scale);
+  return rnd(na,nb);
+}
+function toggleHardMode(){
+  state.hardMode=!state.hardMode;
+  const btn=document.getElementById('hard-btn');
+  if(btn){
+    btn.textContent=state.hardMode?'🔥 Utmaning':'🔥 Enkelt';
+    btn.classList.toggle('hard-active', state.hardMode);
+  }
+  generateExercise();
+}
 
 const T={
   n: v=>({t:'n',v:String(v)}),
@@ -414,7 +730,11 @@ function renderToks(toks, hiSet, hiType){
     const hl = hiSet.has(i);
     switch(tk.t){
       case 'n':  return hl?`<span class="${hcls}">${tk.v}</span>`:`<span>${tk.v}</span>`;
-      case 'op': return hl?`<span class="${hcls} eo"> ${tk.v} </span>`:`<span class="eo"> ${tk.v} </span>`;
+      case 'op': {
+        const opDisp = tk.v==='×'?' · ':' '+tk.v+' ';
+        const opCls = tk.v==='×'?'op-mul':tk.v==='÷'?'op-div':tk.v==='+'?'op-add':tk.v==='−'?'op-sub':'op-sub';
+        return hl?`<span class="${hcls} eo ${opCls}">${opDisp}</span>`:`<span class="eo ${opCls}">${opDisp}</span>`;
+      }
       case 'lp': return hl?`<span class="${hcls} ep">(</span>`:`<span class="ep">(</span>`;
       case 'rp': return hl?`<span class="${hcls} ep">)</span>`:`<span class="ep">)</span>`;
       case 'pw': return hl?`<span class="${hcls} ev">${tk.v}</span>`:`<span class="ev">${tk.v}</span>`;
@@ -427,11 +747,16 @@ function renderToks(toks, hiSet, hiType){
 }
 
 function renderStepStr(s){
+  // Convert "a ÷ b" patterns to inline stacked fraction
+  // Handle multi-part exprs split by "  och  "
+  s = s.replace(/(\-?\d+)\s*÷\s*(\-?\d+)/g, (_, num, den) => {
+    return `<span class="inline-frac"><span class="inline-fnum">${num}</span><span class="inline-fden">${den}</span></span>`;
+  });
   return s
     .replace(/²/g,'<span class="ev">2</span>')
     .replace(/³/g,'<span class="ev">3</span>')
-    .replace(/×/g,'<span class="eo">×</span>')
-    .replace(/÷/g,'<span class="eo">÷</span>');
+    .replace(/×/g,'<span class="eo op-mul"> · </span>')
+    .replace(/÷/g,'<span class="eo op-div">÷</span>');
 }
 
 // ══════════════════════════════════════
@@ -442,33 +767,57 @@ function fracEx(n,d){
 }
 
 const LEVELS=[
-  {id:1,section:'nopow',color:'#60a5fa',label:'Nivå 1',title:'Addition & subtraktion',
+  {id:1,section:'nopow',color:'#7dd3fc',label:'Nivå 1',title:'Addition & subtraktion',
    exampleHTML:'<span>14</span><span class="eo"> − </span><span>5</span><span class="eo"> + </span><span>8</span><span class="eo"> − </span><span>3</span><span class="eo"> + </span><span>2</span>',
    hint:'addsub',gen:genL1},
-  {id:2,section:'nopow',color:'#f5c842',label:'Nivå 2',title:'Multiplikation & addition',
+  {id:2,section:'nopow',color:'#38bdf8',label:'Nivå 2',title:'Multiplikation & addition',
    exampleHTML:'<span>12</span><span class="eo"> + </span><span>3</span><span class="eo"> × </span><span>4</span><span class="eo"> − </span><span>2</span><span class="eo"> × </span><span>5</span>',
    hint:'muldiv',gen:genL2},
-  {id:3,section:'nopow',color:'#fb923c',label:'Nivå 3',title:'Enkla bråk + mult/add',
+  {id:3,section:'nopow',color:'#0ea5e9',label:'Nivå 3',title:'Enkla bråk + mult/add',
    exampleHTML:'<span>6</span><span class="eo"> + </span>'+fracEx('<span>8</span>','<span>4</span>')+'<span class="eo"> − </span><span>3</span><span class="eo"> × </span><span>2</span>',
    hint:'muldiv',hasFrac:true,gen:genL3},
-  {id:4,section:'nopow',color:'#6bffc8',label:'Nivå 4',title:'Parenteser + mult/add',
+  {id:4,section:'nopow',color:'#06b6d4',label:'Nivå 4',title:'Parenteser + mult/add',
    exampleHTML:'<span class="ep">(</span><span>5</span><span class="eo"> + </span><span>3</span><span class="ep">)</span><span class="eo"> × </span><span>2</span><span class="eo"> − </span><span>4</span><span class="eo"> × </span><span>3</span>',
    hint:'paren',gen:genL4},
-  {id:5,section:'nopow',color:'#34d399',label:'Nivå 5',title:'Parenteser, många termer',
+  {id:5,section:'nopow',color:'#0891b2',label:'Nivå 5',title:'Parenteser, många termer',
    exampleHTML:'<span class="ep">(</span><span>6</span><span class="eo"> − </span><span>2</span><span class="ep">)</span><span class="eo"> × </span><span class="ep">(</span><span>3</span><span class="eo"> + </span><span>1</span><span class="ep">)</span><span class="eo"> + </span><span>5</span><span class="eo"> × </span><span>2</span>',
    hint:'paren',gen:genL5},
-  {id:6,section:'nopow',color:'#2dd4bf',label:'Nivå 6',title:'Bråk med osynliga parenteser',
+  {id:6,section:'nopow',color:'#0e7490',label:'Nivå 6',title:'Bråk med osynliga parenteser',
    exampleHTML:fracEx('<span>3</span><span class="eo"> + </span><span>5</span>','<span>4</span><span class="eo"> − </span><span>2</span>')+'<span class="eo"> + </span><span>6</span>',
    hint:'muldiv',hasFrac:true,showParenToggle:true,gen:genL6},
-  {id:7,section:'pow',color:'#a78bfa',label:'Nivå 7',title:'Potenser + mult/add',
+  {id:7,section:'pow',color:'#c4b5fd',label:'Nivå 7',title:'Potenser + mult/add',
    exampleHTML:'<span>2</span><span class="ev">3</span><span class="eo"> + </span><span>4</span><span class="eo"> × </span><span>3</span><span class="eo"> − </span><span>5</span>',
    hint:'pow',gen:genL7},
-  {id:8,section:'pow',color:'#e879f9',label:'Nivå 8',title:'Potenser + parenteser',
+  {id:8,section:'pow',color:'#a855f7',label:'Nivå 8',title:'Potenser + parenteser',
    exampleHTML:'<span class="ep">(</span><span>2</span><span class="eo"> + </span><span>3</span><span class="ep">)</span><span class="ev">2</span><span class="eo"> − </span><span>3</span><span class="eo"> × </span><span>4</span>',
    hint:'pow',gen:genL8},
-  {id:9,section:'pow',color:'#f97316',label:'Nivå 9 · Avancerad',title:'Allt kombinerat',
+  {id:9,section:'pow',color:'#7c3aed',label:'Nivå 9 · Avancerad',title:'Allt kombinerat',
    exampleHTML:'<span class="ep">(</span><span>3</span><span class="eo"> + </span><span>2</span><span class="ep">)</span><span class="ev">2</span><span class="eo"> − </span>'+fracEx('<span>4</span><span class="eo"> + </span><span>2</span>','<span>3</span>')+'<span class="eo"> × </span><span>2</span>',
    hint:'pow',hasFrac:true,showParenToggle:true,gen:genL9},
+  // ── Negativa tal ──
+  {id:'n1',section:'neg',color:'#fca5a5',label:'Nivå N1',title:'Negativa tal: addition & subtraktion',
+   exampleHTML:'<span>5</span><span class="eo op-add"> + </span><span class="ep">(</span><span class="op-sub">−</span><span>2</span><span class="ep">)</span><span class="eo op-sub"> − </span><span class="ep">(</span><span class="op-sub">−</span><span>4</span><span class="ep">)</span>',
+   hint:'addsub',gen:genNeg1},
+  {id:'n2',section:'neg',color:'#f87171',label:'Nivå N2',title:'Negativa tal: × och ÷',
+   exampleHTML:'<span class="frac"><span class="fnum"><span class="ep">(</span><span class="op-sub">−</span><span>6</span><span class="ep">)</span></span><span class="fden"><span>3</span></span></span><span class="eo op-add"> + </span><span>4</span>',
+   hint:'muldiv',gen:genNeg2},
+  {id:'n3',section:'neg',color:'#ef4444',label:'Nivå N3',title:'Negativa tal: parenteser',
+   exampleHTML:'<span class="ep">(</span><span class="op-sub">−</span><span>2</span><span class="eo op-add"> + </span><span>5</span><span class="ep">)</span><span class="eo op-mul"> · </span><span class="ep">(</span><span class="op-sub">−</span><span>3</span><span class="ep">)</span>',
+   hint:'paren',gen:genNeg3},
+  // ── Bråkräkning ──
+  {id:'b1',section:'frac',color:'#bef264',label:'Nivå B1',title:'Förenkla bråk',
+   exampleHTML:'<span class="frac"><span class="fnum"><span>6</span></span><span class="fden"><span>8</span></span></span> <span style="color:var(--muted)">→</span> <span class="frac"><span class="fnum"><span>3</span></span><span class="fden"><span>4</span></span></span>',hint:'frac',isFracLevel:true,gen:genB1},
+  {id:'b2',section:'frac',color:'#a3e635',label:'Nivå B2',title:'+ och − med gemensam nämnare',
+   exampleHTML:'<span class="frac"><span class="fnum"><span>1</span></span><span class="fden"><span>4</span></span></span><span class="eo op-add"> + </span><span class="frac"><span class="fnum"><span>2</span></span><span class="fden"><span>4</span></span></span>',hint:'frac',isFracLevel:true,gen:genB2},
+  {id:'b3',section:'frac',color:'#84cc16',label:'Nivå B3',title:'+ och − med olika nämnare',
+   exampleHTML:'<span class="frac"><span class="fnum"><span>1</span></span><span class="fden"><span>3</span></span></span><span class="eo op-add"> + </span><span class="frac"><span class="fnum"><span>1</span></span><span class="fden"><span>4</span></span></span>',hint:'frac',isFracLevel:true,gen:genB3},
+  {id:'b4',section:'frac',color:'#eab308',label:'Nivå B4',title:'Multiplicera bråk',
+   exampleHTML:'<span class="frac"><span class="fnum"><span>2</span></span><span class="fden"><span>3</span></span></span><span class="eo op-mul"> · </span><span class="frac"><span class="fnum"><span>3</span></span><span class="fden"><span>4</span></span></span>',hint:'frac',isFracLevel:true,gen:genB4},
+  {id:'b5',section:'frac',color:'#d97706',label:'Nivå B5',title:'Dividera bråk',
+   exampleHTML:'<span class="frac"><span class="fnum"><span>2</span></span><span class="fden"><span>3</span></span></span><span class="eo op-div"> ÷ </span><span class="frac"><span class="fnum"><span>4</span></span><span class="fden"><span>5</span></span></span>',hint:'frac',isFracLevel:true,gen:genB5},
+  {id:'b6',section:'frac',color:'#b45309',label:'Nivå B6',title:'Alla fyra räknesätten',
+   exampleHTML:'<span class="frac"><span class="fnum"><span>1</span></span><span class="fden"><span>2</span></span></span><span class="eo op-add"> + </span><span class="frac"><span class="fnum"><span>2</span></span><span class="fden"><span>3</span></span></span><span class="eo op-mul"> · </span><span class="frac"><span class="fnum"><span>3</span></span><span class="fden"><span>4</span></span></span>',hint:'frac',isFracLevel:true,gen:genB6},
+
 ];
 
 // ══════════════════════════════════════
@@ -478,30 +827,54 @@ const LEVELS=[
 // ══════════════════════════════════════
 
 function genL1(){
-  const len=rnd(4,5);
-  const vals=[rnd(10,18)];
-  for(let i=1;i<len;i++) vals.push(rnd(2,12));
+  const len=rnd(3,4);
+  const vals=[rndH(8,18)];
+  for(let i=1;i<len;i++) vals.push(rndH(2,12));
   const ops=[];
   for(let i=1;i<len;i++) ops.push(pick(['+','−']));
-  let ans=vals[0];
-  for(let i=0;i<ops.length;i++) ans=ops[i]==='+'?ans+vals[i+1]:ans-vals[i+1];
-  if(ans<-5||ans>65) return genL1();
+  // Compute running totals
+  const running=[vals[0]];
+  for(let i=0;i<ops.length;i++){
+    const prev=running[running.length-1];
+    running.push(ops[i]==='+'?prev+vals[i+1]:prev-vals[i+1]);
+  }
+  const ans=running[running.length-1];
+  if(ans<0||ans>65) return genL1();
   const toks=[T.n(vals[0])];
   for(let i=0;i<ops.length;i++){toks.push(T.op(ops[i]));toks.push(T.n(vals[i+1]))}
-  // L1: only + and −, one step vänster→höger
-  let exprStr=vals[0]+'';
-  for(let i=0;i<ops.length;i++) exprStr+=' '+ops[i]+' '+vals[i+1];
-  return{toks,ans,hint:'addsub',steps:[
-    {badge:'Steg 1',rule:'Vänster → höger (bara + och −)',
-     expr:exprStr+' = '+ans,desc:'Inga × eller parenteser — räkna rakt igenom',
-     hi:[[0,toks.length-1]],hiType:'default',chain:`**${ans}**`},
-  ]};
+
+  // Build one step per operation, each showing running total in chain
+  const steps=[];
+  for(let i=0;i<ops.length;i++){
+    // Highlight the two operands being combined
+    const hiStart=i*2, hiEnd=i*2+2;
+    // Chain: running[i+1] is highlighted, rest static
+    let chainParts=[];
+    // Before this result: static running total if i>0, else first val already consumed
+    if(i===ops.length-1){
+      chainParts.push(`**${running[i+1]}**`);
+    } else {
+      // Show running result for this pair, then remaining terms
+      let ch=`**${running[i+1]}**`;
+      for(let j=i+1;j<ops.length;j++) ch+=` ${ops[j]} ${vals[j+1]}`;
+      chainParts.push(ch);
+    }
+    steps.push({
+      badge:`Steg ${i+1}`,
+      rule: ops[i]==='+'?`${running[i]} + ${vals[i+1]} = ${running[i+1]}`:`${running[i]} − ${vals[i+1]} = ${running[i+1]}`,
+      expr:`${running[i]} ${ops[i]} ${vals[i+1]} = ${running[i+1]}`,
+      desc: i===0?'Vänster → höger, ett steg i taget':'',
+      hi:[[hiStart,hiEnd]],hiType:'default',
+      chain:chainParts[0]
+    });
+  }
+  return{toks,ans,hint:'addsub',steps};
 }
 
 function genL2(){
   const type=rnd(1,4);
   if(type===1){
-    const a=rnd(5,15),b=rnd(2,5),c=rnd(2,6),d=rnd(2,4),e=rnd(2,5),f=rnd(1,8);
+    const a=rndH(5,15),b=rndH(2,5),c=rndH(2,6),d=rnd(2,4),e=rndH(2,5),f=rnd(1,8);
     const p1=b*c,p2=d*e,ans=a+p1-p2+f;
     if(ans<0||ans>80) return genL2();
     // toks: a(0) +(1) b(2) ×(3) c(4) −(5) d(6) ×(7) e(8) +(9) f(10)
@@ -513,7 +886,7 @@ function genL2(){
       ]};
   }
   if(type===2){
-    const a=rnd(2,5),b=rnd(2,6),c=rnd(3,12),d=rnd(2,8),e=rnd(2,4),f=rnd(2,5);
+    const a=rndH(2,5),b=rndH(2,6),c=rndH(3,12),d=rndH(2,8),e=rnd(2,4),f=rndH(2,5);
     const p1=a*b,p2=e*f,ans=p1+c-d+p2;
     if(ans<0||ans>80) return genL2();
     // a(0) ×(1) b(2) +(3) c(4) −(5) d(6) +(7) e(8) ×(9) f(10)
@@ -525,7 +898,7 @@ function genL2(){
       ]};
   }
   if(type===3){
-    const a=rnd(15,25),b=rnd(2,4),c=rnd(2,4),d=rnd(2,4),e=rnd(2,4),f=rnd(1,6);
+    const a=rndH(15,25),b=rnd(2,4),c=rnd(2,4),d=rnd(2,4),e=rnd(2,4),f=rnd(1,6);
     const p1=b*c,p2=d*e,ans=a-p1+p2-f;
     if(ans<0||ans>80) return genL2();
     // a(0) −(1) b(2) ×(3) c(4) +(5) d(6) ×(7) e(8) −(9) f(10)
@@ -536,7 +909,7 @@ function genL2(){
         {badge:'Steg 2',rule:'Vänster → höger',expr:`${a} − ${p1} + ${p2} − ${f} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
-  const a=rnd(2,4),b=rnd(2,4),c=rnd(2,3),d=rnd(3,10),e=rnd(2,8);
+  const a=rnd(2,4),b=rnd(2,4),c=rnd(2,3),d=rndH(3,10),e=rndH(2,8);
   const p1=a*b,p2=p1*c,ans=p2-d+e;
   if(ans<0||ans>80) return genL2();
   // a(0) ×(1) b(2) ×(3) c(4) −(5) d(6) +(7) e(8)
@@ -551,47 +924,47 @@ function genL2(){
 
 function genL3(){
   function simpleFrac(){
-    const q=pick([2,3,4,5,6]),p=q*rnd(2,6);
+    const q=pick([2,3,4,5,6]),p=q*rndH(2,6);
     return{p,q,v:p/q};
   }
   const type=rnd(1,4);
   if(type===1){
-    const {p,q,v}=simpleFrac(),b=rnd(2,5),c=rnd(2,5),d=rnd(1,8),a=rnd(2,10);
+    const {p,q,v}=simpleFrac(),b=rndH(2,5),c=rndH(2,5),d=rnd(1,8),a=rndH(2,10);
     const prod=b*c,ans=a+v+prod-d;
     if(ans<0||ans>70||!Number.isInteger(v)) return genL3();
     // a(0) +(1) FRAC(2) +(3) b(4) ×(5) c(6) −(7) d(8)
     return{hint:'muldiv',hasFrac:true,
       toks:[T.n(a),T.op('+'),T.fr([T.n(p)],[T.n(q)]),T.op('+'),T.n(b),T.op('×'),T.n(c),T.op('−'),T.n(d)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Bråk = division  och  × samtidigt',expr:`${p} ÷ ${q} = ${v}  och  ${b} × ${c} = ${prod}`,desc:'Bråk och × räknas före + och −',hi:[[2,2],[4,6]],hiType:'frac',chain:`${a} + **${v}** + **${prod}** − ${d}`},
+        {badge:'Steg 1',rule:'Bråk (÷) och × räknas i samma svep',expr:`FRAC[${p}|${q}] = ${v}  och  ${b} × ${c} = ${prod}`,desc:'Bråk = division — räknas före + och −',hi:[[2,2],[4,6]],hiType:'frac',chain:`${a} + **${v}** + **${prod}** − ${d}`},
         {badge:'Steg 2',rule:'Vänster → höger',expr:`${a} + ${v} + ${prod} − ${d} = ${ans}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===2){
-    const {p,q,v}=simpleFrac(),a=rnd(2,6),b=rnd(2,5),c=rnd(1,8);
+    const {p,q,v}=simpleFrac(),a=rndH(2,6),b=rndH(2,5),c=rnd(1,8);
     const prod=a*b,ans=prod-v+c;
     if(ans<0||ans>70||!Number.isInteger(v)) return genL3();
     // a(0) ×(1) b(2) −(3) FRAC(4) +(5) c(6)
     return{hint:'muldiv',hasFrac:true,
       toks:[T.n(a),T.op('×'),T.n(b),T.op('−'),T.fr([T.n(p)],[T.n(q)]),T.op('+'),T.n(c)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Bråk = division  och  × samtidigt',expr:`${a} × ${b} = ${prod}  och  ${p} ÷ ${q} = ${v}`,desc:'Bråk och × räknas på samma gång',hi:[[0,2],[4,4]],hiType:'frac',chain:`**${prod}** − **${v}** + ${c}`},
+        {badge:'Steg 1',rule:'× och bråk (÷) i samma svep',expr:`${a} × ${b} = ${prod}  och  FRAC[${p}|${q}] = ${v}`,desc:'Bråk = division — räknas före + och −',hi:[[0,2],[4,4]],hiType:'frac',chain:`**${prod}** − **${v}** + ${c}`},
         {badge:'Steg 2',rule:'Vänster → höger',expr:`${prod} − ${v} + ${c} = ${ans}`,desc:'',hi:[[0,6]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===3){
-    const {p,q,v}=simpleFrac(),a=rnd(5,15),b=rnd(2,4),c=rnd(2,4),d=rnd(1,6);
+    const {p,q,v}=simpleFrac(),a=rndH(5,15),b=rnd(2,4),c=rnd(2,4),d=rnd(1,6);
     const prod=b*c,ans=v+a-prod+d;
     if(ans<0||ans>70||!Number.isInteger(v)) return genL3();
     // FRAC(0) +(1) a(2) −(3) b(4) ×(5) c(6) +(7) d(8)
     return{hint:'muldiv',hasFrac:true,
       toks:[T.fr([T.n(p)],[T.n(q)]),T.op('+'),T.n(a),T.op('−'),T.n(b),T.op('×'),T.n(c),T.op('+'),T.n(d)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Bråk = division  och  × samtidigt',expr:`${p} ÷ ${q} = ${v}  och  ${b} × ${c} = ${prod}`,desc:'',hi:[[0,0],[4,6]],hiType:'frac',chain:`**${v}** + ${a} − **${prod}** + ${d}`},
+        {badge:'Steg 1',rule:'Bråk (÷) och × i samma svep',expr:`FRAC[${p}|${q}] = ${v}  och  ${b} × ${c} = ${prod}`,desc:'',hi:[[0,0],[4,6]],hiType:'frac',chain:`**${v}** + ${a} − **${prod}** + ${d}`},
         {badge:'Steg 2',rule:'Vänster → höger',expr:`${v} + ${a} − ${prod} + ${d} = ${ans}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
-  const {p,q,v}=simpleFrac(),a=rnd(2,4),b=rnd(2,5),c=rnd(2,3),d=rnd(2,4),e=rnd(1,6);
+  const {p,q,v}=simpleFrac(),a=rnd(2,4),b=rndH(2,5),c=rnd(2,3),d=rnd(2,4),e=rnd(1,6);
   const p1=a*b,p2=c*d,ans=p1+p2-v+e;
   if(ans<0||ans>80||!Number.isInteger(v)) return genL3();
   // a(0) ×(1) b(2) +(3) c(4) ×(5) d(6) −(7) FRAC(8) +(9) e(10)
@@ -600,7 +973,7 @@ function genL3(){
     ans,steps:[
       {badge:'Steg 1',rule:'Vänster ×',expr:`${a} × ${b} = ${p1}`,desc:'',hi:[[0,2]],hiType:'default'},
       {badge:'Steg 2',rule:'Höger ×',expr:`${c} × ${d} = ${p2}`,desc:'',hi:[[4,6]],hiType:'default'},
-      {badge:'Steg 3',rule:'Bråk = division',expr:`${p} ÷ ${q} = ${v}`,desc:'',hi:[[8,8]],hiType:'frac'},
+      {badge:'Steg 3',rule:'Bråk = division',expr:`FRAC[${p}|${q}] = ${v}`,desc:'',hi:[[8,8]],hiType:'frac'},
       {badge:'Steg 4',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${v} + ${e} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default'},
     ]};
 }
@@ -608,58 +981,86 @@ function genL3(){
 function genL4(){
   const type=rnd(1,5);
   if(type===1){
-    const a=rnd(2,7),b=rnd(1,5),c=rnd(2,5),d=rnd(1,8),e=rnd(2,4),f=rnd(1,6);
+    const a=rndH(2,7),b=rnd(1,5),c=rndH(2,5),d=rnd(1,8),e=rnd(2,4),f=rnd(1,6);
     const i1=a+b,p1=i1*c,p2=e*f,ans=p1-p2+d;
     if(ans<0||ans>80) return genL4();
     // ((0) a(1) +(2) b(3) )(4) ×(5) c(6) −(7) e(8) ×(9) f(10) +(11) d(12)
     return{hint:'paren',
       toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.op('×'),T.n(c),T.op('−'),T.n(e),T.op('×'),T.n(f),T.op('+'),T.n(d)],
       ans,steps:[
-        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${a} + ${b} = ${i1}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`**${i1}** × ${c} − ${e} × ${f} + ${d}`},
+        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${a} + ${b} = ${i1}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`(**${i1}**) × ${c} − ${e} × ${f} + ${d}`},
         {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${c}=${p1}  och  ${e}×${f}=${p2}`,desc:'',hi:[[4,6],[8,10]],hiType:'default',chain:`**${p1}** − **${p2}** + ${d}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} − ${p2} + ${d} = ${ans}`,desc:'',hi:[[0,12]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===2){
-    const a=rnd(5,12),b=rnd(1,4),c=rnd(2,5),d=rnd(2,4),e=rnd(2,5),f=rnd(1,8);
+    const a=rndH(5,12),b=rnd(1,4),c=rndH(2,5),d=rnd(2,4),e=rndH(2,5),f=rnd(1,8);
     const i1=a-b,p1=i1*c,p2=d*e,ans=p1+p2-f;
     if(ans<0||ans>80) return genL4();
     // ((0) a(1) −(2) b(3) )(4) ×(5) c(6) +(7) d(8) ×(9) e(10) −(11) f(12)
     return{hint:'paren',
       toks:[T.lp(),T.n(a),T.op('−'),T.n(b),T.rp(),T.op('×'),T.n(c),T.op('+'),T.n(d),T.op('×'),T.n(e),T.op('−'),T.n(f)],
       ans,steps:[
-        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${a} − ${b} = ${i1}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`**${i1}** × ${c} + ${d} × ${e} − ${f}`},
+        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${a} − ${b} = ${i1}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`(**${i1}**) × ${c} + ${d} × ${e} − ${f}`},
         {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${c}=${p1}  och  ${d}×${e}=${p2}`,desc:'',hi:[[4,6],[8,10]],hiType:'default',chain:`**${p1}** + **${p2}** − ${f}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${f} = ${ans}`,desc:'',hi:[[0,12]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===3){
-    const a=rnd(2,4),b=rnd(2,6),c=rnd(2,3),d=rnd(2,4),e=rnd(1,8);
+    const a=rnd(2,4),b=rndH(2,6),c=rnd(2,3),d=rnd(2,4),e=rnd(1,8);
     const ip=c*d,inner=b+ip,ans=a*inner-e;
     if(ans<0||ans>80) return genL4();
     // a(0) ×(1) ((2) b(3) +(4) c(5) ×(6) d(7) )(8) −(9) e(10)
     return{hint:'paren',
       toks:[T.n(a),T.op('×'),T.lp(),T.n(b),T.op('+'),T.n(c),T.op('×'),T.n(d),T.rp(),T.op('−'),T.n(e)],
       ans,steps:[
-        {badge:'Steg 1',rule:'× inne i ( ) — sedan hela ( )',expr:`${c}×${d}=${ip}  →  ${b}+${ip}=${inner}`,desc:'Prioriteringsregler gäller inuti parentesen!',hi:[[2,8]],hiType:'paren',chain:`${a} × **${inner}** − ${e}`},
+        {badge:'Steg 1',rule:'× inne i ( ) — sedan hela ( )',expr:`${c}×${d}=${ip}  →  ${b}+${ip}=${inner}`,desc:'Prioriteringsregler gäller inuti parentesen!',hi:[[2,8]],hiType:'paren',chain:`${a} × (**${inner}**) − ${e}`},
         {badge:'Steg 2',rule:'Multiplikation',expr:`${a} × ${inner} = ${a*inner}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${a*inner}** − ${e}`},
         {badge:'Steg 3',rule:'Subtraktion',expr:`${a*inner} − ${e} = ${ans}`,desc:'',hi:[[8,10]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===4){
-    const b=rnd(2,5),c=rnd(4,9),d=rnd(1,c-1),a=rnd(3,12),e=rnd(1,8);
+    const b=rndH(2,5),c=rndH(4,9),d=rnd(1,c-1),a=rndH(3,12),e=rnd(1,8);
     const inner=c-d,prod=b*inner,ans=a+prod-e;
     if(ans<0||ans>80) return genL4();
     // a(0) +(1) b(2) ×(3) ((4) c(5) −(6) d(7) )(8) −(9) e(10)
     return{hint:'paren',
       toks:[T.n(a),T.op('+'),T.n(b),T.op('×'),T.lp(),T.n(c),T.op('−'),T.n(d),T.rp(),T.op('−'),T.n(e)],
       ans,steps:[
-        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${c} − ${d} = ${inner}`,desc:'',hi:[[4,8]],hiType:'paren',chain:`${a} + ${b} × **${inner}** − ${e}`},
+        {badge:'Steg 1',rule:'( ) Parentes ALLTID FÖRST',expr:`${c} − ${d} = ${inner}`,desc:'',hi:[[4,8]],hiType:'paren',chain:`${a} + ${b} × (**${inner}**) − ${e}`},
         {badge:'Steg 2',rule:'Multiplikation',expr:`${b} × ${inner} = ${prod}`,desc:'',hi:[[2,8]],hiType:'default',chain:`${a} + **${prod}** − ${e}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${a} + ${prod} − ${e} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
-  const a=rnd(2,5),b=rnd(1,3),c=rnd(1,3),d=rnd(2,5),e=rnd(2,4),f=rnd(2,4);
+  // Type 5: negativt mellanresultat — (a − b) × c + d
+  if(type===5){
+    const b=rndH(4,9),a=rnd(1,b-2);
+    const inner=a-b; // negative
+    const cc=rndH(2,5),d=rndH(Math.abs(inner)*cc+2,Math.abs(inner)*cc+18);
+    const prod=inner*cc,ans=prod+d;
+    if(ans<-20||ans>60) return genL4();
+    return{hint:'paren',
+      toks:[T.lp(),T.n(a),T.op('−'),T.n(b),T.rp(),T.op('×'),T.n(cc),T.op('+'),T.n(d)],
+      ans,steps:[
+        {badge:'Steg 1',rule:'( ) Parentesen ALLTID FÖRST',expr:`${a} − ${b} = ${inner}`,desc:'Resultatet kan bli negativt!',hi:[[0,4]],hiType:'paren',chain:`(**${inner}**) × ${cc} + ${d}`},
+        {badge:'Steg 2',rule:'Multiplikation',expr:`${inner} × ${cc} = ${prod}`,desc:'Negativt × positivt = negativt',hi:[[0,6]],hiType:'default',chain:`**${prod}** + ${d}`},
+        {badge:'Steg 3',rule:'Addition',expr:`${prod} + ${d} = ${ans}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  // Type 6: två parenteser, ena negativ
+  if(type===6){
+    const b=rndH(4,8),a=rnd(1,b-2),inner1=a-b;
+    const dd=rndH(2,5),ee=rndH(2,4),inner2=dd+ee;
+    const ans=inner1*inner2;
+    if(ans<-60||ans>60||ans===0) return genL4();
+    return{hint:'paren',
+      toks:[T.lp(),T.n(a),T.op('−'),T.n(b),T.rp(),T.op('×'),T.lp(),T.n(dd),T.op('+'),T.n(ee),T.rp()],
+      ans,steps:[
+        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${a} − ${b} = ${inner1}  och  ${dd} + ${ee} = ${inner2}`,desc:'En parentes kan ge negativt resultat',hi:[[0,4],[6,10]],hiType:'paren',chain:`(**${inner1}**) × (**${inner2}**)`},
+        {badge:'Steg 2',rule:'Multiplikation',expr:`${inner1} × ${inner2} = ${ans}`,desc:'',hi:[[0,10]],hiType:'default',chain:`**${ans}**`},
+      ]};
+  }
+  const a=rndH(2,5),b=rnd(1,3),c=rnd(1,3),d=rndH(2,5),e=rnd(2,4),f=rnd(2,4);
   const i1=a+b+c,p1=i1*d,p2=e*f,ans=p1-p2;
   if(ans<0||ans>80) return genL4();
   // ((0) a(1) +(2) b(3) +(4) c(5) )(6) ×(7) d(8) −(9) e(10) ×(11) f(12)
@@ -676,45 +1077,45 @@ function genL4(){
 function genL5(){
   const type=rnd(1,4);
   if(type===1){
-    const a=rnd(2,6),b=rnd(1,4),c=rnd(4,9),d=rnd(1,3),e=rnd(2,10),f=rnd(2,4),g=rnd(2,4);
+    const a=rndH(2,6),b=rnd(1,4),c=rndH(4,9),d=rnd(1,3),e=rndH(2,10),f=rnd(2,4),g=rnd(2,4);
     const i1=a+b,i2=c-d,p1=i1*i2,p2=f*g,ans=p1+e-p2;
     if(ans<0||ans>90) return genL5();
     // ((0) a(1) +(2) b(3) )(4) ×(5) ((6) c(7) −(8) d(9) )(10) +(11) e(12) −(13) f(14) ×(15) g(16)
     return{hint:'paren',
       toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.op('×'),T.lp(),T.n(c),T.op('−'),T.n(d),T.rp(),T.op('+'),T.n(e),T.op('−'),T.n(f),T.op('×'),T.n(g)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${a}+${b}=${i1}  och  ${c}−${d}=${i2}`,desc:'Lös alla parenteser i ett svep',hi:[[0,4],[6,10]],hiType:'paren',chain:`**${i1}** × **${i2}** + ${e} − ${f} × ${g}`},
+        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${a}+${b}=${i1}  och  ${c}−${d}=${i2}`,desc:'Lös alla parenteser i ett svep',hi:[[0,4],[6,10]],hiType:'paren',chain:`(**${i1}**) × (**${i2}**) + ${e} − ${f} × ${g}`},
         {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${i2}=${p1}  och  ${f}×${g}=${p2}`,desc:'',hi:[[4,10],[14,16]],hiType:'default',chain:`**${p1}** + ${e} − **${p2}**`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} + ${e} − ${p2} = ${ans}`,desc:'',hi:[[0,16]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===2){
-    const a=rnd(2,4),b=rnd(2,6),c=rnd(1,4),d=rnd(4,8),e=rnd(1,3),f=rnd(2,4),g=rnd(1,6);
+    const a=rnd(2,4),b=rndH(2,6),c=rnd(1,4),d=rndH(4,8),e=rnd(1,3),f=rnd(2,4),g=rnd(1,6);
     const i1=b+c,i2=d-e,p1=a*i1,p2=i2*f,ans=p1+p2-g;
     if(ans<0||ans>90) return genL5();
     // a(0) ×(1) ((2) b(3) +(4) c(5) )(6) +(7) ((8) d(9) −(10) e(11) )(12) ×(13) f(14) −(15) g(16)
     return{hint:'paren',
       toks:[T.n(a),T.op('×'),T.lp(),T.n(b),T.op('+'),T.n(c),T.rp(),T.op('+'),T.lp(),T.n(d),T.op('−'),T.n(e),T.rp(),T.op('×'),T.n(f),T.op('−'),T.n(g)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${b}+${c}=${i1}  och  ${d}−${e}=${i2}`,desc:'',hi:[[2,6],[8,12]],hiType:'paren',chain:`${a} × **${i1}** + **${i2}** × ${f} − ${g}`},
+        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${b}+${c}=${i1}  och  ${d}−${e}=${i2}`,desc:'',hi:[[2,6],[8,12]],hiType:'paren',chain:`${a} × (**${i1}**) + (**${i2}**) × ${f} − ${g}`},
         {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${a}×${i1}=${p1}  och  ${i2}×${f}=${p2}`,desc:'',hi:[[0,6],[12,14]],hiType:'default',chain:`**${p1}** + **${p2}** − ${g}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${g} = ${ans}`,desc:'',hi:[[0,16]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===3){
-    const a=rnd(2,5),b=rnd(1,3),c=rnd(1,3),d=rnd(2,4),e=rnd(2,4),f=rnd(1,3),g=rnd(2,3),h=rnd(1,8);
+    const a=rndH(2,5),b=rnd(1,3),c=rnd(1,3),d=rnd(2,4),e=rnd(2,4),f=rnd(1,3),g=rnd(2,3),h=rnd(1,8);
     const i1=a+b+c,i2=e+f,p1=i1*d,p2=i2*g,ans=p1-p2+h;
     if(ans<0||ans>90) return genL5();
     // ((0)a(1)+(2)b(3)+(4)c(5))(6)×(7)d(8)−(9)((10)e(11)+(12)f(13))(14)×(15)g(16)+(17)h(18)
     return{hint:'paren',
       toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.op('+'),T.n(c),T.rp(),T.op('×'),T.n(d),T.op('−'),T.lp(),T.n(e),T.op('+'),T.n(f),T.rp(),T.op('×'),T.n(g),T.op('+'),T.n(h)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${a}+${b}+${c}=${i1}  och  ${e}+${f}=${i2}`,desc:'',hi:[[0,6],[10,14]],hiType:'paren',chain:`**${i1}** × ${d} − **${i2}** × ${g} + ${h}`},
+        {badge:'Steg 1',rule:'Alla ( ) samtidigt',expr:`${a}+${b}+${c}=${i1}  och  ${e}+${f}=${i2}`,desc:'',hi:[[0,6],[10,14]],hiType:'paren',chain:`(**${i1}**) × ${d} − (**${i2}**) × ${g} + ${h}`},
         {badge:'Steg 2',rule:'Alla × samtidigt',expr:`${i1}×${d}=${p1}  och  ${i2}×${g}=${p2}`,desc:'',hi:[[6,8],[14,16]],hiType:'default',chain:`**${p1}** − **${p2}** + ${h}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${p1} − ${p2} + ${h} = ${ans}`,desc:'',hi:[[0,18]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
-  const a=rnd(2,4),b=rnd(2,5),c=rnd(2,3),d=rnd(2,4),e=rnd(4,8),f=rnd(1,3),g=rnd(2,4);
+  const a=rnd(2,4),b=rndH(2,5),c=rnd(2,3),d=rnd(2,4),e=rndH(4,8),f=rnd(1,3),g=rnd(2,4);
   const ip=c*d,i1=b+ip,i2=e-f,p1=a*i1,p2=i2*g,ans=p1+p2;
   if(ans>90) return genL5();
   // a(0)×(1)((2)b(3)+(4)c(5)×(6)d(7))(8)+(9)((10)e(11)−(12)f(13))(14)×(15)g(16)
@@ -742,14 +1143,14 @@ function genL6(){
   }
   function fracNumSub(){
     const q=pick([2,3,4]);
-    const b=rnd(1,4),a=q*rnd(3,6)+b;
+    const b=rnd(1,4),a=q*rndH(3,6)+b;
     const num=a-b;
     if(num%q!==0||num<1) return null;
     return{a,b,q,num,v:num/q,op:'−'};
   }
   function fracBoth(){
     const q=pick([2,3,4,6]);
-    const b=rnd(1,4),a=q*rnd(2,5)-b;
+    const b=rnd(1,4),a=q*rndH(2,5)-b;
     if(a<1) return null;
     const num=a+b;
     const d=rnd(1,3),c=q+d;
@@ -758,53 +1159,54 @@ function genL6(){
   }
   if(type===1){
     const f=fracNumExpr(); if(!f) return genL6();
-    const c=rnd(2,5),d=rnd(2,5),prod=c*d,ans=f.v+prod;
+    const c=rndH(2,5),d=rndH(2,5),prod=c*d,ans=f.v+prod;
     if(ans>70) return genL6();
     // FRAC(0) +(1) c(2) ×(3) d(4)
     return{hint:'muldiv',hasFrac:true,showParenToggle:true,
       toks:[T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('+'),T.n(c),T.op('×'),T.n(d)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} + ${f.b} = ${f.num}`,desc:'Räkna INUTI bråket precis som en parentes',hi:[[0,0]],hiType:'frac',chain:`**${f.num}** ÷ ${f.q} + ${c} × ${d}`},
-        {badge:'Steg 2',rule:'Bråk = division  och  × samtidigt',expr:`${f.num} ÷ ${f.q} = ${f.v}  och  ${c} × ${d} = ${prod}`,desc:'Bråket och × räknas före + och −',hi:[[0,0],[2,4]],hiType:'frac',chain:`**${f.v}** + **${prod}**`},
-        {badge:'Steg 3',rule:'Addition',expr:`${f.v} + ${prod} = ${ans}`,desc:'',hi:[[0,4]],hiType:'default',chain:`**${ans}**`},
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} + ${f.b} = ${f.num}`,desc:'Räkna INUTI bråket precis som en parentes',hi:[[0,0]],hiType:'frac',chain:`FRAC[**${f.num}**|${f.q}] + ${c} × ${d}`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`FRAC[${f.num}|${f.q}] = ${f.v}`,desc:'',hi:[[0,0]],hiType:'frac',chain:`**${f.v}** + ${c} × ${d}`},
+        {badge:'Steg 3',rule:'× FÖRE + och −',expr:`${c} × ${d} = ${prod}`,desc:'',hi:[[2,4]],hiType:'default',chain:`${f.v} + **${prod}**`},
+        {badge:'Steg 4',rule:'Addition',expr:`${f.v} + ${prod} = ${ans}`,desc:'',hi:[[0,4]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===2){
     const f=fracNumSub(); if(!f) return genL6();
-    const a=rnd(3,10),c=rnd(1,6),ans=a+f.v-c;
+    const a=rndH(3,10),c=rnd(1,6),ans=a+f.v-c;
     if(ans<0||ans>70) return genL6();
     // a(0) +(1) FRAC(2) −(3) c(4)
     return{hint:'muldiv',hasFrac:true,showParenToggle:true,
       toks:[T.n(a),T.op('+'),T.fr([T.n(f.a),T.op('−'),T.n(f.b)],[T.n(f.q)]),T.op('−'),T.n(c)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} − ${f.b} = ${f.num}`,desc:'Räkna INUTI bråket precis som en parentes',hi:[[2,2]],hiType:'frac',chain:`${a} + **${f.num}** ÷ ${f.q} − ${c}`},
-        {badge:'Steg 2',rule:'Bråk = division',expr:`${f.num} ÷ ${f.q} = ${f.v}`,desc:'',hi:[[2,2]],hiType:'frac',chain:`${a} + **${f.v}** − ${c}`},
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} − ${f.b} = ${f.num}`,desc:'Räkna INUTI bråket precis som en parentes',hi:[[2,2]],hiType:'frac',chain:`${a} + FRAC[**${f.num}**|${f.q}] − ${c}`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`FRAC[${f.num}|${f.q}] = ${f.v}`,desc:'',hi:[[2,2]],hiType:'frac',chain:`${a} + **${f.v}** − ${c}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${a} + ${f.v} − ${c} = ${ans}`,desc:'',hi:[[0,4]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===3){
     const f=fracBoth(); if(!f) return genL6();
-    const e=rnd(2,5),ans=f.v*e;
+    const e=rndH(2,5),ans=f.v*e;
     if(ans>70) return genL6();
     // FRAC(0) ×(1) e(2)
     return{hint:'muldiv',hasFrac:true,showParenToggle:true,
       toks:[T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.c),T.op('−'),T.n(f.d)]),T.op('×'),T.n(e)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${f.a} + ${f.b} = ${f.num}`,desc:'Räkna täljaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`**${f.num}** ÷ (${f.c} − ${f.d}) × ${e}`},
-        {badge:'Steg 2',rule:'Nämnaren = osynlig ( )',expr:`${f.c} − ${f.d} = ${f.den}`,desc:'Räkna nämnaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`${f.num} ÷ **${f.den}** × ${e}`},
-        {badge:'Steg 3',rule:'Bråk = division  och  × samtidigt',expr:`${f.num} ÷ ${f.den} = ${f.v}  och  ${f.v} × ${e} = ${ans}`,desc:'',hi:[[0,2]],hiType:'frac',chain:`**${ans}**`},
+        {badge:'Steg 1',rule:'Täljare och nämnare = osynliga ( )',expr:`${f.a} + ${f.b} = ${f.num}  och  ${f.c} − ${f.d} = ${f.den}`,desc:'Räkna täljaren och nämnaren som parenteser',hi:[[0,0]],hiType:'frac',chain:`FRAC[**${f.num}**|**${f.den}**] × ${e}`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`FRAC[${f.num}|${f.den}] = ${f.v}`,desc:'',hi:[[0,0]],hiType:'frac',chain:`**${f.v}** × ${e}`},
+        {badge:'Steg 3',rule:'Multiplikation',expr:`${f.v} × ${e} = ${ans}`,desc:'',hi:[[0,2]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===4){
     const f=fracNumExpr(); if(!f) return genL6();
-    const a=rnd(2,4),b=rnd(2,5),g=rnd(1,6),prod=a*b,ans=prod+f.v-g;
+    const a=rnd(2,4),b=rndH(2,5),g=rnd(1,6),prod=a*b,ans=prod+f.v-g;
     if(ans<0||ans>80) return genL6();
     // a(0) ×(1) b(2) +(3) FRAC(4) −(5) g(6)
     return{hint:'muldiv',hasFrac:true,showParenToggle:true,
       toks:[T.n(a),T.op('×'),T.n(b),T.op('+'),T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('−'),T.n(g)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Täljaren = osynlig ( )  och  × samtidigt',expr:`${f.a} + ${f.b} = ${f.num}  och  ${a} × ${b} = ${prod}`,desc:'Täljaren räknas som en parentes — × räknas parallellt',hi:[[0,2],[4,4]],hiType:'frac',chain:`**${prod}** + **${f.num}** ÷ ${f.q} − ${g}`},
-        {badge:'Steg 2',rule:'Bråk = division',expr:`${f.num} ÷ ${f.q} = ${f.v}`,desc:'',hi:[[4,4]],hiType:'frac',chain:`${prod} + **${f.v}** − ${g}`},
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )  och  × samtidigt',expr:`${f.a} + ${f.b} = ${f.num}  och  ${a} × ${b} = ${prod}`,desc:'Täljaren räknas som en parentes — × räknas parallellt',hi:[[0,2],[4,4]],hiType:'frac',chain:`**${prod}** + FRAC[**${f.num}**|${f.q}] − ${g}`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`FRAC[${f.num}|${f.q}] = ${f.v}`,desc:'',hi:[[4,4]],hiType:'frac',chain:`${prod} + **${f.v}** − ${g}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${prod} + ${f.v} − ${g} = ${ans}`,desc:'',hi:[[0,6]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
@@ -812,23 +1214,22 @@ function genL6(){
   const num=a*b;
   const d=rnd(1,q-1),c=q-d;
   if(c<1||num%q!==0) return genL6();
-  const v=num/q,e=rnd(2,8),ans=v+e;
+  const v=num/q,e=rndH(2,8),ans=v+e;
   if(ans>70) return genL6();
   // FRAC(0) +(1) e(2)
   return{hint:'muldiv',hasFrac:true,showParenToggle:true,
     toks:[T.fr([T.n(a),T.op('×'),T.n(b)],[T.n(c),T.op('+'),T.n(d)]),T.op('+'),T.n(e)],
     ans,steps:[
-      {badge:'Steg 1',rule:'Täljaren = osynlig ( )',expr:`${a} × ${b} = ${num}`,desc:'Räkna täljaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`**${num}** ÷ (${c} + ${d}) + ${e}`},
-      {badge:'Steg 2',rule:'Nämnaren = osynlig ( )',expr:`${c} + ${d} = ${q}`,desc:'Räkna nämnaren INUTI bråket',hi:[[0,0]],hiType:'frac',chain:`${num} ÷ **${q}** + ${e}`},
-      {badge:'Steg 3',rule:'Bråk = division',expr:`${num} ÷ ${q} = ${v}`,desc:'',hi:[[0,0]],hiType:'frac',chain:`**${v}** + ${e}`},
-      {badge:'Steg 4',rule:'Addition',expr:`${v} + ${e} = ${ans}`,desc:'',hi:[[0,2]],hiType:'default',chain:`**${ans}**`},
+      {badge:'Steg 1',rule:'Täljare och nämnare = osynliga ( )',expr:`${a} × ${b} = ${num}  och  ${c} + ${d} = ${q}`,desc:'Räkna täljaren och nämnaren som parenteser',hi:[[0,0]],hiType:'frac',chain:`FRAC[**${num}**|**${q}**] + ${e}`},
+      {badge:'Steg 2',rule:'Bråk = division',expr:`FRAC[${num}|${q}] = ${v}`,desc:'',hi:[[0,0]],hiType:'frac',chain:`**${v}** + ${e}`},
+      {badge:'Steg 3',rule:'Addition',expr:`${v} + ${e} = ${ans}`,desc:'',hi:[[0,2]],hiType:'default',chain:`**${ans}**`},
     ]};
 }
 
 function genL7(){
   const type=rnd(1,4);
   if(type===1){
-    const b=rnd(2,5),a=rnd(2,8),c=rnd(2,4),d=rnd(1,6);
+    const b=rndH(2,5),a=rndH(2,8),c=rnd(2,4),d=rnd(1,6);
     const pow=b*b,prod=c*d,ans=a+pow-prod;
     if(ans<0||ans>80) return genL7();
     // a(0) +(1) b(2) ²(3) −(4) c(5) ×(6) d(7)
@@ -840,7 +1241,7 @@ function genL7(){
       ]};
   }
   if(type===2){
-    const a=rnd(2,4),b=rnd(2,5),c=rnd(1,8);
+    const a=rnd(2,4),b=rndH(2,5),c=rnd(1,8);
     const pow=b*b,ans=a*pow+c;
     if(ans>90) return genL7();
     // a(0) ×(1) b(2) ²(3) +(4) c(5)
@@ -852,7 +1253,7 @@ function genL7(){
       ]};
   }
   if(type===3){
-    const a=rnd(2,5),b=rnd(2,4),c=rnd(2,4),d=rnd(2,4);
+    const a=rndH(2,5),b=rnd(2,4),c=rnd(2,4),d=rnd(2,4);
     const p1=a*a,p2=b*b,prod=c*d,ans=p1+p2-prod;
     if(ans<0||ans>80) return genL7();
     // a(0)²(1)+(2)b(3)²(4)−(5)c(6)×(7)d(8)
@@ -863,7 +1264,7 @@ function genL7(){
         {badge:'Steg 2',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${prod} = ${ans}`,desc:'',hi:[[0,8]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
-  const a=rnd(2,8),b=rnd(2,3),c=rnd(2,4),d=rnd(1,8);
+  const a=rndH(2,8),b=rnd(2,3),c=rnd(2,4),d=rnd(1,8);
   const pow=c*c,prod=b*pow,ans=a+prod-d;
   if(ans<0||ans>80) return genL7();
   // a(0)+(1)b(2)×(3)c(4)²(5)−(6)d(7)
@@ -879,20 +1280,20 @@ function genL7(){
 function genL8(){
   const type=rnd(1,4);
   if(type===1){
-    const a=rnd(2,5),b=rnd(1,4),c=rnd(2,5),d=rnd(1,5);
+    const a=rndH(2,5),b=rnd(1,4),c=rndH(2,5),d=rnd(1,5);
     const inner=a+b,pow=inner*inner,prod=c*d,ans=pow-prod;
     if(ans<0||ans>90) return genL8();
     // ((0)a(1)+(2)b(3))(4)²(5)−(6)c(7)×(8)d(9)
     return{hint:'pow',
       toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.pw(2),T.op('−'),T.n(c),T.op('×'),T.n(d)],
       ans,steps:[
-        {badge:'Steg 1',rule:'( ) FÖRST — sedan x²',expr:`${a}+${b}=${inner}  →  ${inner}²=${pow}`,desc:'Parentes räknas FÖRE potens',hi:[[0,5]],hiType:'paren',chain:`**${pow}** − ${c} × ${d}`},
+        {badge:'Steg 1',rule:'( ) FÖRST — sedan x²',expr:`${a}+${b}=${inner}  →  ${inner}²=${pow}`,desc:'Parentes räknas FÖRE potens',hi:[[0,5]],hiType:'paren',chain:`(**${pow}**) − ${c} × ${d}`},
         {badge:'Steg 2',rule:'× FÖRE + och −',expr:`${c} × ${d} = ${prod}`,desc:'',hi:[[7,9]],hiType:'default',chain:`${pow} − **${prod}**`},
         {badge:'Steg 3',rule:'Subtraktion',expr:`${pow} − ${prod} = ${ans}`,desc:'',hi:[[5,9]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===2){
-    const a=rnd(2,5),b=rnd(2,5),c=rnd(1,3),d=rnd(2,4),e=rnd(1,8);
+    const a=rndH(2,5),b=rndH(2,5),c=rnd(1,3),d=rnd(2,4),e=rnd(1,8);
     const pow=a*a,inner=b+c,prod=inner*d,ans=pow+prod-e;
     if(ans<0||ans>90) return genL8();
     // a(0)²(1)+(2)((3)b(4)+(5)c(6))(7)×(8)d(9)−(10)e(11)
@@ -905,14 +1306,14 @@ function genL8(){
       ]};
   }
   if(type===3){
-    const a=rnd(4,7),b=rnd(1,3),c=rnd(2,4),d=rnd(1,8);
+    const a=rndH(4,7),b=rnd(1,3),c=rnd(2,4),d=rnd(1,8);
     const inner=a-b,p1=inner*inner,p2=c*c,ans=p1+p2-d;
     if(ans<0||ans>90) return genL8();
     // ((0)a(1)−(2)b(3))(4)²(5)+(6)c(7)²(8)−(9)d(10)
     return{hint:'pow',
       toks:[T.lp(),T.n(a),T.op('−'),T.n(b),T.rp(),T.pw(2),T.op('+'),T.n(c),T.pw(2),T.op('−'),T.n(d)],
       ans,steps:[
-        {badge:'Steg 1',rule:'( ) FÖRST — sedan alla x²',expr:`${a}−${b}=${inner}  →  ${inner}²=${p1}  och  ${c}²=${p2}`,desc:'',hi:[[0,8]],hiType:'paren',chain:`**${p1}** + **${p2}** − ${d}`},
+        {badge:'Steg 1',rule:'( ) FÖRST — sedan alla x²',expr:`${a}−${b}=${inner}  →  ${inner}²=${p1}  och  ${c}²=${p2}`,desc:'',hi:[[0,8]],hiType:'paren',chain:`(**${p1}**) + (**${p2}**) − ${d}`},
         {badge:'Steg 2',rule:'Vänster → höger',expr:`${p1} + ${p2} − ${d} = ${ans}`,desc:'',hi:[[5,10]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
@@ -949,23 +1350,24 @@ function genL9(){
     return{hint:'pow',hasFrac:true,showParenToggle:true,
       toks:[T.lp(),T.n(a),T.op('+'),T.n(b),T.rp(),T.pw(2),T.op('−'),T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('×'),T.n(e)],
       ans,steps:[
-        {badge:'Steg 1',rule:'( ) ALLTID FÖRST',expr:`${a} + ${b} = ${inner}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`**${inner}**^2 − ${f.a}+${f.b} ÷ ${f.q} × ${e}`},
-        {badge:'Steg 2',rule:'x²  och  täljaren = osynlig ( )',expr:`${inner}² = ${pow}  och  ${f.a} + ${f.b} = ${f.num}`,desc:'Potens och täljare räknas i samma svep',hi:[[4,5],[7,7]],hiType:'pow',chain:`**${pow}** − **${f.num}** ÷ ${f.q} × ${e}`},
-        {badge:'Steg 3',rule:'Bråk = division  och  × samtidigt',expr:`${f.num} ÷ ${f.q} = ${f.v}  och  ${f.v} × ${e} = ${prod}`,desc:'',hi:[[7,9]],hiType:'frac',chain:`${pow} − **${prod}**`},
+        {badge:'Steg 1',rule:'( ) ALLTID FÖRST',expr:`${a} + ${b} = ${inner}`,desc:'',hi:[[0,4]],hiType:'paren',chain:`(**${inner}**)^2 − FRAC[${f.a}+${f.b}|${f.q}] × ${e}`},
+        {badge:'Steg 2',rule:'x²  och  täljaren = osynlig ( )',expr:`${inner}² = ${pow}  och  ${f.a} + ${f.b} = ${f.num}`,desc:'Potens och täljare räknas i samma svep',hi:[[4,5],[7,7]],hiType:'pow',chain:`**${pow}** − FRAC[**${f.num}**|${f.q}] × ${e}`},
+        {badge:'Steg 3',rule:'Bråk = division',expr:`FRAC[${f.num}|${f.q}] = ${f.v}`,desc:'',hi:[[7,7]],hiType:'frac',chain:`${pow} − **${f.v}** × ${e}`},
+        {badge:'Steg 4',rule:'Multiplikation',expr:`${f.v} × ${e} = ${prod}`,desc:'',hi:[[7,9]],hiType:'default',chain:`${pow} − **${prod}**`},
         {badge:'Steg 4',rule:'Subtraktion',expr:`${pow} − ${prod} = ${ans}`,desc:'',hi:[[5,9]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   if(type===2){
     const f=mkFrac(); if(!f) return genL9();
-    const a=rnd(2,5),d=rnd(2,4),e=rnd(2,4);
+    const a=rndH(2,5),d=rnd(2,4),e=rnd(2,4);
     const pow=a*a,prod=d*e,ans=pow+f.v-prod;
     if(ans<0||ans>90) return genL9();
     // a(0)²(1)+(2)FRAC(3)−(4)d(5)×(6)e(7)
     return{hint:'pow',hasFrac:true,showParenToggle:true,
       toks:[T.n(a),T.pw(2),T.op('+'),T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('−'),T.n(d),T.op('×'),T.n(e)],
       ans,steps:[
-        {badge:'Steg 1',rule:'x²  och  täljaren = osynlig ( )  och  ×',expr:`${a}² = ${pow}  och  ${f.a} + ${f.b} = ${f.num}  och  ${d} × ${e} = ${prod}`,desc:'Potens, parentes i täljare och × räknas i samma svep',hi:[[0,1],[3,3],[5,7]],hiType:'pow',chain:`**${pow}** + **${f.num}** ÷ ${f.q} − **${prod}**`},
-        {badge:'Steg 2',rule:'Bråk = division',expr:`${f.num} ÷ ${f.q} = ${f.v}`,desc:'',hi:[[3,3]],hiType:'frac',chain:`${pow} + **${f.v}** − ${prod}`},
+        {badge:'Steg 1',rule:'x²  och  täljaren = osynlig ( )  och  ×',expr:`${a}² = ${pow}  och  ${f.a} + ${f.b} = ${f.num}  och  ${d} × ${e} = ${prod}`,desc:'Potens, parentes i täljare och × räknas i samma svep',hi:[[0,1],[3,3],[5,7]],hiType:'pow',chain:`**${pow}** + FRAC[**${f.num}**|${f.q}] − **${prod}**`},
+        {badge:'Steg 2',rule:'Bråk = division',expr:`FRAC[${f.num}|${f.q}] = ${f.v}`,desc:'',hi:[[3,3]],hiType:'frac',chain:`${pow} + **${f.v}** − ${prod}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${pow} + ${f.v} − ${prod} = ${ans}`,desc:'',hi:[[0,7]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
@@ -978,14 +1380,14 @@ function genL9(){
     return{hint:'pow',hasFrac:true,showParenToggle:true,
       toks:[T.fr([T.n(f.a),T.op('+'),T.n(f.b)],[T.n(f.q)]),T.op('+'),T.lp(),T.n(c),T.op('+'),T.n(d),T.rp(),T.pw(2),T.op('−'),T.n(e)],
       ans,steps:[
-        {badge:'Steg 1',rule:'Täljaren = osynlig ( )  och  ( ) ALLTID FÖRST',expr:`${f.a} + ${f.b} = ${f.num}  och  ${c} + ${d} = ${inner}`,desc:'Räkna täljaren och parentesen i samma svep',hi:[[0,0],[2,6]],hiType:'frac',chain:`**${f.num}** ÷ ${f.q} + **${inner}**^2 − ${e}`},
-        {badge:'Steg 2',rule:'Bråk = division  och  x²',expr:`${f.num} ÷ ${f.q} = ${f.v}  och  ${inner}² = ${pow}`,desc:'',hi:[[0,0],[6,7]],hiType:'frac',chain:`**${f.v}** + **${pow}** − ${e}`},
+        {badge:'Steg 1',rule:'Täljaren = osynlig ( )  och  ( ) ALLTID FÖRST',expr:`${f.a} + ${f.b} = ${f.num}  och  ${c} + ${d} = ${inner}`,desc:'Räkna täljaren och parentesen i samma svep',hi:[[0,0],[2,6]],hiType:'frac',chain:`FRAC[**${f.num}**|${f.q}] + **${inner}**^2 − ${e}`},
+        {badge:'Steg 2',rule:'Bråk = division  och  x²',expr:`FRAC[${f.num}|${f.q}] = ${f.v}  och  ${inner}² = ${pow}`,desc:'',hi:[[0,0],[6,7]],hiType:'frac',chain:`**${f.v}** + **${pow}** − ${e}`},
         {badge:'Steg 3',rule:'Vänster → höger',expr:`${f.v} + ${pow} − ${e} = ${ans}`,desc:'',hi:[[0,9]],hiType:'default',chain:`**${ans}**`},
       ]};
   }
   const q=pick([2,3,4]),c=rnd(2,4),d=rnd(2,4);
   const num=c*d; if(num%q!==0) return genL9();
-  const a=rnd(4,7),b=rnd(1,3),e=rnd(1,8);
+  const a=rndH(4,7),b=rnd(1,3),e=rnd(1,8);
   const inner=a-b; if(inner<1) return genL9();
   const pow=inner*inner,v=num/q,ans=pow+v+e;
   if(ans>90) return genL9();
@@ -996,7 +1398,7 @@ function genL9(){
       {badge:'Steg 1',rule:'( ) Parentes',expr:`${a} − ${b} = ${inner}`,desc:'',hi:[[0,4]],hiType:'paren'},
       {badge:'Steg 2',rule:'x² Potens',expr:`${inner}² = ${pow}`,desc:'',hi:[[4,5]],hiType:'pow'},
       {badge:'Steg 3',rule:'Täljaren = osynlig ( )',expr:`${c} × ${d} = ${num}`,desc:'',hi:[[7,7]],hiType:'frac'},
-      {badge:'Steg 4',rule:'Bråket = division',expr:`${num} ÷ ${q} = ${v}`,desc:'',hi:[[7,7]],hiType:'frac'},
+      {badge:'Steg 4',rule:'Bråket = division',expr:`FRAC[${num}|${q}] = ${v}`,desc:'',hi:[[7,7]],hiType:'frac'},
       {badge:'Steg 5',rule:'Vänster → höger',expr:`${pow} + ${v} + ${e} = ${ans}`,desc:'',hi:[[5,9]],hiType:'default'},
     ]};
 }
@@ -1028,36 +1430,78 @@ function tokStr(toks){
 
 // Render a plain chain string (no existing HTML) into coloured HTML
 // Tokenises character by character to avoid regex touching HTML
+// Convert "a ÷ b" to inline stacked fraction in prompt/chain context
+function fracifyDivision(s){
+  return s.replace(/(\-?\d+)\s*÷\s*(\-?\d+)/g, (_, num, den) => {
+    return `<span class="inline-frac"><span class="inline-fnum">${num}</span><span class="inline-fden">${den}</span></span>`;
+  });
+}
+
 function chainStr(s){
-  // Plain text chain string → HTML
-  // **text** = highlight the active part in this step (yellow)
-  const ops = new Set(['×','÷','−','+']);
+  // FRAC[num|den] → stacked frac HTML (num/den may contain ** markers)
+  // Process FRAC[] first so inner ** are handled by the main loop via recursion
+  function renderFracToken(num, den){
+    const numH = chainStr(num);
+    const denH = chainStr(den);
+    return `<span class="inline-frac"><span class="inline-fnum">${numH}</span><span class="inline-fden">${denH}</span></span>`;
+  }
+
+  // Split on FRAC[...] tokens, process each segment
+  const fracPat = /FRAC\[([^|]+)\|([^\]]+)\]/g;
+  let lastIdx=0, out='';
+  let fm;
+  while((fm=fracPat.exec(s))!==null){
+    // Process text before this FRAC
+    out+=chainStrPlain(s.slice(lastIdx, fm.index));
+    out+=renderFracToken(fm[1], fm[2]);
+    lastIdx=fm.index+fm[0].length;
+  }
+  out+=chainStrPlain(s.slice(lastIdx));
+  return out;
+}
+
+function chainStrPlain(s){
+  // Render plain chain text (no FRAC[]) to HTML
   let out='', i=0, inHi=false;
+  // Track if we're right after an opening paren — means − is a sign, not operator
+  let afterOpen=false;
   while(i<s.length){
-    // highlight markers **
     if(s[i]==='*'&&s[i+1]==='*'){
       if(!inHi){ out+='<span class="chain-hi">'; inHi=true; }
       else     { out+='</span>'; inHi=false; }
       i+=2; continue;
     }
     const ch=s[i];
-    if(ops.has(ch)){
-      out+=`<span class="eo"> ${ch} </span>`; i++;
+    if(ch==='×'){
+      out+=`<span class="eo op-mul"> · </span>`; i++; afterOpen=false;
+    } else if(ch==='÷'){
+      out+=`<span class="eo op-div"> ÷ </span>`; i++; afterOpen=false;
+    } else if(ch==='−'){
+      if(afterOpen){
+        // Negative sign inside parens: (−15) — render tight, red, no spaces
+        out+=`<span class="op-sub">−</span>`; i++;
+      } else {
+        out+=`<span class="eo op-sub"> − </span>`; i++;
+      }
+      afterOpen=false;
+    } else if(ch==='+'){
+      out+=`<span class="eo op-add"> + </span>`; i++; afterOpen=false;
     } else if(ch==='^'){
       let exp=''; i++;
-      while(i<s.length && s[i]>='0'&&s[i]<='9'){ exp+=s[i]; i++; }
-      out+=`<span class="ev">${exp}</span>`;
+      while(i<s.length&&s[i]>='0'&&s[i]<='9'){ exp+=s[i]; i++; }
+      out+=`<span class="ev">${exp}</span>`; afterOpen=false;
     } else if(ch==='('){
-      out+=`<span class="ep">(</span>`; i++;
+      out+=`<span class="ep">(</span>`; i++; afterOpen=true;
     } else if(ch===')'){
-      out+=`<span class="ep">)</span>`; i++;
+      out+=`<span class="ep">)</span>`; i++; afterOpen=false;
     } else {
-      out+=ch; i++;
+      out+=ch; i++; afterOpen=false;
     }
   }
   if(inHi) out+='</span>';
   return out;
 }
+
 
 // addChains: chains are now explicit in generators; this just returns data as-is
 function addChains(data){ return data; }
@@ -1065,22 +1509,34 @@ function addChains(data){ return data; }
 // ══════════════════════════════════════
 //  STATE & UI
 // ══════════════════════════════════════
+const STREAK_TARGET=5;
+let streaks={}; // level → current streak count
+let bestStreaks={}; // level → best streak achieved
+
+let wrongLog=[]; // {expr, correct, given} per session
+let simpState=null; // stegvis förkortning
+
 let state={
-  level:4,mode:'guide',timedSeconds:60,
+  level:4,mode:'guide',timedSeconds:60,hardMode:false,
+  currentStreak:0,
   correct:0,total:0,
   currentAnswer:null,currentSteps:null,currentHint:null,currentToks:null,
   showParenToggle:false,parensVisible:false,
-  stepsRevealed:0,timerInterval:null,timeLeft:60,answered:false
+  stepsRevealed:0,studentStepsRevealed:0,solutionStepsRevealed:0,
+  timerInterval:null,timeLeft:60,answered:false
 };
 
 function buildLevelGrids(){
   const gno=document.getElementById('grid-nopow');
   const gpo=document.getElementById('grid-pow');
-  gno.innerHTML=''; gpo.innerHTML='';
+  const gne=document.getElementById('grid-neg');
+  const gfr=document.getElementById('grid-frac');
+  gno.innerHTML=''; gpo.innerHTML=''; if(gne) gne.innerHTML=''; if(gfr) gfr.innerHTML='';
   LEVELS.forEach(lv=>{
     const btn=document.createElement('button');
     const isDefault=(lv.id===state.level);
     btn.className='level-btn'+(isDefault?' selected':'');
+    btn.dataset.levelId=lv.id;
     btn.style.borderTop=`3px solid ${lv.color}`;
     btn.innerHTML=`<div class="lbl">${lv.label}</div><div class="ltitle">${lv.title}</div><div class="lexample">${lv.exampleHTML}</div>`;
     btn.onclick=()=>{
@@ -1092,14 +1548,81 @@ function buildLevelGrids(){
       btn.classList.add('selected'); state.level=lv.id;
       startExercise();
     };
-    (lv.section==='nopow'?gno:gpo).appendChild(btn);
+    (lv.section==='nopow'?gno:lv.section==='neg'?(gne||gpo):lv.section==='frac'?(gfr||gpo):gpo).appendChild(btn);
   });
+}
+
+// Colour modes for operators
+const COLOUR_MODES=[
+  {name:'Standard',  mul:'#60a5fa', div:'#fb923c', add:'#4ade80', sub:'#ff6b6b'},
+  {name:'Monokrom',  mul:'#8b90a8', div:'#8b90a8', add:'#8b90a8', sub:'#8b90a8'},
+  {name:'Kontrast',  mul:'#ffd700', div:'#ff6b6b', add:'#6bffc8', sub:'#c084fc'},
+];
+let colourModeIdx=0;
+function applyColourMode(){
+  const m=COLOUR_MODES[colourModeIdx];
+  document.documentElement.style.setProperty('--c-mul', m.mul);
+  document.documentElement.style.setProperty('--c-div', m.div);
+  document.documentElement.style.setProperty('--c-add', m.add);
+  document.documentElement.style.setProperty('--c-sub', m.sub);
+  const btn=document.getElementById('colour-btn');
+  if(btn) btn.title='Färgläge: '+m.name+' (klicka för nästa)';
+}
+function cycleColourMode(){
+  colourModeIdx=(colourModeIdx+1)%COLOUR_MODES.length;
+  applyColourMode();
+}
+applyColourMode();
+
+function toggleBottom(id, btn){
+  const content=document.getElementById(id);
+  const isOpen=content.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+}
+
+function switchTab(tab){
+  const sv=document.getElementById('student-view');
+  const solv=document.getElementById('solution-view');
+  const tabS=document.getElementById('tab-student');
+  const tabSol=document.getElementById('tab-solution');
+  const sc=document.getElementById('student-controls');
+
+  if(tab==='solution'){
+    sv.style.display='none'; solv.style.display='block';
+    tabS.classList.remove('active'); tabSol.classList.add('active');
+    if(sc) sc.style.display='none';
+  } else {
+    // Switching back to student — reset student chain so they can retry same problem
+    solv.style.display='none'; sv.style.display='block';
+    tabSol.classList.remove('active'); tabS.classList.add('active');
+    if(sc) sc.style.display='flex';
+    // Reset student progress but keep the same exercise
+    state.studentStepsRevealed=0;
+    initStepInputs();
+    const btn=document.getElementById('next-step-btn');
+    if(btn){btn.disabled=false;btn.textContent='Börja lösa ▶';}
+    document.getElementById('expression-box').innerHTML=renderToks(state.currentToks);
+    if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
+  }
+}
+// Keep old name for compatibility
+function toggleHelpView(){ switchTab(document.getElementById('tab-solution').classList.contains('active')?'student':'solution'); }
+
+function markNextStep(){
+  // Highlight the next unrevealed step in the expression box
+  const steps=state.currentSteps;
+  const i=state.studentStepsRevealed;
+  if(i<steps.length) applyStepHighlight(steps[i]);
 }
 
 function selectMode(mode,el){
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected'); state.mode=mode;
   document.getElementById('time-group').style.display=mode==='timed'?'flex':'none';
+  // Update label in collapsed header
+  const labels={guide:'🧠 Steg-för-steg', timed:'⏱ Tävlingsläge'};
+  const lbl=document.getElementById('mode-label-short');
+  if(lbl) lbl.textContent=labels[mode]||'';
 }
 function selectTime(sec,el){
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
@@ -1112,9 +1635,11 @@ function startExercise(){
   const tw=document.getElementById('timer-bar-wrap'),tb=document.getElementById('time-display-box');
   if(state.mode==='timed'){tw.style.display='block';tb.style.display='block';state.timeLeft=state.timedSeconds;startTimer();}
   else{tw.style.display='none';tb.style.display='none';}
-  const names={analog:'✏️ Analogläge',guide:'🧠 Steg-för-steg',timed:'⏱ Tävlingsläge'};
-  document.getElementById('ex-mode-label').textContent=names[state.mode];
-  document.getElementById('ex-mode-tag').textContent=names[state.mode];
+  const names={guide:'🧠 Steg-för-steg',timed:'⏱ Tävlingsläge'};
+  const modeLabel=document.getElementById('ex-mode-label');
+  if(modeLabel) modeLabel.textContent=names[state.mode];
+  const modeTag=document.getElementById('ex-mode-tag');
+  if(modeTag) modeTag.textContent=names[state.mode];
   generateExercise();
 }
 
@@ -1140,6 +1665,8 @@ function generateExercise(){
   state.showParenToggle=!!(data.showParenToggle||lvl.showParenToggle);
   state.parensVisible=false;
   state.stepsRevealed=0;
+  state.studentStepsRevealed=0;
+  state.solutionStepsRevealed=0;
   state.answered=false;
 
   // Render expression with NO highlights initially
@@ -1151,45 +1678,128 @@ function generateExercise(){
   tog.classList.remove('on');
   tog.innerHTML='<span class="pt-dot"></span> Visa osynliga parenteser';
 
-  const ga=document.getElementById('guide-area'),sc=document.getElementById('steps-container'),gc=document.getElementById('guide-controls');
-  sc.innerHTML=''; gc.innerHTML='';
+  document.getElementById('steps-container').innerHTML='';
+  const hp=document.getElementById('help-panel');
   if(state.mode==='guide'){
-    ga.style.display='block';
+    hp.style.display='block';
     initChainBox();
-    const btn=document.createElement('button'); btn.className='guide-btn';
-    btn.textContent='Visa nästa steg ▶'; btn.onclick=revealNextStep; gc.appendChild(btn);
-  } else ga.style.display='none';
+    initStepInputs();
+    // Reset to student tab
+    document.getElementById('student-view').style.display='block';
+    document.getElementById('solution-view').style.display='none';
+    const tabS=document.getElementById('tab-student');
+    const tabSol=document.getElementById('tab-solution');
+    if(tabS) tabS.classList.add('active');
+    if(tabSol) tabSol.classList.remove('active');
+    const sc2=document.getElementById('student-controls');
+    if(sc2) sc2.style.display='flex';
+    // Toolbar: Nästa steg + Markera
+    const sc=document.getElementById('student-controls');
+    sc.innerHTML='';
+    const nextStepBtn=document.createElement('button');
+    nextStepBtn.className='guide-btn primary'; nextStepBtn.id='next-step-btn';
+    nextStepBtn.textContent='Börja lösa ▶';
+    nextStepBtn.onclick=revealNextStudentStep;
+    sc.appendChild(nextStepBtn);
+
+    // Solution controls
+    const solc=document.getElementById('solution-controls');
+    solc.innerHTML='';
+    const solBtn=document.createElement('button');
+    solBtn.className='guide-btn secondary'; solBtn.id='solution-btn';
+    solBtn.textContent='Visa lösning steg för steg ▶';
+    solBtn.onclick=revealNextSolutionStep;
+    solc.appendChild(solBtn);
+  } else {
+    hp.style.display='none';
+  }
+
+  // Switch between int-answer and frac-answer inputs
+  const lvlDef=LEVELS.find(l=>l.id===state.level);
+  state.isFracLevel = !!(lvlDef && lvlDef.isFracLevel);
+  state.isFracAns   = !!(data.isFracAns);
 
   const inp=document.getElementById('answer-input');
-  inp.value=''; inp.className='answer-input'; inp.disabled=false;
+  const fracWrap=document.getElementById('frac-answer-wrap');
+  const numInp=document.getElementById('ans-num');
+  const denInp=document.getElementById('ans-den');
+
+  if(state.isFracLevel){
+    inp.style.display='none';
+    fracWrap.style.display='inline-flex';
+    numInp.value=''; numInp.className='frac-answer-input frac-inp-num'; numInp.disabled=false;
+    denInp.value=''; denInp.className='frac-answer-input frac-inp-den'; denInp.disabled=false;
+    // Rensa förkortningskedjan
+    simpState = null;
+    const chainArea = document.getElementById('simp-chain-area');
+    if(chainArea){ chainArea.innerHTML=''; chainArea.style.display='none'; }
+    // Återställ = och check-btn
+    const eqMain=document.getElementById('eq-sign-main');
+    if(eqMain) eqMain.style.display='';
+    document.getElementById('check-btn').style.display='block';
+    setTimeout(()=>numInp.focus(), 80);
+  } else {
+    inp.style.display='block';
+    fracWrap.style.display='none';
+    inp.value=''; inp.className='answer-input'; inp.disabled=false;
+    inp.blur();
+    setTimeout(()=>inp.focus(),50);
+  }
   document.getElementById('feedback-banner').style.display='none';
   document.getElementById('next-btn').style.display='none';
-  document.getElementById('check-btn').disabled=false;
+  const cbtn = document.getElementById('check-btn');
+  cbtn.disabled=false;
+  cbtn.style.display='block';
   document.getElementById('skip-btn').disabled=false;
-  setTimeout(()=>inp.focus(),50);
 }
 
-const HINT_MAP={paren:'rh-paren',pow:'rh-pow',muldiv:'rh-muldiv',addsub:'rh-addsub'};
+const HINT_MAP={paren:'rh-paren',pow:'rh-pow',muldiv:'rh-muldiv',addsub:'rh-addsub',frac:'rh-muldiv'};
 function highlightHint(h){
   document.querySelectorAll('.rh-chip').forEach(c=>c.classList.remove('active'));
   const id=HINT_MAP[h]; if(id) document.getElementById(id).classList.add('active');
 }
 
 // Apply step highlight to expression box
+function expandHiSet(toks, hiSet){
+  // If any token inside a paren group is highlighted, highlight the whole group
+  // Find matching lp/rp pairs
+  const stack=[], pairs=[];
+  toks.forEach((tk,i)=>{
+    if(tk.t==='lp') stack.push(i);
+    else if(tk.t==='rp' && stack.length){ const s=stack.pop(); pairs.push([s,i]); }
+  });
+  // For each pair, if any token in [s..e] is in hiSet, add all [s..e]
+  let changed=true;
+  while(changed){
+    changed=false;
+    for(const [s,e] of pairs){
+      let anyHi=false;
+      for(let i=s;i<=e;i++) if(hiSet.has(i)){anyHi=true;break;}
+      if(anyHi){
+        for(let i=s;i<=e;i++) if(!hiSet.has(i)){hiSet.add(i);changed=true;}
+      }
+    }
+  }
+  return hiSet;
+}
+
 function applyStepHighlight(step){
   if(!step||!step.hi) return;
-  const hiSet=new Set();
+  let hiSet=new Set();
   // hi is always array of [start,end] pairs
   for(const range of step.hi){
     if(Array.isArray(range[0])){
-      // nested: [[s1,e1],[s2,e2]]
       for(const [s,e] of range) for(let i=s;i<=e;i++) hiSet.add(i);
     } else {
       const [s,e]=range; for(let i=s;i<=e;i++) hiSet.add(i);
     }
   }
+  // Expand to full paren groups so (a+b)×c highlights all of (a+b) not just )
+  hiSet = expandHiSet(state.currentToks, hiSet);
   document.getElementById('expression-box').innerHTML=renderToks(state.currentToks,hiSet,step.hiType||'default');
-  if(state.parensVisible){
+  // Always show parens when working inside a paren/frac step
+  const showP = state.parensVisible || step.hiType==='paren' || step.hiType==='frac';
+  if(showP){
     document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
   }
 }
@@ -1209,6 +1819,276 @@ function toggleParens(){
   }
 }
 
+// Parse chain string into parts: [{text:'...'}, {input:true, answer:N, idx:N}, ...]
+// Parse chain string into parts for renderChainRow
+// Handles FRAC[num|den] where num/den may contain **answer** (→ input field)
+function parseChainParts(raw, stepIdx){
+  const parts=[];
+  let idx=0;
+  const fracPat=/FRAC\[([^|]+)\|([^\]]+)\]/g;
+  let fm, lastIdx=0;
+
+  function parseSide(s, baseIdx){
+    const trimmed=s.trim();
+    // Match **number** (the field to fill in)
+    const hiMatch=trimmed.match(/^\*\*(-?[\d.]+)\*\*$/);
+    if(hiMatch){
+      const ans=parseFloat(hiMatch[1]);
+      return {isInput:true, answer:ans, fieldId:`sf-${stepIdx}-${baseIdx}`};
+    }
+    // Static content — strip outer parens for display inside frac
+    let text=trimmed;
+    if(text.startsWith('(')&&text.endsWith(')')) text=text.slice(1,-1).trim();
+    return {isInput:false, text};
+  }
+
+  let fieldCounter=0;
+  while((fm=fracPat.exec(raw))!==null){
+    // Text before FRAC
+    if(fm.index>lastIdx){
+      parts.push(...parseFlat(raw.slice(lastIdx,fm.index), stepIdx, fieldCounter));
+      fieldCounter+=countInputs(raw.slice(lastIdx,fm.index));
+    }
+    const numSide=parseSide(fm[1], fieldCounter);
+    if(numSide.isInput) fieldCounter++;
+    const denSide=parseSide(fm[2], fieldCounter);
+    if(denSide.isInput) fieldCounter++;
+    parts.push({
+      fracInput:true,
+      numInput: numSide.isInput?{fieldId:numSide.fieldId,answer:numSide.answer}:null,
+      numStatic:numSide.isInput?null:numSide.text,
+      denInput: denSide.isInput?{fieldId:denSide.fieldId,answer:denSide.answer}:null,
+      denStatic:denSide.isInput?null:denSide.text,
+      stepIdx
+    });
+    lastIdx=fm.index+fm[0].length;
+  }
+  if(lastIdx<raw.length){
+    parts.push(...parseFlat(raw.slice(lastIdx), stepIdx, fieldCounter));
+  }
+  return parts;
+}
+
+function countInputs(s){
+  return (s.match(/\*\*/g)||[]).length/2;
+}
+
+function parseFlat(s, stepIdx, startFieldIdx){
+  // Parse plain text (no FRAC[]) splitting on ** markers
+  const segs=s.split('**');
+  let fi=startFieldIdx;
+  const parts=[];
+  segs.forEach((seg,si)=>{
+    if(!seg) return;
+    if(si%2===1){
+      parts.push({input:true, answer:parseFloat(seg), fieldId:`sf-${stepIdx}-${fi++}`});
+    } else {
+      parts.push({text:seg});
+    }
+  });
+  return parts;
+}
+
+
+// Build the prompt text from expr — strip the "= answer" tail(s)
+function exprPrompt(expr){
+  if(!expr) return '';
+  return expr.split(/\s+och\s+/).map(part=>{
+    const eq=part.lastIndexOf('=');
+    return eq>=0 ? part.slice(0,eq).trim() : part.trim();
+  }).join('  och  ');
+}
+
+function makeStepField(fieldId, answer, stepIdx, extraClass=''){
+  const digits=String(Math.round(Math.abs(answer))).length+(answer<0?1:0);
+  const w=Math.max(44, digits*14+28);
+  return `<input type="number" inputmode="numeric" class="step-field${extraClass?' '+extraClass:''}"
+    id="${fieldId}" placeholder="?" style="width:${w}px"
+    onkeydown="handleStepFieldKey(event,${stepIdx})"
+    data-answer="${answer}" data-step="${stepIdx}">`;
+}
+
+function renderChainRow(parts, stepIdx){
+  return parts.map(p=>{
+    if(p.fracInput){
+      const numHTML = p.numInput
+        ? makeStepField(p.numInput.fieldId, p.numInput.answer, stepIdx)
+        : `<span class="frac-static-part">${chainStrPlain(p.numStatic||'')}</span>`;
+      const denHTML = p.denInput
+        ? makeStepField(p.denInput.fieldId, p.denInput.answer, stepIdx)
+        : `<span class="frac-static-part">${chainStrPlain(p.denStatic||'')}</span>`;
+      return `<span class="step-frac"><span class="step-fnum">${numHTML}</span><span class="step-fden">${denHTML}</span></span>`;
+    } else if(p.input){
+      return makeStepField(p.fieldId, p.answer, stepIdx);
+    } else {
+      return `<span class="step-static">${chainStr(p.text)}</span>`;
+    }
+  }).join('');
+}
+
+function initStepInputs(){
+  const box=document.getElementById('step-input-rows');
+  box.innerHTML='';
+  box.className='student-chain-box';
+  // Row 0: original expression — greyed out
+  const orig=document.createElement('div');
+  orig.className='chain-line chain-original';
+  orig.innerHTML=renderToks(state.currentToks);
+  box.appendChild(orig);
+  // Rows are appended dynamically by revealStepInput / confirmStepRow
+}
+
+function handleStepFieldKey(e,stepIdx){
+  if(e.key==='Tab'||e.key==='Enter'){
+    e.preventDefault();
+    const wrap=document.getElementById('sir-'+stepIdx);
+    if(!wrap) return;
+    const cur=e.target;
+    checkSingleField(cur);
+    // Move focus to next empty field in same row (if any)
+    // confirmStepRow handles advancing to next step when all fields are done
+    setTimeout(()=>{
+      const fields=[...wrap.querySelectorAll('.step-field:not(:disabled)')];
+      const nextEmpty=fields.find(f=>f.value==='');
+      if(nextEmpty) nextEmpty.focus();
+    }, 60);
+  }
+}
+
+function checkSingleField(inp){
+  if(!inp||inp.disabled) return;
+  const expected=parseFloat(inp.dataset.answer);
+  const val=parseFloat(inp.value);
+  if(isNaN(val)) return;
+  if(val===expected){
+    inp.classList.add('s-correct'); inp.classList.remove('s-wrong');
+    inp.disabled=true;
+    // Check if all fields in this wrap are now done
+    const wrap=inp.closest('.student-chain-row');
+    if(wrap){
+      const remaining=wrap.querySelectorAll('.step-field:not(:disabled)');
+      if(remaining.length===0){
+        const stepIdx=parseInt(inp.dataset.step);
+        setTimeout(()=>confirmStepRow(stepIdx), 200);
+      }
+    }
+  } else {
+    inp.classList.add('s-wrong');
+    setTimeout(()=>inp.classList.remove('s-wrong'),700);
+  }
+}
+
+// Build and append a fältrad for step i
+function revealStepInput(i){
+  const box=document.getElementById('step-input-rows');
+  if(!box) return;
+  // Remove existing row for this step if re-revealing
+  const old=document.getElementById('sir-'+i);
+  if(old) old.remove();
+
+  const step=state.currentSteps[i];
+  const row=document.createElement('div');
+  row.className='student-chain-row chain-new'; row.id='sir-'+i;
+  row.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:6px;';
+
+  const chain=step.chain||'';
+  if(chain){
+    const parts=parseChainParts(chain,i);
+    row.innerHTML=`<span class="chain-eq">= </span><span class="step-row-body">${renderChainRow(parts,i)}</span>`;
+  } else {
+    const eqIdx=(step.expr||'').lastIndexOf('=');
+    const ans=eqIdx>=0?step.expr.slice(eqIdx+1).trim():'?';
+    row.innerHTML=`<span class="chain-eq">= </span>
+      <input type="number" inputmode="numeric" class="step-field" id="sf-${i}-0" placeholder="?"
+        data-answer="${parseFloat(ans)}" data-step="${i}"
+        onkeydown="handleStepFieldKey(event,${i})">`;
+  }
+  box.appendChild(row);
+  setTimeout(()=>{
+    row.scrollIntoView({behavior:'smooth',block:'nearest'});
+    const f=row.querySelector('.step-field:not(:disabled)');
+    if(f) f.focus();
+  },80);
+}
+
+// Append a clean renskiven row for step i.
+// Does NOT auto-advance — Nästa steg-knappen hanterar nästa steg.
+function confirmStepRow(stepIdx){
+  const box=document.getElementById('step-input-rows');
+  const step=state.currentSteps[stepIdx];
+  const isLast=(stepIdx===state.currentSteps.length-1);
+
+  // Remove the field-input row — replace with clean confirmed row
+  const fieldRow=document.getElementById('sir-'+stepIdx);
+  if(fieldRow) fieldRow.remove();
+
+  // Renskriven rad — chain utan ** markers
+  const confirmed=document.createElement('div');
+  confirmed.className='chain-line '+(isLast?'chain-final':'chain-new');
+  let chainText=(step.chain||'').replace(/\*\*/g,'');
+  chainText=chainText.replace(/\(([\d.]+)\)/g,'$1'); // only strip parens around positive numbers
+  confirmed.innerHTML=`<span class="chain-eq">= </span><span>${chainStr(chainText)}</span>`;
+  box.appendChild(confirmed);
+  confirmed.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  // Clear expression highlight
+  setTimeout(()=>{
+    document.getElementById('expression-box').innerHTML=renderToks(state.currentToks);
+    if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
+  }, 400);
+
+  if(isLast){
+    // Mirror answer to main input and mark done
+    const mainInp=document.getElementById('answer-input');
+    const eqIdx=(step.expr||'').lastIndexOf('=');
+    const ans=eqIdx>=0?step.expr.slice(eqIdx+1).trim():'';
+    if(mainInp&&!mainInp.disabled&&!state.isFracLevel){
+      mainInp.value=ans;
+      setTimeout(()=>{ checkAnswer(); }, 500);
+    }
+    const btn=document.getElementById('next-step-btn');
+    if(btn){btn.textContent='Alla steg ✓';btn.disabled=true;}
+    // Bråknivå: fokusera täljaren när guide-stegen är klara
+    if(state.isFracLevel){
+      setTimeout(()=>{
+        const n=document.getElementById('ans-num');
+        if(n && !n.disabled) n.focus();
+      }, 150);
+    }
+  } else {
+    // Re-enable button briefly, then auto-advance
+    const btn=document.getElementById('next-step-btn');
+    if(btn){ btn.disabled=false; btn.textContent='Nästa steg ▶'; }
+    setTimeout(()=>revealNextStudentStep(), 350);
+  }
+}
+
+function showStepInputAnswer(i){
+  // For skip: append both fältrad (filled) and confirmed row
+  const box=document.getElementById('step-input-rows');
+  const step=state.currentSteps[i];
+  const existing=document.getElementById('sir-'+i);
+  if(!existing){
+    // Append field row pre-filled
+    const row=document.createElement('div');
+    row.className='student-chain-row chain-new'; row.id='sir-'+i;
+    row.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:6px;';
+    const chain=step.chain||'';
+    if(chain){
+      const parts=parseChainParts(chain,i);
+      row.innerHTML=`<span class="chain-eq">= </span><span class="step-row-body">${renderChainRow(parts,i)}</span>`;
+    }
+    box.appendChild(row);
+  }
+  // Fill all fields in this row
+  const row2=document.getElementById('sir-'+i);
+  if(row2) row2.querySelectorAll('.step-field').forEach(inp=>{
+    inp.value=inp.dataset.answer||''; inp.classList.add('s-shown'); inp.disabled=true;
+  });
+  // Also append confirmed row
+  confirmStepRow(i);
+}
+
 function initChainBox(){
   const box=document.getElementById('chain-box');
   box.innerHTML='';
@@ -1219,15 +2099,29 @@ function initChainBox(){
   box.appendChild(orig);
 }
 
-function revealNextStep(){
+// Student's "Nästa steg" — highlight + visa fältrad, disable btn until confirmed
+function revealNextStudentStep(){
   const steps=state.currentSteps;
-  if(state.stepsRevealed>=steps.length) return;
-  const step=steps[state.stepsRevealed];
+  if(state.studentStepsRevealed>=steps.length) return;
+  const step=steps[state.studentStepsRevealed];
+  applyStepHighlight(step);
+  revealStepInput(state.studentStepsRevealed);
+  state.studentStepsRevealed++;
+  // Disable button — re-enabled by confirmStepRow when row is done
+  const btn=document.getElementById('next-step-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Nästa steg ▶'; }
+}
 
-  // Highlight in expression box
+// Program's "Visa lösning" — two-row model matching student panel
+function revealNextSolutionStep(){
+  const steps=state.currentSteps;
+  if(state.solutionStepsRevealed>=steps.length) return;
+  const step=steps[state.solutionStepsRevealed];
+  const isLast=(state.solutionStepsRevealed===steps.length-1);
+
   applyStepHighlight(step);
 
-  // Append hint row above chain line
+  // Rule badge
   const sc=document.getElementById('steps-container');
   const hint=document.createElement('div'); hint.className='step-hint-row';
   hint.innerHTML=`<div class="step-badge">${step.badge}</div><div class="step-rule">${step.rule}</div>`;
@@ -1237,42 +2131,89 @@ function revealNextStep(){
     dv.textContent=step.desc; sc.appendChild(dv);
   }
 
-  // Append new chain line
   const box=document.getElementById('chain-box');
-  const isLast=(state.stepsRevealed===steps.length-1);
-  const line=document.createElement('div');
-  line.className='chain-line '+(isLast?'chain-final':'chain-new');
-  // Render chain string with colours
-  line.innerHTML=`<span class="chain-eq">= </span><span>${chainStr(step.chain||'')}</span>`;
-  box.appendChild(line);
-  line.scrollIntoView({behavior:'smooth',block:'nearest'});
 
-  state.stepsRevealed++;
-  if(state.stepsRevealed>=steps.length){
-    const btn=document.querySelector('#guide-controls .guide-btn');
-    if(btn){btn.textContent='Alla steg visade ✓';btn.disabled=true;}
-    setTimeout(()=>{
-      document.getElementById('expression-box').innerHTML=renderToks(state.currentToks);
-      if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
-    },1200);
+  // Row A: highlighted chain (** markers → chain-hi colour)
+  const chainRaw=step.chain||('**'+(()=>{const eq=(step.expr||'').lastIndexOf('=');return eq>=0?step.expr.slice(eq+1).trim():'?';})()+'**');
+  const rowA=document.createElement('div');
+  rowA.className='chain-line chain-new sol-row-a';
+  rowA.innerHTML=`<span class="chain-eq">= </span><span>${chainStr(chainRaw)}</span>`;
+  box.appendChild(rowA);
+  rowA.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  // Row B: clean (no ** markers, no parens around bare numbers) — after brief pause
+  setTimeout(()=>{
+    rowA.remove(); // replace highlighted row with clean row
+    let cleanText=chainRaw.replace(/\*\*/g,'');
+    cleanText=cleanText.replace(/\(([\d.]+)\)/g,'$1'); // only strip parens around positive numbers
+    const rowB=document.createElement('div');
+    rowB.className='chain-line '+(isLast?'chain-final':'chain-new');
+    rowB.innerHTML=`<span class="chain-eq">= </span><span>${chainStr(cleanText)}</span>`;
+    box.appendChild(rowB);
+    rowB.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+    if(isLast){
+      const btn=document.getElementById('solution-btn');
+      if(btn){btn.textContent='Lösning klar ✓';btn.disabled=true;}
+      setTimeout(()=>{
+        document.getElementById('expression-box').innerHTML=renderToks(state.currentToks);
+        if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
+      },800);
+    }
+  }, 700);
+
+  state.solutionStepsRevealed++;
+  if(state.solutionStepsRevealed>=steps.length){
+    const btn=document.getElementById('solution-btn');
+    if(btn){btn.textContent='Lösning klar ✓';btn.disabled=true;}
   }
 }
+
+// Keep old name as alias for skip
+function revealNextStep(){ revealNextSolutionStep(); }
 
 function skipExercise(){
   if(state.answered) return;
   state.answered=true; state.total++;
-  // Does NOT increment correct — counts as seen/skipped
   updateStats();
+  // Show all unrevealed step inputs
+  if(state.mode==='guide'){
+    const steps=state.currentSteps||[];
+    steps.forEach((_,i)=>showStepInputAnswer(i));
+    // Also reveal full solution
+    while(state.solutionStepsRevealed<steps.length) revealNextSolutionStep();
+  }
   document.getElementById('skip-btn').disabled=true;
   document.getElementById('check-btn').disabled=true;
   document.getElementById('answer-input').disabled=true;
   const fb=document.getElementById('feedback-banner');
   fb.style.display='block';
   fb.className='feedback-banner wrong';
-  fb.innerHTML=`Hoppade över. Rätt svar var <strong>${state.currentAnswer}</strong>.`;
+  const skipAns = state.isFracLevel ? fracAnswerStr(state.currentAnswer) : state.currentAnswer;
+  fb.innerHTML=`Hoppade över. Rätt svar var <strong>${skipAns}</strong>.`;
   if(state.mode==='guide') while(state.stepsRevealed<state.currentSteps.length) revealNextStep();
   if(state.mode==='timed') setTimeout(nextExercise,1400);
   else document.getElementById('next-btn').style.display='block';
+}
+
+function handleFracInputKey(e, field){
+  if(e.key==='Tab'){ e.preventDefault();
+    if(field==='num') document.getElementById('ans-den').focus();
+    // 'den' tab: låt browser hantera normalt (fokusera nästa element)
+    return;
+  }
+  if(e.key==='Enter'){
+    const denInp=document.getElementById('ans-den');
+    const numInp=document.getElementById('ans-num');
+    if(field==='num' && (isNaN(parseInt(denInp.value)))){
+      denInp.focus(); return;
+    }
+    if(!state.answered) checkAnswer();
+    else {
+      const nb=document.getElementById('next-btn');
+      if(nb && nb.style.display!=='none') nextExercise();
+    }
+  }
 }
 
 function handleInputKey(e){
@@ -1284,47 +2225,205 @@ function handleInputKey(e){
   }
 }
 
+// Global Enter: anywhere on page → Nästa steg, or next exercise after answered
+document.addEventListener('keydown', function(e){
+  if(e.key!=='Enter') return;
+  const active=document.activeElement;
+  if(active && active.classList.contains('step-field')) return;
+  if(active && active.id==='answer-input') return;
+  if(active && (active.id==='simp-n' || active.id==='simp-d')) return;
+  if(active && (active.id==='ans-num' || active.id==='ans-den')) return;
+  if(state.answered && state.mode!=='timed'){
+    // Only fire if next-btn is visible (gives time for flash to complete)
+    const nb=document.getElementById('next-btn');
+    if(nb && nb.style.display!=='none') nextExercise();
+    return;
+  }
+  if(!state.answered && state.mode==='guide'){
+    const nsBtn=document.getElementById('next-step-btn');
+    if(nsBtn && !nsBtn.disabled){ nsBtn.click(); return; }
+    const ai=document.getElementById('answer-input');
+    if(ai && !ai.disabled) ai.focus();
+  }
+});
+
+function fracAnswerStr(r){ return r.d===1 ? `${r.n}` : `${r.n}/${r.d}`; }
+
 function checkAnswer(){
   if(state.answered) return;
-  const inp=document.getElementById('answer-input'),val=parseFloat(inp.value);
+  const fb=document.getElementById('feedback-banner');
+  const exprBox=document.getElementById('expression-box');
+  let ok=false;
+
+  if(state.isFracLevel){
+    const numInp=document.getElementById('ans-num');
+    const denInp=document.getElementById('ans-den');
+    const nv=parseInt(numInp.value), dv=parseInt(denInp.value);
+    if(isNaN(nv)){ numInp.focus(); return; }
+    if(isNaN(dv)||dv===0){ denInp.focus(); return; }
+    // Reduce given answer and compare
+    const given=reduceFrac(nv,dv);
+    const correct=state.currentAnswer; // {n,d} already reduced
+    // Om inte fullt reducerat → starta förkortningskedjan
+    if(given.n !== nv || given.d !== dv){
+      initSimpChain(nv, dv);
+      return;
+    }
+    ok = (given.n===correct.n && given.d===correct.d);
+
+    state.answered=true; state.total++;
+    if(ok){ state.correct++; state.currentStreak++; }
+    else {
+      state.currentStreak=0;
+      wrongLog.push({toks:state.currentToks, correct:fracAnswerStr(correct), given:fracAnswerStr(given)});
+    }
+    updateStreakDisplay(); updateStats();
+    numInp.disabled=true; denInp.disabled=true;
+    document.getElementById('check-btn').disabled=true;
+    document.getElementById('skip-btn').disabled=true;
+
+    if(ok){
+      numInp.className='frac-answer-input frac-inp-num correct';
+      denInp.className='frac-answer-input frac-inp-den correct';
+      fb.style.display='block'; fb.className='feedback-banner correct';
+      exprBox.classList.add('flash-correct');
+      setTimeout(()=>exprBox.classList.remove('flash-correct'),700);
+      if(state.mode==='timed'){ setTimeout(nextExercise,800); }
+      else {
+        fb.textContent='✓ Rätt! Tryck Enter för nästa.';
+        setTimeout(()=>{ document.getElementById('next-btn').style.display='block'; },900);
+      }
+    } else {
+      numInp.className='frac-answer-input frac-inp-num wrong';
+      denInp.className='frac-answer-input frac-inp-den wrong';
+      exprBox.classList.add('flash-wrong');
+      setTimeout(()=>exprBox.classList.remove('flash-wrong'),700);
+      fb.style.display='block'; fb.className='feedback-banner wrong';
+      const cs=fracAnswerStr(correct);
+      fb.innerHTML=`✗ Fel — rätt svar är <strong>${cs}</strong>. Titta på stegen!`;
+      if(state.mode==='guide') while(state.stepsRevealed<state.currentSteps.length) revealNextStep();
+      if(state.mode==='timed') setTimeout(nextExercise,1600);
+      else document.getElementById('next-btn').style.display='block';
+    }
+    setTimeout(()=>{
+      exprBox.innerHTML=renderToks(state.currentToks);
+    },400);
+    return;
+  }
+
+  // ── Standard heltalssvar ──────────────────────────────────────────────────
+  const inp=document.getElementById('answer-input');
+  const val=parseFloat(inp.value);
   if(isNaN(val)){inp.focus();return;}
   state.answered=true; state.total++;
-  const ok=Math.abs(val-state.currentAnswer)<0.001;
-  if(ok) state.correct++;
+  ok=Math.abs(val-state.currentAnswer)<0.001;
+  if(ok){ state.correct++; state.currentStreak++; }
+  else {
+    state.currentStreak=0;
+    wrongLog.push({toks:state.currentToks, correct:state.currentAnswer, given:val});
+  }
+  updateStreakDisplay();
   updateStats();
-  const fb=document.getElementById('feedback-banner');
-  fb.style.display='block'; inp.disabled=true;
+  inp.disabled=true;
   document.getElementById('check-btn').disabled=true;
   document.getElementById('skip-btn').disabled=true;
-  // Clear expression highlight
-  document.getElementById('expression-box').innerHTML=renderToks(state.currentToks);
-  if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
+
   if(ok){
     inp.className='answer-input correct';
-    fb.className='feedback-banner correct'; fb.textContent='✓ Rätt! Tryck Enter för nästa.';
+    fb.style.display='block';
+    fb.className='feedback-banner correct';
+    exprBox.classList.add('flash-correct');
+    setTimeout(()=>exprBox.classList.remove('flash-correct'), 700);
+    if(state.mode==='timed'){
+      setTimeout(nextExercise, 800);
+    } else {
+      fb.textContent='✓ Rätt! Tryck Enter eller → för nästa.';
+      setTimeout(()=>{ document.getElementById('next-btn').style.display='block'; }, 900);
+    }
   } else {
     inp.className='answer-input wrong';
+    exprBox.classList.add('flash-wrong');
+    setTimeout(()=>exprBox.classList.remove('flash-wrong'), 700);
+    fb.style.display='block';
     fb.className='feedback-banner wrong';
-    fb.innerHTML=`✗ Fel. Rätt svar är <strong>${state.currentAnswer}</strong>. Titta på stegen ovan!`;
+    fb.innerHTML=`✗ Fel — rätt svar är <strong>${state.currentAnswer}</strong>. Titta på stegen!`;
     if(state.mode==='guide') while(state.stepsRevealed<state.currentSteps.length) revealNextStep();
+    if(state.mode==='timed') setTimeout(nextExercise,1600);
+    else document.getElementById('next-btn').style.display='block';
   }
-  if(state.mode==='timed') setTimeout(nextExercise,ok?700:1600);
-  else document.getElementById('next-btn').style.display='block';
+  setTimeout(()=>{
+    exprBox.innerHTML=renderToks(state.currentToks);
+    if(state.parensVisible) document.querySelectorAll('#expression-box .frac').forEach(f=>f.classList.add('show-parens'));
+  }, 400);
 }
 
-function nextExercise(){generateExercise();}
+function nextExercise(){
+  // Avbryt om eleven navigerat hem under setTimeout-väntetiden
+  if(document.getElementById('exercise-screen').style.display==='none') return;
+  generateExercise();
+}
 function updateStats(){
   document.querySelector('#stat-correct span').textContent=state.correct;
   document.querySelector('#stat-total span').textContent=state.total;
 }
+function updateStreakDisplay(){
+  const chip=document.getElementById('stat-streak');
+  if(!chip) return;
+  const s=state.currentStreak;
+  chip.querySelector('span').textContent=s;
+  chip.classList.toggle('hot', s>=3);
+  if(s>0&&s%STREAK_TARGET===0){
+    showStreakCelebration(s);
+    // Update best streak for this level
+    const lv=state.level;
+    if(!bestStreaks[lv]||s>bestStreaks[lv]) bestStreaks[lv]=s;
+    updateLevelStars();
+  }
+}
+function showStreakCelebration(n){
+  const fb=document.getElementById('feedback-banner');
+  if(!fb) return;
+  const old=fb.textContent;
+  fb.className='feedback-banner correct';
+  fb.style.display='block';
+  fb.textContent=`🔥 ${n} i rad! Fantastiskt!`;
+  setTimeout(()=>{
+    if(fb.textContent.includes('i rad')){ fb.style.display='none'; }
+  },1800);
+}
+function updateLevelStars(){
+  document.querySelectorAll('.level-btn').forEach(btn=>{
+    const lv=parseInt(btn.dataset.levelId);
+    if(!lv) return;
+    const best=bestStreaks[lv]||0;
+    const stars=Math.min(3,Math.floor(best/STREAK_TARGET));
+    let starEl=btn.querySelector('.lv-stars');
+    if(!starEl){ starEl=document.createElement('div'); starEl.className='lv-stars'; btn.appendChild(starEl); }
+    starEl.textContent=stars>0?'★'.repeat(stars)+'☆'.repeat(3-stars):'';
+    starEl.style.color=stars===3?'#f5c842':stars>0?'#fb923c':'var(--muted)';
+  });
+}
 function showResult(){
   clearInterval(state.timerInterval);
+  // Populate wrong log
+  const wls=document.getElementById('wrong-log-section');
+  const wll=document.getElementById('wrong-log-list');
+  if(wrongLog.length>0 && wls && wll){
+    wls.style.display='block';
+    wll.innerHTML=wrongLog.map(w=>`
+      <div class="wrong-log-row">
+        <span class="wl-expr">${renderToks(w.toks)}</span>
+        <span class="wl-arrow">→</span>
+        <span class="wl-correct">${w.correct}</span>
+        <span class="wl-given">(du svarade ${w.given})</span>
+      </div>`).join('');
+  } else if(wls){ wls.style.display='none'; }
   const pct=state.total>0?Math.round(state.correct/state.total*100):0;
   document.getElementById('r-correct').textContent=state.correct;
   document.getElementById('r-total').textContent=state.total;
   document.getElementById('r-pct').textContent=pct+'%';
   let icon='🏆',title='Tid ute!',sub='';
-  if(pct>=90){icon='🌟';title='Fantastiskt!';sub='Du behärskar prioriteringsreglerna!';}
+  if(pct>=90){icon='🌟';title='Fantastiskt!';sub='Du behärskar räknereglerna!';}
   else if(pct>=70){icon='🎉';title='Bra jobbat!';sub='Fortsätt träna – du är på god väg!';}
   else{icon='💪';title='Kämpa på!';sub='Titta på reglerna och försök igen.';}
   document.getElementById('result-icon').textContent=icon;
@@ -1333,14 +2432,1261 @@ function showResult(){
   show('result-screen');
 }
 function restartSame(){startExercise();}
-function goHome(){clearInterval(state.timerInterval);show('start-screen');}
+function goHome(){
+  clearInterval(state.timerInterval);
+  const lv=state.level;
+  if(state.currentStreak>0&&(!bestStreaks[lv]||state.currentStreak>bestStreaks[lv])) bestStreaks[lv]=state.currentStreak;
+  updateLevelStars();
+  show('start-screen');
+}
 function show(id){
   ['start-screen','exercise-screen','result-screen'].forEach(s=>document.getElementById(s).style.display='none');
   document.getElementById(id).style.display='block';
 }
 
+
+// ══════════════════════════════════════
+//  NEGATIVA TAL — GENERATORER
+//  Notation: negativa tal skrivs som (−n) i uttrycket
+//  Teckenregel-steg: "+ (−n)" → "− n", "− (−n)" → "+ n"
+// ══════════════════════════════════════
+
+// Helper: render negative number as token sequence (−n)
+// Returns toks array segment: [lp, op(−), n(v), rp]  where v > 0
+function negTok(v){ return [T.lp(), T.op('−'), T.n(v), T.rp()]; }
+
+// Describe sign-rule for a step
+function signRuleDesc(outerOp, isNeg){
+  if(outerOp==='+' && isNeg) return '+ (−) = −   (olika tecken → minus)';
+  if(outerOp==='+' && !isNeg) return '+ (+) = +   (lika tecken → plus)';
+  if(outerOp==='−' && isNeg) return '− (−) = +   (lika tecken → plus)';
+  return '− (+) = −   (olika tecken → minus)';
+}
+
+// ── N1: bara + och − med negativa tal ────────────────────────────────────────
+function genNeg1(){
+  // Expression: a OP1 (−b) OP2 c OP3 (−d)
+  // Mix of positive and negative numbers with + and −
+  const type=rnd(1,4);
+
+  if(type===1){
+    // a + (−b) = a − b
+    const a=rndH(5,15), b=rndH(2,9);
+    const ans=a-b;
+    if(ans<-10||ans>20) return genNeg1();
+    // toks: a(0) +(1) lp(2) −(3) b(4) rp(5)
+    const toks=[T.n(a), T.op('+'), ...negTok(b)];
+    return{toks,ans,hint:'addsub',steps:[
+      {badge:'Steg 1',rule:'Teckenregel: + (−) = −',
+       expr:`${a} + (−${b}) → ${a} − ${b} = ${ans}`,
+       desc:signRuleDesc('+',true),
+       hi:[[1,5]],hiType:'default',
+       chain:`**${ans}**`},
+    ]};
+  }
+
+  if(type===2){
+    // a − (−b) = a + b
+    const a=rndH(3,12), b=rndH(2,8);
+    const ans=a+b;
+    if(ans>25) return genNeg1();
+    const toks=[T.n(a), T.op('−'), ...negTok(b)];
+    return{toks,ans,hint:'addsub',steps:[
+      {badge:'Steg 1',rule:'Teckenregel: − (−) = +',
+       expr:`${a} − (−${b}) → ${a} + ${b} = ${ans}`,
+       desc:signRuleDesc('−',true),
+       hi:[[1,5]],hiType:'default',
+       chain:`**${ans}**`},
+    ]};
+  }
+
+  if(type===3){
+    // (−a) + (−b) = −a − b
+    const a=rndH(2,8), b=rndH(2,8);
+    const ans=-a-b;
+    // toks: (−a)(0-3) +(4) (−b)(5-8)
+    const toks=[...negTok(a), T.op('+'), ...negTok(b)];
+    return{toks,ans,hint:'addsub',steps:[
+      {badge:'Steg 1',rule:'Teckenregel: + (−) = −',
+       expr:`(−${a}) + (−${b}) → −${a} − ${b} = ${ans}`,
+       desc:'Båda talen negativa — summera negativt',
+       hi:[[0,8]],hiType:'default',
+       chain:`**${ans}**`},
+    ]};
+  }
+
+  // type 4: a + (−b) + c − (−d) — fyra termer, två teckenregler
+  const a=rndH(4,12), b=rndH(2,7), cc=rndH(3,10), d=rndH(2,6);
+  const step1=a-b;   // after + (−b) → − b
+  const ans=step1+cc+d; // after − (−d) → + d
+  if(ans<-5||ans>30) return genNeg1();
+  // toks: a(0) +(1) (−b)(2-5) +(6) c(7) −(8) (−d)(9-12)
+  const toks=[T.n(a), T.op('+'), ...negTok(b), T.op('+'), T.n(cc), T.op('−'), ...negTok(d)];
+  return{toks,ans,hint:'addsub',steps:[
+    {badge:'Steg 1',rule:'Tillämpa teckenregler',
+     expr:`+ (−${b}) → − ${b}   och   − (−${d}) → + ${d}`,
+     desc:'Olika tecken → minus   ·   Lika tecken → plus',
+     hi:[[1,5],[8,12]],hiType:'default',
+     chain:`${a} − ${b} + ${cc} + ${d}`},
+    {badge:'Steg 2',rule:'Vänster → höger',
+     expr:`${a} − ${b} + ${cc} + ${d} = ${ans}`,
+     desc:'',
+     hi:[[0,12]],hiType:'default',
+     chain:`**${ans}**`},
+  ]};
+}
+
+// ── N2: negativa tal med × och ÷ (stående bråk) ─────────────────────────────
+function genNeg2(){
+  const type=rnd(1,6);
+
+  if(type===1){
+    // (−a) × b + c
+    const a=rndH(2,6), b=rndH(2,5), cc=rndH(5,20);
+    const prod=-a*b, ans=prod+cc;
+    if(ans<-10||ans>25) return genNeg2();
+    const toks=[...negTok(a), T.op('×'), T.n(b), T.op('+'), T.n(cc)];
+    return{toks,ans,hint:'muldiv',steps:[
+      {badge:'Steg 1',rule:'× FÖRE + — teckenregel: − × + = −',
+       expr:`(−${a}) × ${b} = ${prod}`,
+       desc:'Negativt × positivt = negativt',
+       hi:[[0,5]],hiType:'default',
+       chain:`**${prod}** + ${cc}`},
+      {badge:'Steg 2',rule:'Addition',
+       expr:`${prod} + ${cc} = ${ans}`,
+       desc:'',hi:[[0,7]],hiType:'default',chain:`**${ans}**`},
+    ]};
+  }
+
+  if(type===2){
+    // (−a) × (−b) + c
+    const a=rndH(2,5), b=rndH(2,5), cc=rndH(1,10);
+    const prod=a*b, ans=prod+cc;
+    if(ans>35) return genNeg2();
+    const toks=[...negTok(a), T.op('×'), ...negTok(b), T.op('+'), T.n(cc)];
+    return{toks,ans,hint:'muldiv',steps:[
+      {badge:'Steg 1',rule:'× FÖRE + — teckenregel: − × − = +',
+       expr:`(−${a}) × (−${b}) = ${prod}`,
+       desc:'Negativt × negativt = positivt',
+       hi:[[0,9]],hiType:'default',
+       chain:`**${prod}** + ${cc}`},
+      {badge:'Steg 2',rule:'Addition',
+       expr:`${prod} + ${cc} = ${ans}`,
+       desc:'',hi:[[0,11]],hiType:'default',chain:`**${ans}**`},
+    ]};
+  }
+
+  if(type===3){
+    // FRAC[(−a) / b] + c  →  −(a/b) + c
+    const b=pick([2,3,4,5]), a=b*rndH(1,4), cc=rndH(2,12);
+    const v=-a/b, ans=v+cc;
+    if(!Number.isInteger(ans)||ans<-10||ans>15) return genNeg2();
+    const toks=[T.fr([...negTok(a)],[T.n(b)]), T.op('+'), T.n(cc)];
+    return{toks,ans,hint:'muldiv',steps:[
+      {badge:'Steg 1',rule:'Division FÖRE + — teckenregel: − ÷ + = −',
+       expr:`(−${a}) ÷ ${b} = ${v}`,
+       desc:'Negativt ÷ positivt = negativt',
+       hi:[[0,0]],hiType:'frac',
+       chain:`**${v}** + ${cc}`},
+      {badge:'Steg 2',rule:'Addition',
+       expr:`${v} + ${cc} = ${ans}`,
+       desc:'',hi:[[0,2]],hiType:'default',chain:`**${ans}**`},
+    ]};
+  }
+
+  if(type===4){
+    // a + FRAC[(−p) / q]
+    const q=pick([2,3,4,5]), p=q*rndH(1,3), a=rndH(3,12);
+    const v=-p/q, ans=a+v;
+    if(!Number.isInteger(ans)||ans<-5||ans>15) return genNeg2();
+    const toks=[T.n(a), T.op('+'), T.fr([...negTok(p)],[T.n(q)])];
+    return{toks,ans,hint:'muldiv',steps:[
+      {badge:'Steg 1',rule:'Division FÖRE + — negativ täljare → negativt värde',
+       expr:`(−${p}) ÷ ${q} = ${v}`,
+       desc:'Negativ täljare → negativt bråkvärde',
+       hi:[[2,2]],hiType:'frac',
+       chain:`${a} + **${v}**`},
+      {badge:'Steg 2',rule:'Addition',
+       expr:`${a} + (${v}) = ${ans}`,
+       desc:'',hi:[[0,2]],hiType:'default',chain:`**${ans}**`},
+    ]};
+  }
+
+  if(type===5){
+    // FRAC[a / (−b)] + c
+    const b=pick([2,3,4,5]), a=b*rndH(1,4), cc=rndH(3,12);
+    const v=-a/b, ans=v+cc;
+    if(!Number.isInteger(ans)||ans<-8||ans>15) return genNeg2();
+    const toks=[T.fr([T.n(a)],[...negTok(b)]), T.op('+'), T.n(cc)];
+    return{toks,ans,hint:'muldiv',steps:[
+      {badge:'Steg 1',rule:'Division FÖRE + — negativ nämnare → negativt värde',
+       expr:`${a} ÷ (−${b}) = ${v}`,
+       desc:'Negativ nämnare → negativt bråkvärde',
+       hi:[[0,0]],hiType:'frac',
+       chain:`**${v}** + ${cc}`},
+      {badge:'Steg 2',rule:'Addition',
+       expr:`${v} + ${cc} = ${ans}`,
+       desc:'',hi:[[0,2]],hiType:'default',chain:`**${ans}**`},
+    ]};
+  }
+
+  // type 6: a + (−b) × c + FRAC[d / (−e)]
+  const b2=rndH(2,4), a2=rndH(2,5), a3=rndH(5,12);
+  const e2=pick([2,3,4]), d2=e2*rndH(1,3);
+  const prod2=-a2*b2, divVal2=-d2/e2, ans2=a3+prod2+divVal2;
+  if(!Number.isInteger(ans2)||ans2<-12||ans2>20) return genNeg2();
+  const toks2=[T.n(a3), T.op('+'), ...negTok(a2), T.op('×'), T.n(b2),
+               T.op('+'), T.fr([T.n(d2)],[...negTok(e2)])];
+  return{toks:toks2,ans:ans2,hint:'muldiv',steps:[
+    {badge:'Steg 1',rule:'Alla × och ÷ i samma svep',
+     expr:`(−${a2}) × ${b2} = ${prod2}   och   ${d2} ÷ (−${e2}) = ${divVal2}`,
+     desc:'× och ÷ (bråk) räknas före + och −, teckenregler gäller',
+     hi:[[1,5],[6,6]],hiType:'frac',
+     chain:`${a3} + **${prod2}** + **${divVal2}**`},
+    {badge:'Steg 2',rule:'Vänster → höger',
+     expr:`${a3} + (${prod2}) + (${divVal2}) = ${ans2}`,
+     desc:'',hi:[[0,6]],hiType:'default',chain:`**${ans2}**`},
+  ]};
+}
+
+// ── N3: negativa tal med parenteser ─────────────────────────────────────────
+function genNeg3(){
+  const type=rnd(1,3);
+
+  if(type===1){
+    // (−a + b) × c
+    const a=rndH(2,7), b=rndH(a+1,a+8), cc=rndH(2,5);
+    const inner=b-a, ans=inner*cc;
+    if(ans<-20||ans>35) return genNeg3();
+    // toks: ((0) −(1) a(2... wait — (−a + b) 
+    // Use: lp, op(−), n(a), op(+), n(b), rp, op(×), n(c)
+    const toks=[T.lp(), T.op('−'), T.n(a), T.op('+'), T.n(b), T.rp(), T.op('×'), T.n(cc)];
+    return{toks,ans,hint:'paren',steps:[
+      {badge:'Steg 1',rule:'( ) Parentesen ALLTID FÖRST',
+       expr:`−${a} + ${b} = ${inner}`,
+       desc:'Räkna inuti parentesen — negativt tal ingår',
+       hi:[[0,5]],hiType:'paren',
+       chain:`(**${inner}**) × ${cc}`},
+      {badge:'Steg 2',rule:'Multiplikation',
+       expr:`${inner} × ${cc} = ${ans}`,
+       desc:'',
+       hi:[[0,7]],hiType:'default',
+       chain:`**${ans}**`},
+    ]};
+  }
+
+  if(type===2){
+    // (−a + b) × (−c)
+    const a=rndH(2,6), b=rndH(a+1,a+7), cc=rndH(2,4);
+    const inner=b-a, ans=inner*(-cc);
+    if(ans<-30||ans>30||ans===0) return genNeg3();
+    const toks=[T.lp(), T.op('−'), T.n(a), T.op('+'), T.n(b), T.rp(), T.op('×'), ...negTok(cc)];
+    const signRule = inner>0 ? '+ × − = −' : '− × − = +';
+    return{toks,ans,hint:'paren',steps:[
+      {badge:'Steg 1',rule:'Alla ( ) ALLTID FÖRST',
+       expr:`−${a} + ${b} = ${inner}   och   (−${cc})`,
+       desc:'Räkna båda parenteserna',
+       hi:[[0,5],[6,10]],hiType:'paren',
+       chain:`(**${inner}**) × (**${-cc}**)`},
+      {badge:'Steg 2',rule:`Multiplikation — ${signRule}`,
+       expr:`${inner} × (−${cc}) = ${ans}`,
+       desc:'Kom ihåg teckenregeln!',
+       hi:[[0,10]],hiType:'default',
+       chain:`**${ans}**`},
+    ]};
+  }
+
+  // type 3: a − (−b + c) × d
+  const d=rndH(2,4), b=rndH(2,6), cc=rndH(b+1,b+6), a=rndH(10,25);
+  const inner=cc-b, prod=inner*d, ans=a-prod;
+  if(ans<-10||ans>30) return genNeg3();
+  // toks: a(0) −(1) (−b+c)(2-7) ×(8) d(9)
+  const toks=[T.n(a), T.op('−'), T.lp(), T.op('−'), T.n(b), T.op('+'), T.n(cc), T.rp(), T.op('×'), T.n(d)];
+  return{toks,ans,hint:'paren',steps:[
+    {badge:'Steg 1',rule:'( ) ALLTID FÖRST',
+     expr:`−${b} + ${cc} = ${inner}`,
+     desc:'Räkna inuti parentesen',
+     hi:[[2,7]],hiType:'paren',
+     chain:`${a} − (**${inner}**) × ${d}`},
+    {badge:'Steg 2',rule:'× FÖRE −',
+     expr:`${inner} × ${d} = ${prod}`,
+     desc:'',
+     hi:[[2,9]],hiType:'default',
+     chain:`${a} − **${prod}**`},
+    {badge:'Steg 3',rule:'Subtraktion',
+     expr:`${a} − ${prod} = ${ans}`,
+     desc:'',
+     hi:[[0,9]],hiType:'default',
+     chain:`**${ans}**`},
+  ]};
+}
+
+
+const TEACHER_CONTENT = {
+  general: {
+    title: 'Räkneregler — lärarinformation',
+    sections: [
+      {h:'Vad tränar eleven?', p:[
+        'Detta program tränar <strong>räkneordning</strong> (prioriteringsregler) — en av de mest grundläggande konventionerna i matematik. Eleven lär sig att ett matematiskt uttryck alltid beräknas i en bestämd ordning, oavsett hur det ser ut.',
+        'Programmet bygger progressivt: varje nivå lägger till ett nytt element. Det är viktigt att eleven befäster varje nivå innan nästa påbörjas — annars riskerar de att gissa snarare än att förstå.'
+      ]},
+      {h:'Prioriteringsordningen — grundregeln', p:[
+        '<strong>1. Parenteser</strong> — alltid först, inifrån och ut.',
+        '<strong>2. Potenser</strong> — x² beräknas direkt efter parenteser.',
+        '<strong>3. Multiplikation och division</strong> — i samma "svep", vänster till höger.',
+        '<strong>4. Addition och subtraktion</strong> — sist, vänster till höger.',
+        'Minnesregel som fungerar i klassrummet: <strong>"Paraply, Potens, Multiplikation, Addition"</strong> — eller den klassiska <strong>PEMDAS / BODMAS</strong>-varianten.'
+      ]},
+      {h:'Så används programmet', p:[
+        '<strong>Steg-för-steg-läget</strong> är det primära läget för lärande. Eleven exponeras för ett steg i taget, fyller i det beräknade värdet och ser kedjan byggas upp. Felet uppstår i steget — inte i slutsvaret — vilket ger exakt feedback.',
+        '<strong>Visa lösning</strong> är ett stöd, inte en genväg. Eleven kan se hela lösningskedjan och sedan byta till "Din lösning" för att försöka själv på <em>samma uppgift</em>.',
+        '<strong>Osynliga parenteser</strong> (nivå 6) är ett kraftfullt verktyg: eleven ser att bråk fungerar som parenteser, vilket är en vanlig missuppfattning.'
+      ]},
+      {h:'Vanliga misstag att vara uppmärksam på', p:[
+        'Eleven räknar <strong>vänster till höger</strong> utan hänsyn till operatorprioritet — t.ex. beräknar 2 + 3 × 4 som (2+3)×4 = 20 istället för 14.',
+        'Eleven <strong>missar parenteser</strong> eller hoppar över dem när de inte ser "nödvändiga" ut.',
+        'Vid negativa tal: eleven skriver −3 × −4 = −12 (glömmer att − × − = +).',
+        'Vid bråk: eleven beräknar täljaren och nämnaren separat men glömmer att bråkstrecket är ett divisionstecken.'
+      ]}
+    ]
+  },
+  1: {
+    title: 'Nivå 1 — Addition & subtraktion',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Eleven arbetar med uttryck som endast innehåller + och −. Inga andra operatorer förekommer. Regeln är enkel: <strong>räkna vänster till höger</strong>.',
+        'Exempel: 14 − 5 + 8 − 3 beräknas som (((14−5)+8)−3) = 14.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Denna nivå etablerar grundvanan att bygga en <strong>lösningskedja</strong> — dvs. att skriva ut varje delresultat på en ny rad. Det är en ovärderlig vana för alla högre nivåer.',
+        'Betona att "vänster till höger" är en konvention, inte en slump. Det är viktigt att eleven förstår varför vi gör det i den ordningen.'
+      ]},
+      {h:'Tips till läraren', p:[
+        '<strong>Visa kedjan på tavlan</strong> innan eleven börjar: skriv ut varje steg under varandra med = framför. Eleven ska imitera detta i programmet.',
+        'Om eleven skriver hela beräkningen på en rad och "hoppar" till svaret — pausa och be dem visa varje delsteg.'
+      ]}
+    ]
+  },
+  2: {
+    title: 'Nivå 2 — Multiplikation & addition',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Nu tillkommer multiplikation. Regeln: <strong>× och ÷ räknas FÖRE + och −</strong>. Vid flera multiplikationer görs alla i samma "svep" — vänster till höger bland dem.',
+        'Exempel: 12 + 3 × 4 − 2 × 5 → 12 + <strong>12</strong> − <strong>10</strong> → 14.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Detta är den vanligaste källan till fel i grundskolan. Eleven måste <strong>skanna hela uttrycket</strong> efter × innan de börjar räkna.',
+        'En effektiv teknik: låt eleven markera (stryka under) alla × och sifferparen runt dem innan de räknar. Det är precis vad markeringsfunktionen i programmet simulerar.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Fråga: "Vad räknar vi ALDRIG direkt från vänster om det finns ett × längre fram?" — det tvingar eleven att tänka globalt på uttrycket.',
+        '<strong>Vanligt fel:</strong> 2 + 3 × 4 = 20. Fråga eleven: "Vad multipliceras med 4 — är det 3 eller (2+3)?"'
+      ]}
+    ]
+  },
+  3: {
+    title: 'Nivå 3 — Enkla bråk + mult/add',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Bråk introduceras som ett sätt att skriva division. Bråket <strong>8/4</strong> betyder 8÷4 och beräknas i samma svep som multiplikation — dvs. FÖRE + och −.',
+        'Bråket är alltid heltalsdividerbart på denna nivå: svaret är alltid ett heltal.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Eleven behöver förstå att bråkstrecket är ett <strong>divisionstecken</strong>, inte bara en skrivkonvention. Denna insikt är nödvändig för att förstå nivå 6 (osynliga parenteser).',
+        'Betona att bråket "löses upp" till ett heltal i steg 1 — sedan fortsätter uttrycket som vanligt.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Visa parallellen: 12 + 8÷4 − 3 är <em>exakt samma</em> som 12 + 8/4 − 3. Bråkstrecket och ÷ är samma sak.',
+        '<strong>Vanligt fel:</strong> Eleven adderar täljaren till närmaste tal istället för att dela — t.ex. behandlar 6 + 8/4 som (6+8)/4.'
+      ]}
+    ]
+  },
+  4: {
+    title: 'Nivå 4 — Parenteser + mult/add',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Parenteser introduceras. Regeln: <strong>det som står inuti parentes beräknas ALLTID FÖRST</strong>, oavsett vad som finns utanför.',
+        'Nivå 4 innehåller också varianter med negativa delresultat: t.ex. (3 − 8) × 4 + 25 = (−5) × 4 + 25 = 5.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Parentesen är ett sätt att <strong>bryta mot normalordningen</strong>. Det är det bästa sättet att förklara varför de finns: "vi vill att detta ska räknas först, så vi sätter parentes runt det".',
+        'De negativa delresultaten på denna nivå är pedagogiskt viktiga — eleven möter negativa tal i ett naturligt sammanhang, inte som ett abstrakt begrepp.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Bygg intuition: "Om jag vill att 5 + 3 ska multipliceras med 2, vad måste jag göra?" → parentes.',
+        '<strong>Vanligt fel:</strong> Eleven räknar multiplikationen utanför parentesen FÖRST: (5+3)×2 → 5 + 3×2. Betona: "Parentesen vinner alltid".'
+      ]}
+    ]
+  },
+  5: {
+    title: 'Nivå 5 — Parenteser, många termer',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Mer komplexa uttryck med flera parenteser, multiplikationer och additioner i kombination. Eleven måste hålla koll på <strong>flera operationer simultant</strong>.',
+        'Exempel: (6−2) × (3+1) + 5 × 2 → 4 × 4 + 10 → 26.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Här tränas <strong>systematisk genomsökning</strong>: eleven måste identifiera alla parenteser, lösa dem, sedan alla multiplikationer, och sist addition/subtraktion.',
+        'Kedjan i programmet visar hur varje "svep" reducerar uttrycket tills bara ett tal återstår — det är ett kraftfullt visuellt hjälpmedel.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Be eleven beskriva <em>i ord</em> vad de ska göra innan de räknar: "Först löser jag parenteserna, sedan multiplikationerna, sedan resten." Det metakognitiva steget förbättrar resultaten markant.'
+      ]}
+    ]
+  },
+  6: {
+    title: 'Nivå 6 — Bråk med osynliga parenteser',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Bråk där täljaren och/eller nämnaren innehåller ett uttryck: t.ex. (3+5)/(4−2). Bråkstrecket fungerar som <strong>osynliga parenteser</strong> runt täljaren och nämnaren.',
+        'Regeln: beräkna täljaren, beräkna nämnaren, dividera — och behandla resultatet som ett vanligt bråk.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Den "osynliga parentes"-metaforen är central. Eleven behöver internalisera att bråkstrecket inte bara delar — det <strong>grupperar</strong>.',
+        'Knappen "Visa osynliga parenteser" i programmet är ett konkret verktyg: eleven kan se exakt vilka parenteser som är implicita, och sedan dölja dem igen.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Jämför: skriv (3+5)÷(4−2) bredvid bråkformen. De är identiska — bråkstrecket är bara ett mer kompakt sätt att skriva divisionen.',
+        '<strong>Vanligt fel:</strong> Eleven behandlar bråket som 3 + 5/4 − 2, dvs. glömmer att hela täljaren och hela nämnaren ska beräknas var för sig.'
+      ]}
+    ]
+  },
+  7: {
+    title: 'Nivå 7 — Potenser + mult/add',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Potenser (x²) introduceras. Prioriteringsordningen utökas: <strong>Parentes → Potens → × och ÷ → + och −</strong>.',
+        'På denna nivå förekommer inga parenteser — eleven fokuserar på att potensen beräknas FÖRE multiplikation.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Potensen är den operation som flest elever "glömmer" i prioriteringsordningen. Det beror på att den skrivs som ett litet tal ovanför, inte som ett tydligt operatortecken.',
+        'Betona: x² betyder x×x, och den beräknas direkt — precis som om det stod (x×x).'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Skriv om: 2³ + 4 × 3 som (2×2×2) + (4×3) för att göra det konkret.',
+        '<strong>Vanligt fel:</strong> Eleven beräknar 2³ som 2×3 = 6 istället för 2×2×2 = 8. Gå tillbaka till definitionen av potens.'
+      ]}
+    ]
+  },
+  8: {
+    title: 'Nivå 8 — Potenser + parenteser',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Parenteser och potenser kombineras. Vanligaste formen: (a+b)² där parentesen löses FÖRE potensen beräknas.',
+        'Exempel: (2+3)² − 3 × 4 → 5² − 12 → 25 − 12 = 13.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        '(a+b)² ≠ a² + b² — detta är en av de vanligaste algebraiska missuppfattningarna. Parentesen måste lösas FÖRST, och sedan kvadreras resultatet.',
+        'Denna nivå lägger grunden för att förstå potensregler och kvadreringsregler i algebra.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Visa kontrastexemplet: 2² + 3² = 4 + 9 = 13, men (2+3)² = 25. Fråga: "Vad är skillnaden?" — det skapar kognitiv konflikt som befäster regeln.',
+        'Betona ordningen explicit: "Parentes SEDAN potens — inte tvärtom".'
+      ]}
+    ]
+  },
+  9: {
+    title: 'Nivå 9 — Allt kombinerat',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Alla regler i full kombination: parenteser, potenser, bråk med osynliga parenteser, multiplikation, addition. Uttrycken kräver 3–4 steg och bred överblick.',
+        'Denna nivå är tänkt som en summering och diagnostik — klarar eleven denna, har de genuint förstått hela prioriteringsordningen.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Framgång på nivå 9 kräver <strong>automatisering</strong> av de tidigare reglerna — eleven ska inte behöva tänka på dem, utan bara tillämpa dem.',
+        'Använd "Visa lösning" strategiskt: låt eleven se en komplex kedja och förklara varje steg högt. Det är en effektiv diagnostisk metod.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Om eleven fastnar — gå tillbaka till nivå 6 eller 7 och befäst den svaga länken. Nivå 9 avslöjar var förståelsen brister.',
+        'Utmana: "Kan du skapa ett eget uttryck som kräver alla fyra reglerna?" — det mäter djupförståelse.'
+      ]}
+    ]
+  },
+  n1: {
+    title: 'Nivå N1 — Negativa tal: addition & subtraktion',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Eleven möter negativa tal skrivna inom parentes: (−5). Uttrycken innehåller + och − kombinerade med negativa tal.',
+        'Teckenreglerna: <strong>+ (−) = −</strong> (olika tecken → minus) och <strong>− (−) = +</strong> (lika tecken → plus).'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Parentesnotationen (−5) är standard och förhindrar förvirring: eleven ser tydligt att det är ett negativt tal, inte ett subtraktionstecken.',
+        'Teckenregeln "lika tecken → plus, olika tecken → minus" är ett minnesverktyg — men det viktigare är att eleven förstår <em>varför</em>: att subtrahera ett negativt tal är att addera det positiva.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Tallinje är ett ovärderligt hjälpmedel: visa 5 + (−2) som att starta på 5 och gå 2 steg åt vänster.',
+        '<strong>Vanligt fel:</strong> Eleven ser 5 + (−2) och skriver 5 + 2 = 7, dvs. ignorerar minustecknet. Betona att parentesen innehåller ett negativt tal, inte ett positivt.',
+        '<strong>Knepigt fall:</strong> − (−3) = +3. Visualisera som "motsatsen till −3" = +3.'
+      ]}
+    ]
+  },
+  n2: {
+    title: 'Nivå N2 — Negativa tal: × och ÷',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Multiplikation och division med negativa tal. Teckenreglerna för × och ÷: <strong>− × + = −</strong>, <strong>+ × − = −</strong>, <strong>− × − = +</strong>.',
+        'Division skrivs alltid som stående bråk. Täljaren eller nämnaren kan vara negativ: (−6)/3 = −2, eller 6/(−3) = −2.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Teckenreglerna för multiplikation är kontraintuitiva — särskilt − × − = +. Den matematiska förklaringen: negation av en negation ger positiv riktning.',
+        'Praktisk förklaring som fungerar i klassrummet: "Om det är dåligt att förlora pengar (−), är det bra (−×− = +) att sluta förlora dem."',
+        'Divisionen med negativa tal behandlas identiskt med multiplikation vad gäller tecken — det är samma regel.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Bygg upp systematiskt: börja med (−a) × b, sedan a × (−b), sedan (−a) × (−b). Eleven bör se mönstret.',
+        '<strong>Vanligt fel:</strong> (−3) × (−4) = −12. Eleven "vet" att det är negativt för att det finns minustecken, utan att tillämpa regeln.',
+        'Bråkformen hjälper: (−6)/3 är lättare att resonera kring än (−6)÷3 för många elever.'
+      ]}
+    ]
+  },
+  b1: {
+    title: 'Nivå B1 — Förenkla bråk',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Eleven lär sig att förenkla bråk till lägsta termer genom att hitta <strong>störste gemensamma faktorn (SGF)</strong> för täljare och nämnare och dela båda med den.',
+        'Exempel: 6/8 → SGF(6,8) = 2 → 3/4.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Förenkling av bråk är en grundläggande färdighet som eleven behöver automatisera. Det är grunden för all fortsatt bråkräkning — ett oförenklade svar är formellt felaktigt.',
+        'Betona att 6/8 och 3/4 är <em>lika stora</em> — förenkling ändrar inte värdet, bara skrivformen.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Strategin "dela med 2 tills det inte går, sedan med 3" fungerar för många tal men lär inte eleven SGF. Uppmuntra att verkligen hitta SGF direkt.',
+        '<strong>Vanligt fel:</strong> Eleven delar bara täljaren, eller delar med ett tal som inte är gemensamt: 6/8 → 3/8 (delade bara täljaren).'
+      ]}
+    ]
+  },
+  b2: {
+    title: 'Nivå B2 — Addition och subtraktion med gemensam nämnare',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Addition och subtraktion av bråk när nämnarna redan är lika. Regeln: <strong>addera/subtrahera täljarna, behåll nämnaren</strong>.',
+        'Exempel: 1/4 + 2/4 = 3/4. Om möjligt förenklas svaret: 2/6 + 2/6 = 4/6 = 2/3.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Gemensam nämnare är förutsättningen för bråkaddition. Denna nivå renodlar selve additionssteget utan distraktionen att behöva utöka bråken.',
+        'Analogin som fungerar: 1 fjärdedel + 2 fjärdedelar = 3 fjärdedelar. <em>Du adderar antalet delar, inte storleken på delarna.</em>'
+      ]},
+      {h:'Tips till läraren', p:[
+        '<strong>Vanligt fel:</strong> Eleven adderar även nämnarerna: 1/4 + 2/4 = 3/8. Fråga: "Om du äter 1 pizza-skiva av 4 och sedan 2 skivor av 4, har du ätit av 8 skivor?" — det skapar rätt intuition.'
+      ]}
+    ]
+  },
+  b3: {
+    title: 'Nivå B3 — Addition och subtraktion med olika nämnare',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Bråk med olika nämnare kan inte adderas direkt. Eleven måste hitta <strong>minsta gemensamma nämnare (MGN)</strong> och utöka båda bråken.',
+        'Exempel: 1/3 + 1/4 → MGN = 12 → 4/12 + 3/12 = 7/12.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'MGN = LCM (minsta gemensamma multipel) för nämnarerna. För enklare tal räcker det att multiplicera nämnarerna om de saknar gemensamma faktorer.',
+        'Processen är alltid: (1) hitta MGN, (2) utöka båda bråken, (3) addera täljarna, (4) förenkla om möjligt.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Visa att MGN(3,4)=12 men MGN(4,6)=12 inte 24 — det lönar sig att hitta rätt MGN.',
+        '<strong>Vanligt fel:</strong> Eleven hittar MGN men utökar bara en av täljarna, eller glömmer att multiplicera täljaren med samma faktor som nämnaren.'
+      ]}
+    ]
+  },
+  b4: {
+    title: 'Nivå B4 — Multiplicera bråk',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Multiplikation av bråk: <strong>täljare × täljare och nämnare × nämnare</strong>. Ingen gemensam nämnare behövs!',
+        'Exempel: 2/3 × 3/4 = 6/12 = 1/2. Förkortning <em>innan</em> multiplikation gör beräkningen enklare: 2/3 × 3/4 → ²/₄ × ¹/₁ = 1/2.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Multiplikation av bråk är faktiskt enklare än addition — ingen gemensam nämnare behövs. Trots det förväxlar elever ofta reglerna.',
+        'Diagonal förkortning (kors-förkortning) är en viktig teknik: förkorta täljaren i ett bråk med nämnaren i det andra och vice versa, innan du multiplicerar.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Visualisering: "2/3 av 3/4" — rita ett rutnät och skugga. Det bygger intuitionen.',
+        '<strong>Vanligt fel:</strong> Eleven försöker hitta gemensam nämnare (additionsregeln) och adderar täljarna. Betona: "Multiplikation — vi multiplicerar rakt igenom, ingen gemensam nämnare."'
+      ]}
+    ]
+  },
+  b5: {
+    title: 'Nivå B5 — Dividera bråk',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Division med bråk: <strong>vänd det andra bråket (reciproken) och multiplicera</strong>.',
+        'Exempel: 2/3 ÷ 4/5 = 2/3 × 5/4 = 10/12 = 5/6. Reciproken av 4/5 är 5/4.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Regeln "vänd och multiplicera" är en av de svåraste att befästa intuitivt. Eleven behöver förstå <em>varför</em>: att dela med x är samma sak som att multiplicera med 1/x.',
+        'Reciproken av ett heltal n är 1/n: 3 ÷ 2/5 = 3 × 5/2 = 15/2.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Konkret: "Hur många gånger ryms 1/4 i 3/4?" — eleven kan räkna (3 gånger). Visa sedan att 3/4 ÷ 1/4 = 3/4 × 4/1 = 3. Det stämmer!',
+        '<strong>Vanligt fel:</strong> Eleven vänder det <em>första</em> bråket istället för det andra, eller vänder båda. Betona: "Det är divisorn — det du dividerar MED — som ska vändas."'
+      ]}
+    ]
+  },
+  b6: {
+    title: 'Nivå B6 — Alla fyra räknesätten med bråk',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Uttryck som kombinerar addition, subtraktion, multiplikation och division med bråk — och där <strong>prioriteringsreglerna gäller</strong>: × och ÷ räknas före + och −.',
+        'Exempel: 1/2 + 2/3 × 3/4 → räkna 2/3 × 3/4 = 1/2 FÖRST → sedan 1/2 + 1/2 = 1.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Denna nivå förenar bråkräkning med prioriteringsreglerna — det är den naturliga bryggan mellan de två ämnena.',
+        'Eleven måste nu hålla <em>två</em> regelsystem aktiva simultant: bråkreglerna och räkneordningen. Det kräver god automatisering av båda.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Börja med att låta eleven identifiera ordningen: "Vad räknar vi FÖRST? Varför?" Sedan tillämpar de bråkreglerna i rätt ordning.',
+        '<strong>Vanligt fel:</strong> Eleven räknar vänster till höger utan hänsyn till prioritet — eller glömmer att bråket i täljaren/nämnaren måste beräknas separat.'
+      ]}
+    ]
+  },
+  n3: {
+    title: 'Nivå N3 — Negativa tal: parenteser',
+    sections: [
+      {h:'Matematiskt innehåll', p:[
+        'Parenteser som innehåller negativa tal, kombinerat med multiplikation. Exempel: (−2 + 5) × (−3) → 3 × (−3) = −9.',
+        'Prioriteringsordningen gäller fullt ut: parentes ALLTID FÖRST, sedan multiplikation med teckenregel.'
+      ]},
+      {h:'Didaktisk poäng', p:[
+        'Denna nivå kombinerar två utmaningar: parentesregeln och teckenregeln. Eleven måste tillämpa dem i rätt ordning.',
+        'Det är viktigt att eleven löser parentesen FULLT UT — inklusive eventuellt negativt resultat — INNAN de räknar på det utanför.'
+      ]},
+      {h:'Tips till läraren', p:[
+        'Betona steget: "Vad är värdet inuti parentesen?" → skriv ut det tydligt → sedan: "Vilket tecken ger multiplikationen?"',
+        '<strong>Vanligt fel:</strong> Eleven "distribuerar" negativt tecken in i parentesen istället för att beräkna den först: (−2+5)×(−3) → −2×(−3)+5×(−3). Det är inte fel matematiskt, men det är inte vad vi tränar här.',
+        'Lyft fram: resultatet av parentesen kan vara positivt eller negativt — och det avgör om slutsvaret är positivt eller negativt.'
+      ]}
+    ]
+  }
+};
+
+function openTeacherModal(levelId){
+  const content = levelId != null ? (TEACHER_CONTENT[levelId] || TEACHER_CONTENT.general) : TEACHER_CONTENT.general;
+  const modal = document.getElementById('teacher-modal');
+  const box = document.getElementById('teacher-modal-box');
+
+  let html = `<div class="modal-teacher-tag">📚 Från läraren</div>
+    <div class="modal-title">${content.title}</div>`;
+
+  content.sections.forEach(sec => {
+    html += `<div class="modal-section"><h3>${sec.h}</h3>`;
+    sec.p.forEach(para => {
+      if(para.startsWith('<strong>') && (para.includes('→') || para.includes('−') || para.includes('+'))) {
+        html += `<div class="modal-rule-box"><div class="rule-line"><span class="rn">▸</span><span>${para}</span></div></div>`;
+      } else {
+        html += `<p>${para}</p>`;
+      }
+    });
+    html += `</div>`;
+  });
+
+  // Add general overview link if on a specific level
+  if(levelId != null){
+    html += `<div class="modal-tip"><strong>Vill du se den allmänna läraröversikten?</strong> Stäng och klicka på 📚-knappen på startsidan.</div>`;
+  }
+
+  box.innerHTML = `<button class="modal-close" onclick="closeTeacherModal()">✕</button>${html}`;
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeTeacherModal(){
+  document.getElementById('teacher-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+
+// ══════════════════════════════════════
+//  BRÅKRÄKNING — GENERATORER
+//  Svar alltid som {num, den} (fullt förenklade)
+//  state.isFracLevel = true aktiverar bråk-svarsrutan
+// ══════════════════════════════════════
+
+// GCD — störste gemensamma delare
+function gcd(a,b){ a=Math.abs(a);b=Math.abs(b); while(b){const t=b;b=a%b;a=t;} return a; }
+// LCM — minsta gemensamma multipel
+function lcm(a,b){ return Math.abs(a*b)/gcd(a,b); }
+// Förenkla bråk till lägsta termer
+function reduceFrac(n,d){
+  if(d===0) return{n:0,d:1};
+  if(d<0){n=-n;d=-d;}
+  const g=gcd(Math.abs(n),d);
+  return{n:n/g, d:d/g};
+}
+// Formatera bråk för chain-sträng
+function fracChain(n,d,hi=false){
+  const r=reduceFrac(n,d);
+  if(r.d===1) return hi?`**${r.n}**`:`${r.n}`;
+  if(hi) return `FRAC[**${r.n}**|**${r.d}**]`;
+  return `FRAC[${r.n}|${r.d}]`;
+}
+// Rendera bråk som toks för expression-box
+function fracToks(n,d){ return [T.fr([T.n(n)],[T.n(d)])]; }
+
+// ── B1: Förenkla bråk ────────────────────────────────────────────────────────
+function genB1(){
+  const denoms=[2,3,4,5,6,8,10,12];
+  const d=pick(denoms);
+  const factor=pick([2,3,4].filter(f=>f*d<=24));
+  const n=rndH(1,d-1); // proper fraction, täljare < nämnare
+  const bigN=n*factor, bigD=d*factor;
+  if(gcd(n,d)!==1) return genB1(); // ensure already reduced
+  const g=gcd(bigN,bigD);
+  const steps=[];
+  // Step 1: find GCF
+  steps.push({
+    badge:'Steg 1', rule:`SGF av ${bigN} och ${bigD} = ${g}`,
+    expr:`SGF(${bigN}, ${bigD}) = ${g}`,
+    desc:'Störste gemensamma faktor — det tal vi kan dela båda med',
+    hi:[[0,0]],hiType:'frac',
+    chain:`FRAC[${bigN}÷${g}|${bigD}÷${g}]`
+  });
+  // Step 2: divide
+  steps.push({
+    badge:'Steg 2', rule:'Dela täljare och nämnare med SGF',
+    expr:`${bigN}÷${g} = ${n}  och  ${bigD}÷${g} = ${d}`,
+    desc:'',
+    hi:[[0,0]],hiType:'frac',
+    chain:`FRAC[**${n}**|**${d}**]`
+  });
+  return{
+    toks:[T.fr([T.n(bigN)],[T.n(bigD)])],
+    ans:reduceFrac(bigN,bigD), isFracAns:true,
+    hint:'frac', steps
+  };
+}
+
+// ── B2: + och − med gemensam nämnare ─────────────────────────────────────────
+function genB2(){
+  const type=rnd(1,3);
+  const d=pick([3,4,5,6,8,10]);
+  if(type===1){
+    // a/d + b/d = (a+b)/d
+    const a=rnd(1,d-2), b=rnd(1,d-1-a);
+    const rn=a+b, r=reduceFrac(rn,d);
+    const steps=[];
+    steps.push({badge:'Steg 1',rule:'Gemensam nämnare — addera täljarna',
+      expr:`${a} + ${b} = ${rn}`,desc:'Nämnaren förblir oförändrad',
+      hi:[[0,2]],hiType:'frac',
+      chain:`FRAC[**${rn}**|${d}]`});
+    if(r.d!==d){
+      steps.push({badge:'Steg 2',rule:`Förenkla — SGF = ${gcd(rn,d)}`,
+        expr:`${rn}÷${gcd(rn,d)} = ${r.n}  och  ${d}÷${gcd(rn,d)} = ${r.d}`,desc:'',
+        hi:[[0,0]],hiType:'frac',
+        chain:`FRAC[**${r.n}**|**${r.d}**]`});
+    }
+    return{toks:[T.fr([T.n(a)],[T.n(d)]),T.op('+'),T.fr([T.n(b)],[T.n(d)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  if(type===2){
+    // a/d − b/d
+    const a=rnd(2,d-1), b=rnd(1,a-1);
+    const rn=a-b, r=reduceFrac(rn,d);
+    const steps=[];
+    steps.push({badge:'Steg 1',rule:'Gemensam nämnare — subtrahera täljarna',
+      expr:`${a} − ${b} = ${rn}`,desc:'Nämnaren förblir oförändrad',
+      hi:[[0,2]],hiType:'frac',
+      chain:`FRAC[**${rn}**|${d}]`});
+    if(r.d!==d){
+      steps.push({badge:'Steg 2',rule:`Förenkla — SGF = ${gcd(rn,d)}`,
+        expr:`${rn}÷${gcd(rn,d)} = ${r.n}  och  ${d}÷${gcd(rn,d)} = ${r.d}`,desc:'',
+        hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+    }
+    return{toks:[T.fr([T.n(a)],[T.n(d)]),T.op('−'),T.fr([T.n(b)],[T.n(d)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  // type 3: a/d + b/d + c/d
+  const a=rnd(1,d-3), b=rnd(1,d-2-a), cc=rnd(1,d-1-a-b);
+  const rn=a+b+cc, r=reduceFrac(rn,d);
+  const steps=[];
+  steps.push({badge:'Steg 1',rule:'Gemensam nämnare — addera alla täljare',
+    expr:`${a} + ${b} + ${cc} = ${rn}`,desc:'Tre bråk, samma nämnare',
+    hi:[[0,4]],hiType:'frac',chain:`FRAC[**${rn}**|${d}]`});
+  if(r.d!==d){
+    steps.push({badge:'Steg 2',rule:`Förenkla — SGF = ${gcd(rn,d)}`,
+      expr:`${rn}÷${gcd(rn,d)} = ${r.n}  och  ${d}÷${gcd(rn,d)} = ${r.d}`,desc:'',
+      hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+  }
+  return{toks:[T.fr([T.n(a)],[T.n(d)]),T.op('+'),T.fr([T.n(b)],[T.n(d)]),T.op('+'),T.fr([T.n(cc)],[T.n(d)])],
+    ans:r,isFracAns:true,hint:'frac',steps};
+}
+
+// ── B3: + och − med olika nämnare ─────────────────────────────────────────────
+function genB3(){
+  const type=rnd(1,4);
+  const pairs=[[2,3],[2,5],[3,4],[3,5],[4,5],[2,7],[3,7],[4,6],[3,8],[2,9]];
+  const [d1,d2]=pick(pairs);
+  const L=lcm(d1,d2);
+  if(type<=2){
+    // a/d1 + b/d2
+    const a=rnd(1,d1-1), b=rnd(1,d2-1);
+    const n1=a*(L/d1), n2=b*(L/d2), rn=n1+(type===1?n2:-n2);
+    if(rn<=0) return genB3();
+    const r=reduceFrac(rn,L);
+    const op=type===1?'+':'−';
+    const opSym=type===1?'addera':'subtrahera';
+    const steps=[
+      {badge:'Steg 1',rule:`MGN = ${L} — utöka båda bråken`,
+       expr:`${a}/${d1} = ${n1}/${L}  och  ${b}/${d2} = ${n2}/${L}`,
+       desc:`Minsta gemensamma nämnare för ${d1} och ${d2} är ${L}`,
+       hi:[[0,2]],hiType:'frac',
+       chain:`FRAC[${n1}|${L}] ${op} FRAC[${n2}|${L}]`},
+      {badge:'Steg 2',rule:`${opSym} täljarna`,
+       expr:`${n1} ${op} ${n2} = ${rn}`,desc:'Nämnaren är nu gemensam',
+       hi:[[0,2]],hiType:'frac',
+       chain:`FRAC[**${rn}**|${L}]`},
+    ];
+    if(r.d!==L){
+      steps.push({badge:'Steg 3',rule:`Förenkla — SGF = ${gcd(rn,L)}`,
+        expr:`${rn}÷${gcd(rn,L)} = ${r.n}  och  ${L}÷${gcd(rn,L)} = ${r.d}`,desc:'',
+        hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+    }
+    const opT=type===1?T.op('+'):T.op('−');
+    return{toks:[T.fr([T.n(a)],[T.n(d1)]),opT,T.fr([T.n(b)],[T.n(d2)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  // types 3-4: heltal + bråk
+  const whole=rndH(1,4), a=rnd(1,d1-1);
+  const rn=whole*L+a, r=reduceFrac(rn,L);
+  const op=type===3?'+':'−';
+  // whole ± a/d1
+  const rn2=type===3?whole*d1+a:whole*d1-a;
+  if(rn2<=0) return genB3();
+  const r2=reduceFrac(rn2,d1);
+  const steps=[
+    {badge:'Steg 1',rule:`Skriv ${whole} som bråk med nämnaren ${d1}`,
+     expr:`${whole} = ${whole*d1}/${d1}`,
+     desc:`Multiplicera täljare och nämnare med ${d1}`,
+     hi:[[0,0]],hiType:'frac',
+     chain:`FRAC[${whole*d1}|${d1}] ${op} FRAC[${a}|${d1}]`},
+    {badge:'Steg 2',rule:`${type===3?'Addera':'Subtrahera'} täljarna`,
+     expr:`${whole*d1} ${op} ${a} = ${rn2}`,desc:'',
+     hi:[[0,2]],hiType:'frac',chain:`FRAC[**${rn2}**|${d1}]`},
+  ];
+  if(r2.d!==d1){
+    steps.push({badge:'Steg 3',rule:`Förenkla — SGF = ${gcd(rn2,d1)}`,
+      expr:`${rn2}÷${gcd(rn2,d1)} = ${r2.n}  och  ${d1}÷${gcd(rn2,d1)} = ${r2.d}`,desc:'',
+      hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r2.n}**|**${r2.d}**]`});
+  }
+  const opT=type===3?T.op('+'):T.op('−');
+  return{toks:[T.n(whole),opT,T.fr([T.n(a)],[T.n(d1)])],
+    ans:r2,isFracAns:true,hint:'frac',steps};
+}
+
+// ── B4: Multiplicera bråk ────────────────────────────────────────────────────
+function genB4(){
+  const type=rnd(1,3);
+  if(type===1){
+    // a/b × c/d
+    const denPairs=[[2,3],[2,5],[3,4],[3,5],[4,5],[2,7],[5,6]];
+    const [b,d]=pick(denPairs);
+    const a=rnd(1,b), cc=rnd(1,d);
+    const rn=a*cc, rd=b*d, r=reduceFrac(rn,rd);
+    const g=gcd(rn,rd);
+    const steps=[
+      {badge:'Steg 1',rule:'Multiplicera täljare × täljare, nämnare × nämnare',
+       expr:`${a}×${cc} = ${rn}  och  ${b}×${d} = ${rd}`,
+       desc:'Bråkmultiplikation: direkt kors',
+       hi:[[0,2]],hiType:'frac',chain:`FRAC[${rn}|${rd}]`},
+    ];
+    if(g>1){
+      steps.push({badge:'Steg 2',rule:`Förenkla — SGF = ${g}`,
+        expr:`${rn}÷${g} = ${r.n}  och  ${rd}÷${g} = ${r.d}`,desc:'',
+        hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+    } else {
+      steps[0].chain=`FRAC[**${rn}**|**${rd}**]`;
+    }
+    return{toks:[T.fr([T.n(a)],[T.n(b)]),T.op('×'),T.fr([T.n(cc)],[T.n(d)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  if(type===2){
+    // heltal × a/d
+    const whole=rndH(2,6), d=pick([3,4,5,6,8]);
+    const a=rnd(1,d-1);
+    const rn=whole*a, r=reduceFrac(rn,d);
+    const g=gcd(rn,d);
+    const steps=[
+      {badge:'Steg 1',rule:`Skriv ${whole} som ${whole}/1 och multiplicera`,
+       expr:`${whole}×${a} = ${rn}  och  1×${d} = ${d}`,
+       desc:'Heltal × bråk = (heltal × täljare) / nämnare',
+       hi:[[0,2]],hiType:'frac',chain:`FRAC[${rn}|${d}]`},
+    ];
+    if(g>1){
+      steps.push({badge:'Steg 2',rule:`Förenkla — SGF = ${g}`,
+        expr:`${rn}÷${g} = ${r.n}  och  ${d}÷${g} = ${r.d}`,desc:'',
+        hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+    } else { steps[0].chain=`FRAC[**${rn}**|**${d}**]`; }
+    return{toks:[T.n(whole),T.op('×'),T.fr([T.n(a)],[T.n(d)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  // type 3: a/b × c/d med förkortning INNAN multiplikation
+  const cross=[[2,4],[3,6],[2,6],[4,8],[3,9],[2,8]];
+  const [a,d]=pick(cross), b=rndH(3,8), cc=rndH(2,b-1);
+  const g1=gcd(a,d), g2=gcd(cc,b);
+  if(g1===1&&g2===1) return genB4();
+  const a2=a/g1, d2=d/g1, cc2=cc/g2, b2=b/g2;
+  const rn=a2*cc2, rd=b2*d2, r=reduceFrac(rn,rd);
+  const steps=[
+    {badge:'Steg 1',rule:'Förkorta diagonalt innan du multiplicerar',
+     expr:`${a}÷${g1}=${a2} och ${d}÷${g1}=${d2}   ${cc}÷${g2}=${cc2} och ${b}÷${g2}=${b2}`,
+     desc:'Spara arbete — förkorta kors för kors',
+     hi:[[0,2]],hiType:'frac',
+     chain:`FRAC[${a2}|${b2}] × FRAC[${cc2}|${d2}]`},
+    {badge:'Steg 2',rule:'Multiplicera de förenklade bråken',
+     expr:`${a2}×${cc2}=${rn}  och  ${b2}×${d2}=${rd}`,desc:'',
+     hi:[[0,2]],hiType:'frac',chain:`FRAC[**${rn}**|**${rd}**]`},
+  ];
+  return{toks:[T.fr([T.n(a)],[T.n(b)]),T.op('×'),T.fr([T.n(cc)],[T.n(d)])],
+    ans:r,isFracAns:true,hint:'frac',steps};
+}
+
+// ── B5: Dividera bråk ────────────────────────────────────────────────────────
+function genB5(){
+  const type=rnd(1,3);
+  const denPairs=[[2,3],[2,5],[3,4],[3,5],[4,5],[2,7]];
+  const [b,d]=pick(denPairs);
+  const a=rnd(1,b), cc=rnd(1,d);
+  if(type===1){
+    // a/b ÷ c/d = a/b × d/c
+    const rn=a*d, rd=b*cc, r=reduceFrac(rn,rd);
+    const g=gcd(rn,rd);
+    const steps=[
+      {badge:'Steg 1',rule:'Division med bråk = multiplication med reciproken',
+       expr:`÷ FRAC[${cc}|${d}] → × FRAC[${d}|${cc}]`,
+       desc:'Vänd på det andra bråket och byt ÷ mot ×',
+       hi:[[2,2]],hiType:'frac',
+       chain:`FRAC[${a}|${b}] × FRAC[${d}|${cc}]`},
+      {badge:'Steg 2',rule:'Multiplicera',
+       expr:`${a}×${d}=${rn}  och  ${b}×${cc}=${rd}`,desc:'',
+       hi:[[0,2]],hiType:'frac',chain:`FRAC[${rn}|${rd}]`},
+    ];
+    if(g>1){
+      steps.push({badge:'Steg 3',rule:`Förenkla — SGF = ${g}`,
+        expr:`${rn}÷${g}=${r.n}  och  ${rd}÷${g}=${r.d}`,desc:'',
+        hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+    } else { steps[1].chain=`FRAC[**${rn}**|**${rd}**]`; }
+    return{toks:[T.fr([T.n(a)],[T.n(b)]),T.op('÷'),T.fr([T.n(cc)],[T.n(d)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  if(type===2){
+    // heltal ÷ a/b
+    const whole=rndH(2,5);
+    const rn=whole*b, rd=a, r=reduceFrac(rn,rd);
+    const steps=[
+      {badge:'Steg 1',rule:'Heltal ÷ bråk — vänd bråket och multiplicera',
+       expr:`${whole} ÷ FRAC[${a}|${b}] → ${whole} × FRAC[${b}|${a}]`,
+       desc:'Samma regel: reciprok av det vi dividerar med',
+       hi:[[0,2]],hiType:'frac',
+       chain:`FRAC[${whole}|1] × FRAC[${b}|${a}]`},
+      {badge:'Steg 2',rule:'Multiplicera',
+       expr:`${whole}×${b}=${rn}  och  1×${a}=${a}`,desc:'',
+       hi:[[0,2]],hiType:'frac',chain:`FRAC[${rn}|${a}]`},
+    ];
+    const g=gcd(rn,rd);
+    if(g>1){
+      steps.push({badge:'Steg 3',rule:`Förenkla — SGF = ${g}`,
+        expr:`${rn}÷${g}=${r.n}  och  ${rd}÷${g}=${r.d}`,desc:'',
+        hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+    } else { steps[1].chain=`FRAC[**${rn}**|**${a}**]`; }
+    return{toks:[T.n(whole),T.op('÷'),T.fr([T.n(a)],[T.n(b)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  // type 3: a/b ÷ heltal
+  const whole=rndH(2,5);
+  const rn=a, rd=b*whole, r=reduceFrac(rn,rd);
+  const steps=[
+    {badge:'Steg 1',rule:`Skriv ${whole} som ${whole}/1 — vänd och multiplicera`,
+     expr:`${a}/${b} ÷ ${whole}/1 → ${a}/${b} × 1/${whole}`,
+     desc:'Reciproken av ett heltal n är 1/n',
+     hi:[[0,0]],hiType:'frac',
+     chain:`FRAC[${a}|${b}] × FRAC[1|${whole}]`},
+    {badge:'Steg 2',rule:'Multiplicera',
+     expr:`${a}×1=${a}  och  ${b}×${whole}=${rd}`,desc:'',
+     hi:[[0,2]],hiType:'frac',chain:`FRAC[${a}|${rd}]`},
+  ];
+  const g=gcd(rn,rd);
+  if(g>1){
+    steps.push({badge:'Steg 3',rule:`Förenkla — SGF = ${g}`,
+      expr:`${a}÷${g}=${r.n}  och  ${rd}÷${g}=${r.d}`,desc:'',
+      hi:[[0,0]],hiType:'frac',chain:`FRAC[**${r.n}**|**${r.d}**]`});
+  } else { steps[1].chain=`FRAC[**${a}**|**${rd}**]`; }
+  return{toks:[T.fr([T.n(a)],[T.n(b)]),T.op('÷'),T.n(whole)],
+    ans:r,isFracAns:true,hint:'frac',steps};
+}
+
+// ── B6: Alla fyra räknesätten ─────────────────────────────────────────────────
+function genB6(){
+  const type=rnd(1,4);
+  const denPairs=[[2,3],[2,5],[3,4],[4,5]];
+  const [d1,d2]=pick(denPairs);
+  const L=lcm(d1,d2);
+  if(type===1){
+    // a/d1 + b/d2 × c/d1  (prioritet: × före +)
+    const a=rnd(1,d1-1),b=rnd(1,d2-1),cc=rnd(1,d1-1);
+    const p=reduceFrac(b*cc,d2*d1);
+    const n1=a*p.d, n2=p.n*d1, rn=n1+n2, rd=d1*p.d;
+    const r=reduceFrac(rn,rd);
+    if(r.n<=0||r.n>20) return genB6();
+    const steps=[
+      {badge:'Steg 1',rule:'× FÖRE + — multiplicera bråken',
+       expr:`FRAC[${b}|${d2}] × FRAC[${cc}|${d1}] = FRAC[${b*cc}|${d2*d1}]`,
+       desc:'Precis som med heltal: × räknas före +',
+       hi:[[2,4]],hiType:'frac',
+       chain:`FRAC[${a}|${d1}] + FRAC[${p.n}|${p.d}]`},
+      {badge:'Steg 2',rule:'Gemensam nämnare och addera',
+       expr:`MGN = ${d1*p.d}`,desc:'',
+       hi:[[0,4]],hiType:'frac',
+       chain:`FRAC[**${r.n}**|**${r.d}**]`},
+    ];
+    return{toks:[T.fr([T.n(a)],[T.n(d1)]),T.op('+'),T.fr([T.n(b)],[T.n(d2)]),T.op('×'),T.fr([T.n(cc)],[T.n(d1)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  if(type===2){
+    // a/d1 − b/d1 + c/d2
+    const a=rnd(2,d1),b=rnd(1,a-1),cc=rnd(1,d2-1);
+    const sub=a-b;
+    const rn=sub*L/d1+cc*L/d2, r=reduceFrac(rn,L);
+    const steps=[
+      {badge:'Steg 1',rule:'Gemensam nämnare — vänster till höger',
+       expr:`FRAC[${a}|${d1}] − FRAC[${b}|${d1}] = FRAC[${sub}|${d1}]`,desc:'',
+       hi:[[0,4]],hiType:'frac',
+       chain:`FRAC[${sub}|${d1}] + FRAC[${cc}|${d2}]`},
+      {badge:'Steg 2',rule:`MGN = ${L} — utöka och addera`,
+       expr:`FRAC[${sub*L/d1}|${L}] + FRAC[${cc*L/d2}|${L}] = FRAC[${rn}|${L}]`,desc:'',
+       hi:[[0,4]],hiType:'frac',
+       chain:`FRAC[**${r.n}**|**${r.d}**]`},
+    ];
+    return{toks:[T.fr([T.n(a)],[T.n(d1)]),T.op('−'),T.fr([T.n(b)],[T.n(d1)]),T.op('+'),T.fr([T.n(cc)],[T.n(d2)])],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  if(type===3){
+    // (a/d1 + b/d1) ÷ c  — parentes + division
+    const a=rnd(1,d1-2),b=rnd(1,d1-1-a),cc=rndH(2,4);
+    const sumN=a+b, r=reduceFrac(sumN,d1*cc);
+    const g=gcd(sumN,d1);
+    const steps=[
+      {badge:'Steg 1',rule:'( ) ALLTID FÖRST',
+       expr:`FRAC[${a}|${d1}] + FRAC[${b}|${d1}] = FRAC[${sumN}|${d1}]`,desc:'',
+       hi:[[0,4]],hiType:'frac',
+       chain:`FRAC[${sumN}|${d1}] ÷ ${cc}`},
+      {badge:'Steg 2',rule:'Dividera med heltal',
+       expr:`FRAC[${sumN}|${d1}] ÷ ${cc} = FRAC[${sumN}|${d1*cc}]`,
+       desc:'Multiplicera nämnaren med heltalet',
+       hi:[[0,0]],hiType:'frac',
+       chain:`FRAC[**${r.n}**|**${r.d}**]`},
+    ];
+    return{toks:[T.lp(),T.fr([T.n(a)],[T.n(d1)]),T.op('+'),T.fr([T.n(b)],[T.n(d1)]),T.rp(),T.op('÷'),T.n(cc)],
+      ans:r,isFracAns:true,hint:'frac',steps};
+  }
+  // type 4: a/d1 × b/d2 + c/d1
+  const a=rnd(1,d1),b=rnd(1,d2),cc=rnd(1,d1);
+  const p=reduceFrac(a*b,d1*d2);
+  const rn2=p.n*d1+cc*p.d, rd2=p.d*d1, r2=reduceFrac(rn2,rd2);
+  if(r2.n<=0||r2.n>20) return genB6();
+  const steps=[
+    {badge:'Steg 1',rule:'× FÖRE + — multiplicera bråken',
+     expr:`FRAC[${a}|${d1}] × FRAC[${b}|${d2}] = FRAC[${a*b}|${d1*d2}]`,desc:'',
+     hi:[[0,4]],hiType:'frac',
+     chain:`FRAC[${p.n}|${p.d}] + FRAC[${cc}|${d1}]`},
+    {badge:'Steg 2',rule:'Addera — gemensam nämnare',
+     expr:`MGN = ${p.d*d1}`,desc:'',
+     hi:[[0,4]],hiType:'frac',
+     chain:`FRAC[**${r2.n}**|**${r2.d}**]`},
+  ];
+  return{toks:[T.fr([T.n(a)],[T.n(d1)]),T.op('×'),T.fr([T.n(b)],[T.n(d2)]),T.op('+'),T.fr([T.n(cc)],[T.n(d1)])],
+    ans:r2,isFracAns:true,hint:'frac',steps};
+}
+
+
+
+// ══════════════════════════════════════════════════════════
+//  FÖRKORTNINGSKEDJA  –  rad-för-rad i uttryckspanelen
+// ══════════════════════════════════════════════════════════
+// simpState = { currentN, currentD, finalN, finalD, rows:[{n,d}] }
+
+function initSimpChain(n, d){
+  const reduced = reduceFrac(n, d);
+  simpState = {
+    currentN: n, currentD: d,
+    finalN: reduced.n, finalD: reduced.d,
+    rows: [{n, d}]
+  };
+  // Dölj huvud-frac-input, = och check-knapp — kedjan tar över
+  document.getElementById('frac-answer-wrap').style.display='none';
+  document.getElementById('eq-sign-main').style.display='none';
+  document.getElementById('check-btn').style.display='none';
+  // Visa kedjan
+  const area=document.getElementById('simp-chain-area');
+  if(area) area.style.display='flex';
+  renderSimpChain();
+}
+
+function renderSimpChain(){
+  const area = document.getElementById('simp-chain-area');
+  if(!area || !simpState) return;
+  const {rows, finalN, finalD} = simpState;
+  const done = (simpState.currentN===finalN && simpState.currentD===finalD);
+
+  // Hjälpfunktion: renderar ett "÷k"-bråk med n÷k / d÷k inuti
+  function divFrac(n, d, k, cls=''){
+    return `<div class="simp-div-frac${cls}">
+      <div class="sdf-num">${n}<span class="sdf-k"> ÷${k}</span></div>
+      <div class="sdf-den">${d}<span class="sdf-k"> ÷${k}</span></div>
+    </div>`;
+  }
+
+  // Hjälpfunktion: renderar ett vanligt bekräftat bråk
+  function confirmedFrac(n, d, isFinal){
+    return `<div class="simp-confirmed-frac${isFinal?' final':''}">
+      <div class="scf-num">${n}</div>
+      <div class="scf-den">${d}</div>
+    </div>`;
+  }
+
+  let html = '';
+
+  for(let i=0; i<rows.length; i++){
+    const r = rows[i];
+    const isFinal = (r.n===finalN && r.d===finalD);
+
+    if(i === 0){
+      // Startbråket: visa ÷k-notation om nästa rad finns, annars vanligt bråk
+      const nextRow = rows[1];
+      if(nextRow){
+        const k = r.d / nextRow.d;
+        html += `<span class="simp-eq">=</span>${divFrac(r.n, r.d, k)}`;
+      } else {
+        // Inga bekräftade steg ännu — visa vanligt bråk
+        html += `<span class="simp-eq">=</span>${confirmedFrac(r.n, r.d, false)}`;
+      }
+    } else {
+      // Bekräftat steg: visa resultatet, och ÷k om nästa steg finns
+      const nextRow = rows[i+1];
+      html += `<span class="simp-eq">=</span>`;
+      if(nextRow){
+        // Visa detta bråk med ÷k för nästa förkortning
+        const k = r.d / nextRow.d;
+        html += confirmedFrac(r.n, r.d, isFinal) + divFrac(r.n, r.d, k, ' dim');
+        // dim-klassen tonas ner lite — hjälp för eleven
+      } else if(!done){
+        // Sista bekräftade steget — visa med ÷k för kommande inmatning (k=?)
+        html += confirmedFrac(r.n, r.d, isFinal);
+      } else {
+        // Klar
+        html += confirmedFrac(r.n, r.d, isFinal);
+      }
+    }
+  }
+
+  // Inmatningsruta
+  if(!done){
+    const last = rows[rows.length-1];
+    html += `<span class="simp-eq">=</span>
+    <div class="simp-frac-wrap">
+      <div class="simp-input-frac">
+        <input type="number" inputmode="numeric" id="simp-n" placeholder="?" autocomplete="off"
+               onkeydown="simpKey(event,'n')">
+        <div class="sif-line"></div>
+        <input type="number" inputmode="numeric" id="simp-d" placeholder="?" autocomplete="off"
+               onkeydown="simpKey(event,'d')">
+      </div>
+    </div>
+    <button class="simp-confirm-btn" onclick="confirmSimpRow()">▶</button>`;
+  }
+
+  if(done){
+    html += `<div class="simp-done-badge">✓ Fullt förenklat!</div>`;
+  }
+
+  html += `<div class="simp-msg" id="simp-msg"></div>`;
+  area.innerHTML = html;
+  if(!done) setTimeout(()=>{ const el=document.getElementById('simp-n'); if(el) el.focus(); }, 60);
+}
+
+function simpKey(e, field){
+  if(e.key==='Enter'||e.key==='Tab'){
+    e.preventDefault();
+    if(field==='n') document.getElementById('simp-d')?.focus();
+    else confirmSimpRow();
+  }
+}
+
+function confirmSimpRow(){
+  if(!simpState) return;
+  const nEl=document.getElementById('simp-n');
+  const dEl=document.getElementById('simp-d');
+  const nv=parseInt(nEl?.value), dv=parseInt(dEl?.value);
+  if(isNaN(nv)||isNaN(dv)||dv===0){ nEl?.focus(); return; }
+
+  const {currentN, currentD, finalN, finalD} = simpState;
+
+  // Ekvivalent?
+  if(nv*currentD !== dv*currentN){
+    showSimpMsg(`${nv}/${dv} är inte lika med ${currentN}/${currentD} — prova igen.`, false);
+    nEl.value=''; dEl.value=''; nEl.focus(); return;
+  }
+  // Nämnaren måste minska
+  if(dv>=currentD){
+    showSimpMsg('Nämnaren måste bli mindre — du förkortar, inte förlänger!', false);
+    nEl.value=''; dEl.value=''; nEl.focus(); return;
+  }
+
+  // Godkänt — lägg till i kedjan
+  simpState.rows.push({n:nv, d:dv});
+  simpState.currentN=nv; simpState.currentD=dv;
+
+  const g=gcd(Math.abs(nv),dv);
+  const fullyReduced=(g===1);
+
+  if(fullyReduced){
+    // Klar! Rendera sista raden och trigga checkAnswer
+    renderSimpChain();
+    // Fyll i dolda frac-inputs och kör checkAnswer
+    const an=document.getElementById('ans-num');
+    const ad=document.getElementById('ans-den');
+    if(an&&ad){ an.value=nv; ad.value=dv; }
+    setTimeout(()=>checkAnswer(), 400);
+  } else {
+    renderSimpChain();
+    // setTimeout 0: vänta tills DOM är uppdaterad innan vi skriver meddelandet
+    setTimeout(()=>showSimpMsg(`Bra! Kan du förkorta ${nv}/${dv} mer? SGF = ${g}`, true), 0);
+  }
+}
+
+function showSimpMsg(text, isOk){
+  const el=document.getElementById('simp-msg');
+  if(!el) return;
+  el.textContent=text;
+  el.className='simp-msg '+(isOk?'ok':'err');
+  el.style.display='block';
+  if(!isOk) setTimeout(()=>{ if(el) el.style.display='none'; }, 3000);
+}
+function flashSimpMsg(t,h){ showSimpMsg(t,h); }
+function initSimpStepper(n,d){ initSimpChain(n,d); }  // alias
+
+
+function getRawFracFromSteps(steps, finalAns){
+  // Extract unreduced fraction from the LAST step chain that contains FRAC[...]
+  // Returns {n, d} of the unreduced form, or finalAns if not found
+  if(!steps || steps.length === 0) return finalAns;
+  for(let i = steps.length - 1; i >= 0; i--){
+    const chain = steps[i].chain || '';
+    // Match FRAC[**n**|d] or FRAC[n|d]
+    const m = chain.match(/FRAC\[\*?\*?(\d+)\*?\*?\|(\d+)\]/);
+    if(m){
+      return {n: parseInt(m[1]), d: parseInt(m[2])};
+    }
+  }
+  return finalAns;
+}
+
 buildLevelGrids();
 show('start-screen');
 </script>
+
+<!-- ── Lärarmodal ── -->
+<div class="modal-overlay" id="teacher-modal" onclick="if(event.target===this)closeTeacherModal()">
+  <div class="modal-box" id="teacher-modal-box"></div>
+</div>
 </body>
 </html>
